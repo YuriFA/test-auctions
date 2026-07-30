@@ -19,6 +19,7 @@
 - Added base routes (`/`, `/auctions`, `/auctions/$auctionUuid`, `/auctions/$auctionUuid/bets`, `/auctions/$auctionUuid/bet`) with root layout, error and not-found boundaries.
 - Verified all routes (including redirect and 404) with a Playwright smoke test under `scripts/route-smoke.mjs`.
 - Wired Hey API codegen against `docs/openapi.auctions.v0.json` with the bundled fetch client and SDK + schemas plugins, output isolated to `src/shared/api/generated/`.
+- Built the `shared/api` adapter: domain entry points (`fetchAuctionList`, `fetchAuctionDetail`, `fetchBets`, `placeBet`) over the generated SDK, plus `ApiError`/`ApiValidationError` normalization for `application/problem+json` and `422` responses.
 
 ## Current SDD Coverage
 
@@ -29,8 +30,9 @@
   - `SDD-004 Configure Styling Foundation`
   - `SDD-005 Configure Router And App Providers`
   - `SDD-006 Introduce OpenAPI Codegen`
+  - `SDD-007 Build Shared API Layer`
 - Not covered yet in code:
-  - `SDD-007` and all later implementation tasks
+  - `SDD-008` and all later implementation tasks
 
 ## Notes On Current Coverage
 
@@ -41,6 +43,7 @@
 - `SDD-004` is completed: Tailwind v4 and `shadcn/ui` are wired in through FSD aliases. Vite resolve aliases mirror the TypeScript path aliases. The shadcn Button lives at `src/shared/ui/button.component.tsx` plus `button.styles.ts`, with `cn` at `src/shared/lib/cn.ts`. `components.json` aliases point at `@shared/ui`, `@shared/lib`, and `@shared/lib/cn` so future `shadcn add` commands land inside FSD.
 - `SDD-005` is completed: TanStack Router runs in code-based mode with `RouterProvider` + `QueryClientProvider` wired in `src/app/app.component.tsx`. The QueryClient singleton lives at `src/app/lib/query-client.ts` (steiger flags `providers` and `store` as content-named, so `lib` is the purpose-named segment). Route definitions are split from page components: routes live under `src/app/routes/*.route.tsx`, page components live under `src/pages/<slice>/ui/*.component.tsx` and are reached through slice Public API `index.ts`. A Playwright smoke test under `scripts/route-smoke.mjs` verifies that `/` redirects to `/auctions`, all four planned routes render with the correct `$auctionUuid` param, and unknown URLs surface the root not-found boundary.
 - `SDD-006` is completed: Hey API generates the SDK and types into `src/shared/api/generated/` via `pnpm codegen`. The config lives in `openapi-ts.config.ts` and uses the bundled fetch client (no separate `@hey-api/client-fetch` runtime dep — it ships inside `@hey-api/openapi-ts` since v0.73). The local OpenAPI path must start with `./` so v0.99 treats it as a relative path rather than the Hey API cloud shorthand. The generated folder is excluded from oxlint via `.oxlintrc.json` `ignorePatterns` and treated as read-only; downstream layers must reach it through the `shared/api` Public API adapter that SDD-007 will introduce.
+- `SDD-007` is completed: the `shared/api` segment exposes four adapter functions (`fetchAuctionList`, `fetchAuctionDetail`, `fetchBets`, `placeBet`) and the DTO types app code needs, all routed through `src/shared/api/index.ts`. Adapters translate Hey API's `RequestResult` into thrown `ApiError` / `ApiValidationError` so callers can use `try/catch` and type-narrow with `isApiValidationError`. The error normalizer handles `application/problem+json`, the `422` validation payload with field-level `errors`, and network failures where `response` is undefined. The generated folder remains reachable only via relative imports inside `shared/api`; oxlint has no `no-restricted-paths` equivalent yet, so the boundary is enforced by folder layout and Public API rather than lint.
 - The current UI is still only a styled bootstrap shell with placeholder pages, not the auctions application.
 
 ## What Decisions Were Made By The Candidate
@@ -62,6 +65,7 @@
 - Put the QueryClient singleton in `src/app/lib/` rather than `app/providers` or `app/store` because steiger's `fsd/segments-by-purpose` flags both as content-named.
 - Pin Hey API inputs to relative paths starting with `./` so v0.99 does not parse them as the cloud "organization/project" shorthand.
 - Keep generated OpenAPI artifacts read-only and excluded from lint; reach them only through the handwritten `shared/api` adapter.
+- Wrap generated SDK calls in `shared/api` adapter functions that throw unified `ApiError` / `ApiValidationError` instead of leaking Hey API's `RequestResult` shape to callers.
 
 ## Which AI Suggestions Were Rejected
 
@@ -87,10 +91,11 @@
 - Some product expectations are broader than the exact response shapes in OpenAPI, so a few UI values may need to be derived from available data.
 - The schema is detailed and contains many nullable fields, which increases the chance of accidental UI assumptions during implementation.
 - MSW consistency across list, detail, and bets views can regress if state updates are implemented in multiple places instead of one runtime store.
-- The current bootstrap does not yet include React Hook Form, Zod, or MSW integration. TanStack Router and TanStack Query are wired in as of `SDD-005`; Tailwind CSS and `shadcn/ui` as of `SDD-004`; Hey API SDK as of `SDD-006`.
+- The current bootstrap does not yet include React Hook Form, Zod, or MSW integration. TanStack Router and TanStack Query are wired in as of `SDD-005`; Tailwind CSS and `shadcn/ui` as of `SDD-004`; Hey API SDK as of `SDD-006`; `shared/api` adapter as of `SDD-007`.
 - shadcn-generated components ship with two exports by default; they must be split into `*.component.tsx` plus `*.styles.ts` on each `shadcn add` to satisfy the project lint rule.
 - The Playwright smoke test in `scripts/route-smoke.mjs` assumes a running dev server; it is not wired into a CI script yet.
-- Generated SDK exports ~50 raw OpenAPI types and 4 SDK functions that downstream code must not import directly; the `shared/api` adapter (SDD-007) is the boundary that turns those DTOs into view models.
+- The `shared/api` adapter is exercised by typecheck and build but not yet by a runtime test; MSW handlers (SDD-010+) and logic tests (SDD-028) will cover behaviour.
+- Generated SDK exports ~50 raw OpenAPI types and 4 SDK functions that downstream code must not import directly; the `shared/api` adapter is the boundary that exposes only the DTOs and operations app code needs.
 
 ## What Would Be Improved With One More Day
 

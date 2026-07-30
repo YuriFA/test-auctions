@@ -1,5 +1,9 @@
 # SDD-007 Build Shared API Layer
 
+## Status
+
+Completed.
+
 ## Purpose
 
 Wrap generated API artifacts behind application-owned adapters.
