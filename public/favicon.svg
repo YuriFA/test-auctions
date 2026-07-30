@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>Test Logistics</title>
+  <rect width="64" height="64" rx="14" fill="#111827" />
+  <path d="M14 36h20v8H14z" fill="#60a5fa" />
+  <path d="M34 24h12l8 12v8H34z" fill="#34d399" />
+  <circle cx="22" cy="46" r="5" fill="#f9fafb" />
+  <circle cx="44" cy="46" r="5" fill="#f9fafb" />
+</svg>
