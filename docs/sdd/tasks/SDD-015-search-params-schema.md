@@ -2,7 +2,7 @@
 
 ## Статус
 
-Не начато.
+Завершено.
 
 ## Цель
 
@@ -62,3 +62,13 @@
 - Parse и serialize — две стороны одного контракта, поэтому живут в одном модуле и тестируются вместе. Разделение их по разным задачам нарушило бы инвариант round-trip.
 - Не прятать тесты в `__tests__`-папках — co-locate рядом с тестируемым модулем (`*.spec.ts` или `*.test.ts`), чтобы steiger FSD-проверка и Public API оставались консистентными.
 - SDD-018 (фильтры UI) потребляет эти хелперы; любой чисто-логический трансфер из UI в URL или обратно дорабатывается здесь, а не в UI-задаче.
+
+## Заметки о реализации
+
+- Контракт живёт в `src/features/auction-filters/lib/search-params.ts` — новый feature-слайс `auction-filters` создан с Public API `index.ts`. UI фильтров (SDD-018) добавит `ui/`-сегмент поверх `lib/` без изменения Public API.
+- Vitest 4.1.10 установлен как devDep, `vitest.config.ts` зеркалит path-алиасы из `vite.config.ts`/`tsconfig.app.json`. Скрипты `pnpm test` (watch) и `pnpm test:run` (CI-style) добавлены в `package.json`. `tsconfig.node.json` расширен `vitest.config.ts` для типизации конфига.
+- Zod 4.4.3 установлен как runtime-dep. Parse идёт через типизированную Zod-схему `auctionsListFiltersSchema: z.ZodType<AuctionsListFilters>` с permissive-трансформами на каждом поле — `schema.parse()` никогда не бросает, любой мусор на входе коллапсирует в defaults. Helper `toPlainObject(raw)` нормализует URLSearchParams в `Record<string, string[]>` (всегда массивы), так что схема видит консистентную форму и для single-value, и для repeated keys. Serialize и defaults остаются ручными — Zod не занимается сериализацией, а дефолты нужны и для serialize, и для UI badge. Схема экспортирована через Public API — SDD-018 может переиспользовать её для UI-формы.
+- Контракт покрывает user-facing фильтры (минимум из `project_requirements.md`): `page`, `is_oldest`, `cargo_num`, `load_city`, `unload_city`, `auc_type[]`, `status[]`, `statuses[]` (1..7), `is_available`, `is_bidder`, `current_price_from/to`, `create_date_from/to`, `load_date_from/to`. Admin-only поля (`customer`, `customer_ids`, `auction_ids`) и транспортная `per_page` намеренно НЕ в URL — SDD-016 мапит typed-объект в полный `AuctionListRequest`.
+- `parseAuctionsListSearchParams` пермиссивна: некорректный ввод коллапсирует в defaults, никаких исключений. `serializeAuctionsListSearchParams` НЕ пишет default-значения, чтобы URL оставался читаемым и устойчивым к изменению дефолтов; массивы — повторяющиеся ключи (`auc_type=Down&auc_type=Up`), не CSV.
+- Round-trip-инвариант `parse(serialize(x)) ≡ x` покрыт тестами (47 assertion, ALL OK): default-filters, fully-populated filters, falsy `is_available: false` проходит через обе стороны.
+- `isDefaultFilters` / `countActiveFilters` считают каждый не-default scalar за один активный фильтр (массив — за один, независимо от длины); булевый флаг активен и при `true`, и при `false`, если он не default (default для optionals — `undefined`).
