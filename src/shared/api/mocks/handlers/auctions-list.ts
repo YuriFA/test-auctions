@@ -36,7 +36,10 @@ export const auctionsListHandler = http.post(
       try {
         filters = JSON.parse(text) as AuctionListRequest
       } catch {
-        return HttpResponse.json(malformedBodyProblem(), { status: 422 })
+        return HttpResponse.json(malformedBodyProblem(), {
+          status: 422,
+          headers: { 'content-type': 'application/problem+json' },
+        })
       }
     }
 

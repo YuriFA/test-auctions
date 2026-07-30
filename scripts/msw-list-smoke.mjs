@@ -49,7 +49,7 @@ async function postList(body) {
       json = null
     }
   }
-  return { status: res.status, json }
+  return { status: res.status, contentType: res.headers.get('content-type'), json }
 }
 
 // --- case 1: default body, all seed auctions ---------------------------------
@@ -135,8 +135,13 @@ async function postList(body) {
 // --- case 6: malformed JSON body collapses to 422 ----------------------------
 
 {
-  const { status, json } = await postList('{not-json')
+  const { status, contentType, json } = await postList('{not-json')
   assert('malformed body status 422', status === 422, `got ${status}`)
+  assert(
+    'malformed body content-type application/problem+json',
+    contentType === 'application/problem+json',
+    `got ${contentType}`,
+  )
   assert('malformed body code validation_failed', json?.code === 'validation_failed')
   assert('malformed body has errors[]', Array.isArray(json?.errors) && json.errors.length > 0)
 }
