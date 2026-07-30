@@ -1,1 +1,1 @@
-export * from "./ui/auctions-list.component";
+export * from './ui/auctions-list.component'

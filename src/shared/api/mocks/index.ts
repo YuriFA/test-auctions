@@ -13,31 +13,23 @@
  * `shared/api` adapter helpers.
  */
 
-export type { MockCity } from "./cities";
-export {
-  findMockCityByGcId,
-  findMockCityByName,
-  mockCities,
-} from "./cities";
+export type { MockCity } from './cities'
+export { findMockCityByGcId, findMockCityByName, mockCities } from './cities'
 
-export type { MockCompetitor, MockCurrentUser } from "./user";
-export { mockCompetitors, mockCurrentUser } from "./user";
+export type { MockCompetitor, MockCurrentUser } from './user'
+export { mockCompetitors, mockCurrentUser } from './user'
 
-export type {
-  MockAuctionListItem,
-  MockAuctionListItemMain,
-  SeedAuction,
-} from "./auctions";
-export { seedAuctionUuids, seedAuctions } from "./auctions";
+export type { MockAuctionListItem, MockAuctionListItemMain, SeedAuction } from './auctions'
+export { seedAuctionUuids, seedAuctions } from './auctions'
 
-import { seedAuctions, type SeedAuction } from "./auctions";
+import { seedAuctions, type SeedAuction } from './auctions'
 
 /**
  * Convenience lookup: seed auction by its UUID. The runtime store and MSW
  * detail/bets handlers will call this to resolve a path parameter to a record.
  */
 export function findSeedAuctionByUuid(uuid: string): SeedAuction | undefined {
-  return seedAuctions.find((auction) => auction.uuid === uuid);
+  return seedAuctions.find((auction) => auction.uuid === uuid)
 }
 
 // SDD-010 — single in-memory MSW runtime store. Handlers (SDD-011+) and tests
@@ -48,13 +40,12 @@ export {
   readAuctionList,
   resetMockRuntime,
   writeBet,
-} from "./runtime/store";
-export type { PlaceBetResult } from "./runtime/store";
+} from './runtime/store'
+export type { PlaceBetResult } from './runtime/store'
 
 // SDD-011+ — MSW handlers. The array is the single shared source of truth for
 // the browser worker (`./browser.ts`) and the Node test server. The browser
 // worker itself is intentionally NOT re-exported here — `msw/browser` is a
 // side-effectful import that only the dev-mode `src/main.tsx` bootstrap should
 // reach via dynamic `import("@shared/api/mocks/browser")`.
-export { mockHandlers } from "./handlers";
-
+export { mockHandlers } from './handlers'

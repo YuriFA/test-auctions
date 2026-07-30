@@ -26,45 +26,42 @@ import type {
   TradingStatus,
   ValidationProblem,
   ValidationError,
-} from "../../generated";
-import type { MockAuctionListItem, SeedAuction } from "../auctions";
-import { seedAuctions } from "../auctions";
-import { mockCurrentUser } from "../user";
+} from '../../generated'
+import type { MockAuctionListItem, SeedAuction } from '../auctions'
+import { seedAuctions } from '../auctions'
+import { mockCurrentUser } from '../user'
 
-const VAT_RATE = 0.2;
+const VAT_RATE = 0.2
 
 /** Statuses accepted by the `statuses[]` numeric filter, in numeric order. */
 const AUCTION_STATUS_BY_NUMBER: AuctionStatus[] = [
-  "Planning",
-  "Auction",
-  "DeterminateWinner",
-  "WaitDeal",
-  "InProgress",
-  "Finished",
-  "Stopped",
-];
+  'Planning',
+  'Auction',
+  'DeterminateWinner',
+  'WaitDeal',
+  'InProgress',
+  'Finished',
+  'Stopped',
+]
 
 interface MockRuntimeState {
-  auctions: SeedAuction[];
-  nextBetId: number;
+  auctions: SeedAuction[]
+  nextBetId: number
 }
 
-let state: MockRuntimeState = createInitialState();
+let state: MockRuntimeState = createInitialState()
 
 function createInitialState(): MockRuntimeState {
-  const auctions = structuredClone(seedAuctions) as SeedAuction[];
+  const auctions = structuredClone(seedAuctions) as SeedAuction[]
   const maxBetId = auctions.reduce((max, auction) => {
-    return auction.bets.reduce(
-      (inner, bet) => Math.max(inner, bet.id ?? 0),
-      max,
-    );
-  }, 0);
-  return { auctions, nextBetId: maxBetId + 1 };
+    return auction.bets.reduce((inner, bet) => Math.max(inner, bet.id ?? 0), max)
+  }, 0)
+  return { auctions, nextBetId: maxBetId + 1 }
 }
 
 /** Reset the runtime back to the seed snapshot. Tests call this in `beforeEach`. */
 export function resetMockRuntime(): void {
-  state = createInitialState();
+  state = createInitialState()
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -72,40 +69,31 @@ export function resetMockRuntime(): void {
 // -------------------------------------------------------------------------------------------------
 
 export function readAuctionDetail(uuid: string): AuctionShowResponse | undefined {
-  const auction = findAuction(uuid);
-  return auction?.detail;
+  const auction = findAuction(uuid)
+  return auction?.detail
 }
 
 export function readAuctionBets(
   uuid: string,
   options: { includeCanceled?: boolean } = {},
 ): BetItem[] | undefined {
-  const auction = findAuction(uuid);
-  if (!auction) return undefined;
-  const includeCanceled = options.includeCanceled === true;
+  const auction = findAuction(uuid)
+  if (!auction) return undefined
+  const includeCanceled = options.includeCanceled === true
   return auction.bets
     .filter((bet) => includeCanceled || !bet.is_rejected)
-    .map((bet) => ({ ...bet }));
+    .map((bet) => ({ ...bet }))
 }
 
-export function readAuctionList(
-  filters: AuctionListRequest = {},
-): AuctionListResponseBase {
-  const filtered = state.auctions.filter((auction) =>
-    matchesFilters(auction, filters),
-  );
-  const sorted = applySort(filtered, filters);
-  const { page, perPage, paged } = applyPagination(sorted, filters);
-  const meta: AuctionListMeta = buildMeta(
-    sorted.length,
-    page,
-    perPage,
-    paged.length,
-  );
+export function readAuctionList(filters: AuctionListRequest = {}): AuctionListResponseBase {
+  const filtered = state.auctions.filter((auction) => matchesFilters(auction, filters))
+  const sorted = applySort(filtered, filters)
+  const { page, perPage, paged } = applyPagination(sorted, filters)
+  const meta: AuctionListMeta = buildMeta(sorted.length, page, perPage, paged.length)
   return {
     data: paged.map((auction) => auction.list),
     meta,
-  };
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -115,7 +103,7 @@ export function readAuctionList(
 export type PlaceBetResult =
   | { ok: true; bet: BetItem }
   | { ok: false; status: 404; problem: ProblemDetail }
-  | { ok: false; status: 422; problem: ValidationProblem };
+  | { ok: false; status: 422; problem: ValidationProblem }
 
 /**
  * Apply a user bet to the runtime. The price is the with-VAT amount, matching
@@ -137,48 +125,48 @@ export function writeBet(uuid: string, price: number): PlaceBetResult {
       status: 422,
       problem: validationProblem([
         {
-          field: "price",
-          message: "Цена ставки должна быть больше 0",
-          code: "greater_than_zero",
+          field: 'price',
+          message: 'Цена ставки должна быть больше 0',
+          code: 'greater_than_zero',
         },
       ]),
-    };
+    }
   }
 
-  const auction = findAuction(uuid);
+  const auction = findAuction(uuid)
   if (!auction) {
     return {
       ok: false,
       status: 404,
       problem: problemDetail(
-        "auction_not_found",
-        "Аукцион не найден",
+        'auction_not_found',
+        'Аукцион не найден',
         `Аукцион с UUID ${uuid} не существует`,
       ),
-    };
+    }
   }
 
-  const previousUserBet = findUserActiveBet(auction);
-  const previousUserPrice = previousUserBet?.price_with_vat ?? null;
+  const previousUserBet = findUserActiveBet(auction)
+  const previousUserPrice = previousUserBet?.price_with_vat ?? null
 
-  const newBet: BetItem = makeUserBetRecord(price);
-  state.nextBetId += 1;
+  const newBet: BetItem = makeUserBetRecord(price)
+  state.nextBetId += 1
 
   if (previousUserBet) {
-    previousUserBet.is_rejected = true;
-    previousUserBet.cancel_reason = "Перебито новой ставкой";
-    previousUserBet.place = null;
+    previousUserBet.is_rejected = true
+    previousUserBet.cancel_reason = 'Перебито новой ставкой'
+    previousUserBet.place = null
   }
 
-  auction.bets.push(newBet);
-  recomputePlaces(auction);
-  applyBetToTrading(auction, newBet, previousUserPrice);
+  auction.bets.push(newBet)
+  recomputePlaces(auction)
+  applyBetToTrading(auction, newBet, previousUserPrice)
 
-  return { ok: true, bet: { ...newBet } };
+  return { ok: true, bet: { ...newBet } }
 }
 
 function makeUserBetRecord(priceWithVat: number): BetItem {
-  const id = state.nextBetId;
+  const id = state.nextBetId
   return {
     id,
     auction_id: 1000 + id,
@@ -196,8 +184,8 @@ function makeUserBetRecord(priceWithVat: number): BetItem {
     place: null,
     is_win: false,
     run_number: 0,
-    cancel_reason: "",
-  };
+    cancel_reason: '',
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -205,17 +193,13 @@ function makeUserBetRecord(priceWithVat: number): BetItem {
 // -------------------------------------------------------------------------------------------------
 
 function findAuction(uuid: string): SeedAuction | undefined {
-  return state.auctions.find((auction) => auction.uuid === uuid);
+  return state.auctions.find((auction) => auction.uuid === uuid)
 }
 
 function findUserActiveBet(auction: SeedAuction): BetItem | undefined {
   return [...auction.bets]
-    .filter(
-      (bet) =>
-        !bet.is_rejected &&
-        bet.organization_id === mockCurrentUser.organization_id,
-    )
-    .sort((a, b) => (b.id ?? 0) - (a.id ?? 0))[0];
+    .filter((bet) => !bet.is_rejected && bet.organization_id === mockCurrentUser.organization_id)
+    .sort((a, b) => (b.id ?? 0) - (a.id ?? 0))[0]
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -223,31 +207,27 @@ function findUserActiveBet(auction: SeedAuction): BetItem | undefined {
 // -------------------------------------------------------------------------------------------------
 
 function recomputePlaces(auction: SeedAuction): void {
-  const direction = auctionDirection(auction);
+  const direction = auctionDirection(auction)
   for (const bet of auction.bets) {
     if (bet.is_rejected) {
-      bet.place = null;
+      bet.place = null
     }
   }
-  const active = auction.bets.filter((bet) => !bet.is_rejected);
-  const ranked = [...active].sort((a, b) => compareForRank(a, b, direction));
+  const active = auction.bets.filter((bet) => !bet.is_rejected)
+  const ranked = [...active].sort((a, b) => compareForRank(a, b, direction))
   ranked.forEach((bet, index) => {
-    bet.place = index + 1;
-  });
+    bet.place = index + 1
+  })
 }
 
-function compareForRank(
-  a: BetItem,
-  b: BetItem,
-  direction: AuctionType | undefined,
-): number {
-  const priceA = a.price_with_vat ?? 0;
-  const priceB = b.price_with_vat ?? 0;
+function compareForRank(a: BetItem, b: BetItem, direction: AuctionType | undefined): number {
+  const priceA = a.price_with_vat ?? 0
+  const priceB = b.price_with_vat ?? 0
   // Down auctions: lowest bet wins. Up auctions: highest bet wins.
-  const diff = direction === "Up" ? priceB - priceA : priceA - priceB;
-  if (diff !== 0) return diff;
+  const diff = direction === 'Up' ? priceB - priceA : priceA - priceB
+  if (diff !== 0) return diff
   // Tie-break by earliest bet first so the ranking is stable.
-  return (a.id ?? 0) - (b.id ?? 0);
+  return (a.id ?? 0) - (b.id ?? 0)
 }
 
 function applyBetToTrading(
@@ -255,50 +235,30 @@ function applyBetToTrading(
   newBet: BetItem,
   previousUserPrice: number | null,
 ): void {
-  const direction = auctionDirection(auction);
-  const active = auction.bets.filter((bet) => !bet.is_rejected);
-  const ranked = [...active].sort((a, b) => compareForRank(a, b, direction));
-  const leading = ranked[0];
-  const userActive = active.filter(
-    (bet) => bet.organization_id === mockCurrentUser.organization_id,
-  );
-  const userRanked = [...userActive].sort((a, b) =>
-    compareForRank(a, b, direction),
-  );
-  const userLeading = userRanked[0];
-  const isLeading =
-    !!leading && !!userLeading && leading.id === userLeading.id;
+  const direction = auctionDirection(auction)
+  const active = auction.bets.filter((bet) => !bet.is_rejected)
+  const ranked = [...active].sort((a, b) => compareForRank(a, b, direction))
+  const leading = ranked[0]
+  const userActive = active.filter((bet) => bet.organization_id === mockCurrentUser.organization_id)
+  const userRanked = [...userActive].sort((a, b) => compareForRank(a, b, direction))
+  const userLeading = userRanked[0]
+  const isLeading = !!leading && !!userLeading && leading.id === userLeading.id
 
   const newStatusMobile: ListTradingStatus = userLeading
     ? isLeading
-      ? "Leading"
-      : "Losing"
-    : toListTradingStatus(
-        auction.detail.trading?.status_mobile ?? "NotParticipating",
-      );
+      ? 'Leading'
+      : 'Losing'
+    : toListTradingStatus(auction.detail.trading?.status_mobile ?? 'NotParticipating')
 
   const worseThanPrevious =
     previousUserPrice != null
-      ? direction === "Up"
+      ? direction === 'Up'
         ? (newBet.price_with_vat ?? 0) < previousUserPrice
         : (newBet.price_with_vat ?? 0) > previousUserPrice
-      : false;
+      : false
 
-  updateDetailTrading(
-    auction,
-    leading,
-    userLeading,
-    isLeading,
-    newStatusMobile,
-    worseThanPrevious,
-  );
-  updateListTrading(
-    auction,
-    leading,
-    userLeading,
-    newStatusMobile,
-    worseThanPrevious,
-  );
+  updateDetailTrading(auction, leading, userLeading, isLeading, newStatusMobile, worseThanPrevious)
+  updateListTrading(auction, leading, userLeading, newStatusMobile, worseThanPrevious)
 }
 
 function updateDetailTrading(
@@ -309,43 +269,38 @@ function updateDetailTrading(
   statusMobile: ListTradingStatus,
   worseThanPrevious: boolean,
 ): void {
-  const trading: AuctionShowTrading | undefined = auction.detail.trading;
-  if (!trading) return;
+  const trading: AuctionShowTrading | undefined = auction.detail.trading
+  if (!trading) return
 
-  const direction = auctionDirection(auction);
+  const direction = auctionDirection(auction)
   if (leading) {
-    const price = trading.price ?? {};
-    price.current = leading.price_with_vat ?? price.current ?? null;
-    price.current_no_vat =
-      leading.price_no_vat ?? price.current_no_vat ?? null;
-    price.available = nextAvailablePrice(price.current, price.step, direction);
-    price.available_no_vat = nextAvailablePrice(
-      price.current_no_vat,
-      price.step_no_vat,
-      direction,
-    );
-    trading.price = price;
+    const price = trading.price ?? {}
+    price.current = leading.price_with_vat ?? price.current ?? null
+    price.current_no_vat = leading.price_no_vat ?? price.current_no_vat ?? null
+    price.available = nextAvailablePrice(price.current, price.step, direction)
+    price.available_no_vat = nextAvailablePrice(price.current_no_vat, price.step_no_vat, direction)
+    trading.price = price
   }
 
-  const your: AuctionShowTradingYour = trading.your ?? {};
+  const your: AuctionShowTradingYour = trading.your ?? {}
   if (userLeading) {
-    your.bet = true;
-    your.last_bet = userLeading.price_with_vat ?? null;
-    your.last_bet_with_vat = userLeading.price_with_vat ?? null;
-    your.win = isLeading && isAuctionFinished(auction) ? true : (your.win ?? false);
+    your.bet = true
+    your.last_bet = userLeading.price_with_vat ?? null
+    your.last_bet_with_vat = userLeading.price_with_vat ?? null
+    your.win = isLeading && isAuctionFinished(auction) ? true : (your.win ?? false)
   } else {
-    your.bet = false;
-    your.last_bet = null;
-    your.last_bet_with_vat = null;
-    your.win = false;
+    your.bet = false
+    your.last_bet = null
+    your.last_bet_with_vat = null
+    your.win = false
   }
-  trading.your = your;
+  trading.your = your
 
-  trading.is_bidder = !!userLeading;
-  trading.status_mobile = statusMobile;
-  trading.is_last_bet_with_vat = true;
-  trading.red_bet_with_vat = worseThanPrevious;
-  trading.red_bet_no_vat = worseThanPrevious;
+  trading.is_bidder = !!userLeading
+  trading.status_mobile = statusMobile
+  trading.is_last_bet_with_vat = true
+  trading.red_bet_with_vat = worseThanPrevious
+  trading.red_bet_no_vat = worseThanPrevious
 }
 
 function updateListTrading(
@@ -355,32 +310,31 @@ function updateListTrading(
   statusMobile: ListTradingStatus,
   worseThanPrevious: boolean,
 ): void {
-  const listTrading = (auction.list as MockAuctionListItem).trading;
-  if (!listTrading) return;
+  const listTrading = (auction.list as MockAuctionListItem).trading
+  if (!listTrading) return
 
   if (leading) {
-    const price = listTrading.price ?? {};
-    price.current = leading.price_with_vat ?? price.current ?? undefined;
-    price.current_no_vat =
-      leading.price_no_vat ?? price.current_no_vat ?? undefined;
-    listTrading.price = price;
+    const price = listTrading.price ?? {}
+    price.current = leading.price_with_vat ?? price.current ?? undefined
+    price.current_no_vat = leading.price_no_vat ?? price.current_no_vat ?? undefined
+    listTrading.price = price
   }
 
-  const your = listTrading.your ?? {};
+  const your = listTrading.your ?? {}
   if (userLeading) {
-    your.bet = true;
-    your.last_bet = userLeading.price_with_vat ?? null;
+    your.bet = true
+    your.last_bet = userLeading.price_with_vat ?? null
   } else {
-    your.bet = false;
-    your.last_bet = null;
+    your.bet = false
+    your.last_bet = null
   }
-  listTrading.your = your;
+  listTrading.your = your
 
-  listTrading.is_bidder = !!userLeading;
-  listTrading.status_mobile = statusMobile;
-  listTrading.is_last_bet_with_vat = true;
-  listTrading.red_bet_with_vat = worseThanPrevious;
-  listTrading.red_bet_no_vat = worseThanPrevious;
+  listTrading.is_bidder = !!userLeading
+  listTrading.status_mobile = statusMobile
+  listTrading.is_last_bet_with_vat = true
+  listTrading.red_bet_with_vat = worseThanPrevious
+  listTrading.red_bet_no_vat = worseThanPrevious
 }
 
 /**
@@ -392,9 +346,9 @@ function nextAvailablePrice(
   step: number | null | undefined,
   direction: AuctionType | undefined,
 ): number | null {
-  if (current == null || step == null) return null;
-  const raw = direction === "Up" ? current + step : current - step;
-  return Math.max(0, Math.round(raw * 100) / 100);
+  if (current == null || step == null) return null
+  const raw = direction === 'Up' ? current + step : current - step
+  return Math.max(0, Math.round(raw * 100) / 100)
 }
 
 /**
@@ -404,205 +358,201 @@ function nextAvailablePrice(
  * is always within the narrower set.
  */
 type ListTradingStatus =
-  | "NotParticipating"
-  | "Leading"
-  | "Losing"
-  | "Winner"
-  | "Confirmed"
-  | "Unknown";
+  | 'NotParticipating'
+  | 'Leading'
+  | 'Losing'
+  | 'Winner'
+  | 'Confirmed'
+  | 'Unknown'
 
 function toListTradingStatus(status: TradingStatus): ListTradingStatus {
   // The detail DTO allows three extra variants; we collapse them onto the
   // nearest list-DTO equivalent so the seed never produces an illegal value.
-  if (status === "OnPending" || status === "ChoosingWinner") return "Losing";
-  if (status === "Accepted") return "Confirmed";
-  return status;
+  if (status === 'OnPending' || status === 'ChoosingWinner') return 'Losing'
+  if (status === 'Accepted') return 'Confirmed'
+  return status
 }
 
 function isAuctionFinished(auction: SeedAuction): boolean {
-  const status = auction.detail.trading?.status;
+  const status = auction.detail.trading?.status
   return (
-    status === "Finished" ||
-    status === "WaitDeal" ||
-    status === "InProgress" ||
-    status === "DeterminateWinner"
-  );
+    status === 'Finished' ||
+    status === 'WaitDeal' ||
+    status === 'InProgress' ||
+    status === 'DeterminateWinner'
+  )
 }
 
 function auctionDirection(auction: SeedAuction): AuctionType | undefined {
-  return auction.detail.main?.auc_type ?? auction.list.main?.auc_type;
+  return auction.detail.main?.auc_type ?? auction.list.main?.auc_type
 }
 
 // -------------------------------------------------------------------------------------------------
 // Internals: filters / sort / pagination
 // -------------------------------------------------------------------------------------------------
 
-function matchesFilters(
-  auction: SeedAuction,
-  filters: AuctionListRequest,
-): boolean {
-  const list = auction.list;
-  const trading = list.trading;
+function matchesFilters(auction: SeedAuction, filters: AuctionListRequest): boolean {
+  const list = auction.list
+  const trading = list.trading
 
   if (filters.auc_type && filters.auc_type.length > 0) {
-    const type = list.main?.auc_type;
-    if (!type || !filters.auc_type.includes(type as "Request" | "Up" | "Down" | "FixPrice")) {
-      return false;
+    const type = list.main?.auc_type
+    if (!type || !filters.auc_type.includes(type as 'Request' | 'Up' | 'Down' | 'FixPrice')) {
+      return false
     }
   }
 
   if (filters.status && filters.status.length > 0) {
-    const mobile = trading?.status_mobile;
+    const mobile = trading?.status_mobile
     if (!mobile || !filters.status.includes(mobile)) {
-      return false;
+      return false
     }
   }
 
   if (filters.statuses && filters.statuses.length > 0) {
     const mapped = filters.statuses
       .map((value) => AUCTION_STATUS_BY_NUMBER[value - 1])
-      .filter((value): value is AuctionStatus => Boolean(value));
-    const current = trading?.status;
+      .filter((value): value is AuctionStatus => Boolean(value))
+    const current = trading?.status
     if (!current || !mapped.includes(current)) {
-      return false;
+      return false
     }
   }
 
   if (filters.cargo_num) {
-    const haystack = list.main?.cargo_num ?? "";
+    const haystack = list.main?.cargo_num ?? ''
     if (!haystack.toLowerCase().includes(filters.cargo_num.toLowerCase())) {
-      return false;
+      return false
     }
   }
 
   if (filters.body_types && filters.body_types.length > 0) {
-    const body = list.cargo?.body_type;
+    const body = list.cargo?.body_type
     if (!body || !filters.body_types.includes(body)) {
-      return false;
+      return false
     }
   }
 
-  if (typeof filters.weight_from === "number" && (list.cargo?.weight ?? 0) < filters.weight_from) {
-    return false;
+  if (typeof filters.weight_from === 'number' && (list.cargo?.weight ?? 0) < filters.weight_from) {
+    return false
   }
-  if (typeof filters.weight_to === "number" && (list.cargo?.weight ?? 0) > filters.weight_to) {
-    return false;
+  if (typeof filters.weight_to === 'number' && (list.cargo?.weight ?? 0) > filters.weight_to) {
+    return false
   }
-  if (typeof filters.volume_from === "number" && (list.cargo?.volume ?? 0) < filters.volume_from) {
-    return false;
+  if (typeof filters.volume_from === 'number' && (list.cargo?.volume ?? 0) < filters.volume_from) {
+    return false
   }
-  if (typeof filters.volume_to === "number" && (list.cargo?.volume ?? 0) > filters.volume_to) {
-    return false;
+  if (typeof filters.volume_to === 'number' && (list.cargo?.volume ?? 0) > filters.volume_to) {
+    return false
   }
 
-  if (typeof filters.is_international_shipment === "boolean") {
+  if (typeof filters.is_international_shipment === 'boolean') {
     if (Boolean(list.cargo?.is_international) !== filters.is_international_shipment) {
-      return false;
+      return false
     }
   }
-  if (typeof filters.is_available === "boolean") {
+  if (typeof filters.is_available === 'boolean') {
     if (Boolean(trading?.is_available) !== filters.is_available) {
-      return false;
+      return false
     }
   }
-  if (typeof filters.is_favorite === "boolean") {
+  if (typeof filters.is_favorite === 'boolean') {
     if (Boolean(trading?.is_favorite) !== filters.is_favorite) {
-      return false;
+      return false
     }
   }
-  if (typeof filters.is_bidder === "boolean") {
+  if (typeof filters.is_bidder === 'boolean') {
     if (Boolean(trading?.is_bidder) !== filters.is_bidder) {
-      return false;
+      return false
     }
   }
 
   if (filters.load_gc_id !== undefined && list.route?.load?.city_gc_id !== filters.load_gc_id) {
-    return false;
+    return false
   }
-  if (filters.unload_gc_id !== undefined && list.route?.unload?.city_gc_id !== filters.unload_gc_id) {
-    return false;
+  if (
+    filters.unload_gc_id !== undefined &&
+    list.route?.unload?.city_gc_id !== filters.unload_gc_id
+  ) {
+    return false
   }
   if (filters.load_city) {
-    const city = list.route?.load?.city ?? "";
+    const city = list.route?.load?.city ?? ''
     if (!city.toLowerCase().includes(filters.load_city.toLowerCase())) {
-      return false;
+      return false
     }
   }
   if (filters.unload_city) {
-    const city = list.route?.unload?.city ?? "";
+    const city = list.route?.unload?.city ?? ''
     if (!city.toLowerCase().includes(filters.unload_city.toLowerCase())) {
-      return false;
+      return false
     }
   }
 
-  if (typeof filters.current_price_from === "number") {
+  if (typeof filters.current_price_from === 'number') {
     if ((trading?.price?.current ?? 0) < filters.current_price_from) {
-      return false;
+      return false
     }
   }
-  if (typeof filters.current_price_to === "number") {
+  if (typeof filters.current_price_to === 'number') {
     if ((trading?.price?.current ?? Number.POSITIVE_INFINITY) > filters.current_price_to) {
-      return false;
+      return false
     }
   }
 
-  if (typeof filters.price_per_km_from === "number") {
+  if (typeof filters.price_per_km_from === 'number') {
     if ((list.main?.price_per_km ?? 0) < filters.price_per_km_from) {
-      return false;
+      return false
     }
   }
-  if (typeof filters.price_per_km_to === "number") {
+  if (typeof filters.price_per_km_to === 'number') {
     if ((list.main?.price_per_km ?? Number.POSITIVE_INFINITY) > filters.price_per_km_to) {
-      return false;
+      return false
     }
   }
 
   if (filters.customer) {
-    const name = list.organizer?.organization_name ?? "";
-    const inn = list.organizer?.organization_inn ?? "";
-    const needle = filters.customer.toLowerCase();
+    const name = list.organizer?.organization_name ?? ''
+    const inn = list.organizer?.organization_inn ?? ''
+    const needle = filters.customer.toLowerCase()
     if (!name.toLowerCase().includes(needle) && !inn.toLowerCase().includes(needle)) {
-      return false;
+      return false
     }
   }
 
   if (filters.create_date_from) {
-    if ((list.main?.created_at ?? "") < filters.create_date_from) {
-      return false;
+    if ((list.main?.created_at ?? '') < filters.create_date_from) {
+      return false
     }
   }
   if (filters.create_date_to) {
-    if ((list.main?.created_at ?? "") > filters.create_date_to) {
-      return false;
+    if ((list.main?.created_at ?? '') > filters.create_date_to) {
+      return false
     }
   }
 
-  return true;
+  return true
 }
 
-function applySort(
-  auctions: SeedAuction[],
-  filters: AuctionListRequest,
-): SeedAuction[] {
-  const direction = filters.is_oldest ? 1 : -1;
+function applySort(auctions: SeedAuction[], filters: AuctionListRequest): SeedAuction[] {
+  const direction = filters.is_oldest ? 1 : -1
   return [...auctions].sort((a, b) => {
-    const left = a.list.main?.created_at ?? "";
-    const right = b.list.main?.created_at ?? "";
-    if (left < right) return -1 * direction;
-    if (left > right) return 1 * direction;
-    return 0;
-  });
+    const left = a.list.main?.created_at ?? ''
+    const right = b.list.main?.created_at ?? ''
+    if (left < right) return -1 * direction
+    if (left > right) return 1 * direction
+    return 0
+  })
 }
 
 function applyPagination(
   auctions: SeedAuction[],
   filters: AuctionListRequest,
 ): { page: number; perPage: number; paged: SeedAuction[] } {
-  const page = filters.page && filters.page > 0 ? filters.page : 1;
-  const perPage =
-    filters.per_page && filters.per_page > 0 ? filters.per_page : auctions.length;
-  const start = (page - 1) * perPage;
-  return { page, perPage, paged: auctions.slice(start, start + perPage) };
+  const page = filters.page && filters.page > 0 ? filters.page : 1
+  const perPage = filters.per_page && filters.per_page > 0 ? filters.per_page : auctions.length
+  const start = (page - 1) * perPage
+  return { page, perPage, paged: auctions.slice(start, start + perPage) }
 }
 
 function buildMeta(
@@ -611,13 +561,13 @@ function buildMeta(
   perPage: number,
   pagedCount: number,
 ): AuctionListMeta {
-  const lastPage = perPage === 0 ? 1 : Math.ceil(total / perPage);
+  const lastPage = perPage === 0 ? 1 : Math.ceil(total / perPage)
   // Both `total === 0` (everything filtered out) and `page > lastPage`
   // (over-paginated request) produce an empty slice. In either case `from`
   // and `to` must read as 0 — Laravel's paginator reports the same and the
   // spec marks both fields as plain `integer`, so 0 is the safe shape.
-  const from = pagedCount === 0 ? 0 : (page - 1) * perPage + 1;
-  const to = pagedCount === 0 ? 0 : Math.min(page * perPage, total);
+  const from = pagedCount === 0 ? 0 : (page - 1) * perPage + 1
+  const to = pagedCount === 0 ? 0 : Math.min(page * perPage, total)
   return {
     current_page: page,
     from,
@@ -625,7 +575,7 @@ function buildMeta(
     per_page: perPage,
     to,
     total,
-  };
+  }
 }
 
 // -------------------------------------------------------------------------------------------------
@@ -633,22 +583,18 @@ function buildMeta(
 // -------------------------------------------------------------------------------------------------
 
 function roundPrice(value: number): number {
-  return Math.round(value * 100) / 100;
+  return Math.round(value * 100) / 100
 }
 
-function problemDetail(
-  code: string,
-  title: string,
-  message: string,
-): ProblemDetail {
-  return { code, title, message };
+function problemDetail(code: string, title: string, message: string): ProblemDetail {
+  return { code, title, message }
 }
 
 function validationProblem(errors: ValidationError[]): ValidationProblem {
   return {
-    code: "validation_failed",
-    title: "Ошибка валидации",
-    message: "Запрос не прошёл валидацию",
+    code: 'validation_failed',
+    title: 'Ошибка валидации',
+    message: 'Запрос не прошёл валидацию',
     errors,
-  };
+  }
 }

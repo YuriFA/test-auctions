@@ -1,10 +1,10 @@
-import { createRoute } from "@tanstack/react-router";
+import { createRoute } from '@tanstack/react-router'
 
-import { AuctionsListComponent } from "@pages/auctions-list";
-import { auctionsRoute } from "./auctions.route";
+import { AuctionsListComponent } from '@pages/auctions-list'
+import { auctionsRoute } from './auctions.route'
 
 export const auctionsIndexRoute = createRoute({
   getParentRoute: () => auctionsRoute,
-  path: "/",
+  path: '/',
   component: AuctionsListComponent,
-});
+})

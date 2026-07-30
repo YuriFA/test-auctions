@@ -1,7 +1,7 @@
 {
   "name": "test-logistics",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +9,8 @@
     "typecheck": "tsc -b",
     "lint": "oxlint",
     "lint:fsd": "steiger ./src --reporter json",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check",
     "check": "pnpm typecheck && pnpm lint",
     "codegen": "openapi-ts",
     "preview": "vite preview"
@@ -35,6 +37,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
     "msw": "^2.15.0",
+    "oxfmt": "^0.61.0",
     "oxlint": "^1.75.0",
     "playwright": "^1.62.0",
     "shadcn": "^4.16.0",

@@ -10,8 +10,8 @@
  * Handlers come from the shared `mockHandlers` array so the browser worker and
  * Node test server stay in lockstep.
  */
-import { setupWorker } from "msw/browser";
+import { setupWorker } from 'msw/browser'
 
-import { mockHandlers } from "./handlers";
+import { mockHandlers } from './handlers'
 
-export const worker = setupWorker(...mockHandlers);
+export const worker = setupWorker(...mockHandlers)

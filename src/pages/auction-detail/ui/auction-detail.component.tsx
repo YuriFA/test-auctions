@@ -1,7 +1,7 @@
-import { Link, useParams } from "@tanstack/react-router";
+import { Link, useParams } from '@tanstack/react-router'
 
 export function AuctionDetailComponent() {
-  const { auctionUuid } = useParams({ from: "/auctions/$auctionUuid" });
+  const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid' })
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-8 sm:px-6 sm:py-12">
@@ -12,15 +12,13 @@ export function AuctionDetailComponent() {
         >
           ← Back to auctions
         </Link>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Auction detail
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Auction detail</h1>
         <p className="text-sm text-muted-foreground">
           Auction UUID: <code className="font-mono">{auctionUuid}</code>
         </p>
         <p className="max-w-prose text-sm text-muted-foreground sm:text-base">
-          Placeholder page for the auction detail. ViewModel mapping and
-          DTO-driven restrictions arrive in later SDD tasks.
+          Placeholder page for the auction detail. ViewModel mapping and DTO-driven restrictions
+          arrive in later SDD tasks.
         </p>
       </header>
 
@@ -48,5 +46,5 @@ export function AuctionDetailComponent() {
         </ul>
       </section>
     </div>
-  );
+  )
 }

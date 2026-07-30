@@ -1,4 +1,4 @@
-import type { ErrorComponentProps } from "@tanstack/react-router";
+import type { ErrorComponentProps } from '@tanstack/react-router'
 
 export function RootErrorComponent({ error }: ErrorComponentProps) {
   return (
@@ -9,9 +9,7 @@ export function RootErrorComponent({ error }: ErrorComponentProps) {
       <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
         Unexpected application error
       </h1>
-      <p className="text-sm text-muted-foreground">
-        {error.message || "Unknown error"}
-      </p>
+      <p className="text-sm text-muted-foreground">{error.message || 'Unknown error'}</p>
     </div>
-  );
+  )
 }

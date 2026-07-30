@@ -6,6 +6,6 @@
  * declared in exactly one place. Detail (SDD-012), bets (SDD-013), and set-bet
  * (SDD-014) handlers will be appended here as they land.
  */
-import { auctionsListHandler } from "./auctions-list";
+import { auctionsListHandler } from './auctions-list'
 
-export const mockHandlers = [auctionsListHandler] as const;
+export const mockHandlers = [auctionsListHandler] as const

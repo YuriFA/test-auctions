@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from '@tanstack/react-router'
 
 export function AuctionsListComponent() {
   return (
@@ -7,12 +7,10 @@ export function AuctionsListComponent() {
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Freight Auctions
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-          Auctions list
-        </h1>
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Auctions list</h1>
         <p className="max-w-prose text-sm text-muted-foreground sm:text-base">
-          Placeholder page for the auctions list. Filters, query wiring, and
-          item cards will arrive in later SDD tasks.
+          Placeholder page for the auctions list. Filters, query wiring, and item cards will arrive
+          in later SDD tasks.
         </p>
       </header>
 
@@ -22,35 +20,35 @@ export function AuctionsListComponent() {
           <li>
             <Link
               to="/auctions/$auctionUuid"
-              params={{ auctionUuid: "preview" }}
+              params={{ auctionUuid: 'preview' }}
               className="font-medium text-primary underline-offset-4 hover:underline"
             >
               /auctions/$auctionUuid
-            </Link>{" "}
+            </Link>{' '}
             — auction detail
           </li>
           <li>
             <Link
               to="/auctions/$auctionUuid/bets"
-              params={{ auctionUuid: "preview" }}
+              params={{ auctionUuid: 'preview' }}
               className="font-medium text-primary underline-offset-4 hover:underline"
             >
               /auctions/$auctionUuid/bets
-            </Link>{" "}
+            </Link>{' '}
             — bets history (nested)
           </li>
           <li>
             <Link
               to="/auctions/$auctionUuid/bet"
-              params={{ auctionUuid: "preview" }}
+              params={{ auctionUuid: 'preview' }}
               className="font-medium text-primary underline-offset-4 hover:underline"
             >
               /auctions/$auctionUuid/bet
-            </Link>{" "}
+            </Link>{' '}
             — place or update a bet
           </li>
         </ul>
       </section>
     </div>
-  );
+  )
 }
