@@ -12,6 +12,9 @@
 - Helped add baseline project configuration such as package scripts, TypeScript configs, Vite config, and linting setup.
 - Helped introduce FSD-oriented static analysis groundwork via `steiger` configuration.
 - Reviewed which SDD tasks are actually covered by the currently staged implementation.
+- Set up Tailwind v4 with shadcn/ui tokens and the base-mira style.
+- Migrated shadcn artifacts onto FSD aliases (`@shared/ui`, `@shared/lib`) and verified the runtime chain via build.
+- Split shadcn Button into `*.component.tsx` and `*.styles.ts` to satisfy oxlint `react(only-export-components)` and Fast Refresh.
 
 ## Current SDD Coverage
 
@@ -19,8 +22,9 @@
   - `SDD-001 Bootstrap Workspace`
   - `SDD-002 Establish Project Policies`
   - `SDD-003 Set Up FSD Skeleton`
+  - `SDD-004 Configure Styling Foundation`
 - Not covered yet in code:
-  - `SDD-004` and all later implementation tasks
+  - `SDD-005` and all later implementation tasks
 
 ## Notes On Current Coverage
 
@@ -28,7 +32,8 @@
 - `SDD-001` is completed: the project now has baseline scripts, TypeScript configs, path aliases, and verified local `typecheck` and `build`.
 - `SDD-002` is completed: `AGENTS.md`, `AI_USAGE.md`, and a project-specific `README.md` are present.
 - `SDD-003` is completed: the FSD-oriented folder structure exists and the entry component already follows the `*.component.tsx` naming rule.
-- The current UI is still only a bootstrap shell, not the auctions application.
+- `SDD-004` is completed: Tailwind v4 and `shadcn/ui` are wired in through FSD aliases. Vite resolve aliases mirror the TypeScript path aliases. The shadcn Button lives at `src/shared/ui/button.component.tsx` plus `button.styles.ts`, with `cn` at `src/shared/lib/cn.ts`. `components.json` aliases point at `@shared/ui`, `@shared/lib`, and `@shared/lib/cn` so future `shadcn add` commands land inside FSD.
+- The current UI is still only a styled bootstrap shell, not the auctions application.
 
 ## What Decisions Were Made By The Candidate
 
@@ -43,6 +48,8 @@
 - Require `*.component.tsx` naming for all React component files.
 - Keep the generated OpenAPI layer isolated behind `shared/api`.
 - Use `steiger` to help enforce Feature-Sliced Design boundaries.
+- Map shadcn `components.json` aliases onto FSD layers (`@shared/ui`, `@shared/lib`) instead of the default `@/components` and `@/lib`.
+- Split each shadcn UI primitive into `*.component.tsx` plus `*.styles.ts` to satisfy `react(only-export-components)`.
 
 ## Which AI Suggestions Were Rejected
 
@@ -68,8 +75,8 @@
 - Some product expectations are broader than the exact response shapes in OpenAPI, so a few UI values may need to be derived from available data.
 - The schema is detailed and contains many nullable fields, which increases the chance of accidental UI assumptions during implementation.
 - MSW consistency across list, detail, and bets views can regress if state updates are implemented in multiple places instead of one runtime store.
-- The current bootstrap does not yet include TanStack Router, TanStack Query, React Hook Form, Zod, MSW, Tailwind CSS, or `shadcn/ui` integration.
-- The current bootstrap does not yet follow the `*.component.tsx` naming rule because the starter app still uses default Vite file naming.
+- The current bootstrap does not yet include TanStack Router, TanStack Query, React Hook Form, Zod, or MSW integration. Tailwind CSS and `shadcn/ui` are wired in as of `SDD-004`.
+- shadcn-generated components ship with two exports by default; they must be split into `*.component.tsx` plus `*.styles.ts` on each `shadcn add` to satisfy the project lint rule.
 
 ## What Would Be Improved With One More Day
 
