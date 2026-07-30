@@ -68,8 +68,7 @@
 25. `SDD-025` Bet Form Route
 26. `SDD-026` Bet Mutation Integration
 27. `SDD-027` Runtime Consistency Verification
-28. `SDD-028` Logic Tests
-29. `SDD-029` Final Documentation
+28. `SDD-029` Final Documentation
 
 ## Порядок исполнения
 
@@ -94,3 +93,4 @@
 - Query-хуки не генерируются.
 - URL search params — источник истины для фильтров.
 - Точность контракта важнее удобства.
+- Logic-тесты (TDD) пишутся вперёд в задаче, которая создаёт тестируемый код (SDD-015, SDD-016, SDD-023, SDD-024), а не отдельным финальным шагом. Vitest ставится в SDD-015 как первая порождающая тесты задача.
