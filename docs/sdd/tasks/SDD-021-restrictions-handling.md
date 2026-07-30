@@ -1,5 +1,9 @@
 # SDD-021 Restrictions Handling
 
+## Статус
+
+Не начато.
+
 ## Цель
 
 Обеспечить DTO-driven ограничения в UI.

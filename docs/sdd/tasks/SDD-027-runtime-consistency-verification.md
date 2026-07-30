@@ -1,5 +1,9 @@
 # SDD-027 Runtime Consistency Verification
 
+## Статус
+
+Не начато.
+
 ## Цель
 
 Проверить, что mock runtime ведёт себя консистентно на связанных экранах.

@@ -1,5 +1,9 @@
 # SDD-010 Implement Single MSW Runtime Store
 
+## Статус
+
+Завершено.
+
 ## Цель
 
 Создать единое общее runtime-состояние для всех mock-обработчиков.
@@ -23,3 +27,13 @@
 ## Заметки и риски
 
 - Это главная защита от неконсистентного поведения mock-а.
+
+## Заметки о реализации
+
+- Единое runtime-хранилище лежит в `src/shared/api/mocks/runtime/store.ts` и реэкспортируется через `src/shared/api/mocks/index.ts`. Сидируется из `seedAuctions` через `structuredClone`, поэтому сид остаётся read-only, а `resetMockRuntime()` пересоздаёт свежий снимок для детерминированных тестов.
+- Чтения (`readAuctionList`, `readAuctionDetail`, `readAuctionBets`) и мутация ставки (`writeBet`) работают с одним и тем же module-level `state.auctions` — выполняется критерий приёмки «все обработчики используют одно и то же in-memory состояние».
+- `writeBet` возвращает discriminated union `PlaceBetResult` (`{ ok: true; bet } | { ok: false; status: 404; problem } | { ok: false; status: 422; problem }`), чтобы MSW-обработчики (SDD-014) мапили failure-ветки напрямую в HTTP-ответ без повторной валидации. Хранилище отвечает только за данные; HTTP-семантика остаётся за обработчиком.
+- Мутация ставки отвергает предыдущую активную ставку пользователя, вставляет новую, пересчитывает места активных ставок по направлению аукциона (Down — младшая выигрывает, Up — старшая) и обновляет trading-блок одновременно в detail и list DTO — все три чтения (list, detail, bets) видят согласованное состояние.
+- Хранилище проверено разовым Node-smoke через `tsx`: 10 сид-аукционов, текущая цена 45000 → 44000 после `writeBet`, list + detail согласованно отражают новую цену и статус `Leading`, 404 на неизвестном UUID, 422 на цене ≤ 0, `resetMockRuntime()` восстанавливает сид-снимок.
+- Попутно исправлен баг пагинации: при `page > last_page` `meta.from` превышал `total`. `buildMeta` принимает `pagedCount` и возвращает `from = 0, to = 0` для пустой страницы (включая `total === 0`), что соответствует поведению Laravel-пагинатора и контракту `AuctionListMeta` (поля `integer`, не nullable). Фикс зачёван в SDD-011 (см. ниже).
+- Расширение `main.auction_uuid` в list DTO (D-011) — это mock-only контрактное расширение, которое НЕ ДОЛЖНО протекать в production-типы `shared/api` или вышележащие FSD-слои.
