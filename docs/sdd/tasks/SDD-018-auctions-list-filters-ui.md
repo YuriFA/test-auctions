@@ -10,10 +10,20 @@
 
 ## Охват
 
-- Рендер обязательного минимума контролов (статус, тип аукциона, диапазоны веса/объёма, города, текстовый поиск).
-- Подписка контрола на текущие значения из типизированного объекта SDD-015 (односторонняя: URL → UI).
+- Рендер обязательного минимума контролов 1:1 с URL-контрактом SDD-015:
+  - `cargo_num` (текстовый поиск по номеру заявки);
+  - `status[]` (multi-select торговых статусов пользователя);
+  - `statuses[]` (multi-select статусов аукциона, 1..7);
+  - `auc_type[]` (multi-select `Request`/`Up`/`Down`/`FixPrice`);
+  - `load_city`/`unload_city` (select из `mockCities` SDD-009);
+  - `load_date_from`/`load_date_to` (date picker даты погрузки);
+  - `is_available`/`is_bidder` (чекбоксы);
+  - `current_price_from`/`current_price_to` (number input цены от/до).
+- `weight_*`/`volume_*` НЕ отображать (D-014).
+- Подписка контролов на текущие значения из типизированного объекта SDD-015 (односторонняя: URL → UI).
 - На изменение значения контрола вызывать `serializeAuctionsListSearchParams(next)` и `navigate()` — никаких ручных `URLSearchParams`-конкатенаций в UI.
 - Интегрировать словарь городов (`mockCities` из SDD-009).
+- Состояние мобильного drawer'а фильтров хранится в `useFiltersUIStore` на Zustand (D-004). Само состояние фильтров — в URL (SDD-015), не в сторе; в сторе только UI-флаг «drawer открыт/закрыт».
 - TDD: построить типизированный словарь лейблов enum'ов (`auc_type`, `status`, `body_type` и т. п.) в `entities/auction/lib` и покрыть его маппер тестами вперёд.
 
 ## Зависимости
@@ -39,6 +49,8 @@
 - Городские фильтры используют `mockCities` (SDD-009).
 - Лейблы enum'ов берутся из `entities/auction/lib` и покрыты `pnpm test`.
 - `countActiveFilters` / `isDefaultFilters` используются для бейджа и кнопки «сбросить».
+- Фильтры читаемы на mobile (`< sm`) и desktop; на mobile сворачиваются в drawer, состояние которого живёт в `useFiltersUIStore` (Zustand, D-004).
+- React-компоненты именуются с суффиксом `*.component.tsx` (D-003, требование `project_requirements.md` строки 103/139).
 
 ## Non-goals
 

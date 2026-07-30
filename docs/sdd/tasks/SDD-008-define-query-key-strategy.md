@@ -28,3 +28,4 @@
 ## Заметки и риски
 
 - Дисциплина query-ключей снижает количество поздних cache-багов.
+- Хелпер `auctionKeys.detail(uuid)` должен быть переиспользуемым: его вызывает list-page (SDD-017) для prefetch по hover/focus на карточке (требование `project_requirements.md` строка 55).
