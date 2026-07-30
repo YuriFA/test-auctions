@@ -40,3 +40,14 @@ export function findSeedAuctionByUuid(uuid: string): SeedAuction | undefined {
   return seedAuctions.find((auction) => auction.uuid === uuid);
 }
 
+// SDD-010 — single in-memory MSW runtime store. Handlers (SDD-011+) and tests
+// reach the runtime through this Public API; production code must not.
+export {
+  readAuctionBets,
+  readAuctionDetail,
+  readAuctionList,
+  resetMockRuntime,
+  writeBet,
+} from "./runtime/store";
+export type { PlaceBetResult } from "./runtime/store";
+
