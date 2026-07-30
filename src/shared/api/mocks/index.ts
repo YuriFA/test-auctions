@@ -23,7 +23,11 @@ export {
 export type { MockCompetitor, MockCurrentUser } from "./user";
 export { mockCompetitors, mockCurrentUser } from "./user";
 
-export type { SeedAuction } from "./auctions";
+export type {
+  MockAuctionListItem,
+  MockAuctionListItemMain,
+  SeedAuction,
+} from "./auctions";
 export { seedAuctionUuids, seedAuctions } from "./auctions";
 
 import { seedAuctions, type SeedAuction } from "./auctions";

@@ -1,5 +1,6 @@
 import type {
   AuctionListItem,
+  AuctionListItemMain,
   AuctionShowResponse,
   BetItem,
 } from "../generated";
@@ -7,27 +8,50 @@ import type {
 import { mockCompetitors, mockCurrentUser } from "./user";
 
 /**
+ * Mock-only extension of `AuctionListItemMain` that exposes the auction's
+ * routing UUID as `auction_uuid`.
+ *
+ * The OpenAPI spec routes auctions by `auctionUuid: format: uuid` in path
+ * parameters (`/auctions/{auctionUuid}`, bets, set-bet) but does not expose
+ * an `auction_uuid` field in any response DTO. Per `docs/sdd/decisions.md`
+ * D-011 we treat this as a contract gap that a real backend would close, and
+ * the mock handler therefore injects `main.auction_uuid` into list items so
+ * the client can navigate from list to detail without guessing. The field is
+ * a deliberate, documented deviation from the generated DTO and MUST NOT be
+ * added to the production `shared/api` types — it lives in the mock layer
+ * only.
+ */
+export type MockAuctionListItemMain = AuctionListItemMain & {
+  auction_uuid: string;
+};
+
+export type MockAuctionListItem = Omit<AuctionListItem, "main"> & {
+  main?: MockAuctionListItemMain;
+};
+
+/**
  * A single mock auction bundling the three DTO shapes that the runtime store
  * must keep consistent: the list item (for `POST /auctions/list`), the detail
  * payload (for `GET /auctions/{uuid}`), and the bets history (for
  * `GET /auctions/{uuid}/bets`).
  *
- * The UUID is the primary key. The list DTO itself does not expose a UUID, so
- * the runtime store owns the list-position → UUID mapping (see SDD-010); the
- * dataset simply keeps the UUID alongside each item.
+ * `uuid` is the routing identifier — it matches the injected
+ * `main.auction_uuid` extension field and is what the client puts into
+ * `/auctions/$auctionUuid` paths. It is intentionally distinct from
+ * `main.order_uid` (the underlying order's UUID), which the spec exposes
+ * inside the DTO.
  */
 export interface SeedAuction {
   uuid: string;
-  list: AuctionListItem;
+  list: MockAuctionListItem;
   detail: AuctionShowResponse;
   bets: BetItem[];
 }
 
 /**
- * Stable UUIDs for seed auctions. The `auctionUuid` path parameter has
- * `format: uuid`, so all routes (`/auctions/$auctionUuid`,
- * `/auctions/$auctionUuid/bets`, `/auctions/$auctionUuid/bet`) must receive a
- * real UUID. The sequential suffix keeps them human-distinguishable in tests.
+ * Routing UUIDs for seed auctions. These are the values that appear in path
+ * parameters and in the injected `main.auction_uuid` extension field. The
+ * sequential last segment keeps them human-distinguishable in tests.
  */
 export const seedAuctionUuids = {
   downLeading: "00000000-0000-4000-8000-000000000001",
@@ -40,6 +64,26 @@ export const seedAuctionUuids = {
   planningUpcoming: "00000000-0000-4000-8000-000000000008",
   stoppedRejected: "00000000-0000-4000-8000-000000000009",
   canceledEmpty: "00000000-0000-4000-8000-000000000010",
+} as const;
+
+/**
+ * Stable UUIDs for the underlying orders, surfaced in the spec as
+ * `main.order_uid`. Kept separate from `seedAuctionUuids` so the routing
+ * identity (`auctionUuid`) and the order identity (`order_uid`) stay
+ * independent, as they would in a real system where an auction is a trading
+ * procedure layered on top of an order.
+ */
+const seedOrderUids = {
+  downLeading: "3a05d045-0e67-4f85-b20a-de81d18bba7a",
+  upLosing: "3a05d046-0e67-4f85-b20a-de81d18bba7a",
+  downNewcomer: "3a05d047-0e67-4f85-b20a-de81d18bba7a",
+  requestWinner: "3a05d048-0e67-4f85-b20a-de81d18bba7a",
+  fixPriceHidden: "3a05d049-0e67-4f85-b20a-de81d18bba7a",
+  finishedConfirmed: "3a05d04a-0e67-4f85-b20a-de81d18bba7a",
+  downHiddenContacts: "3a05d04b-0e67-4f85-b20a-de81d18bba7a",
+  planningUpcoming: "3a05d04c-0e67-4f85-b20a-de81d18bba7a",
+  stoppedRejected: "3a05d04d-0e67-4f85-b20a-de81d18bba7a",
+  canceledEmpty: "3a05d04e-0e67-4f85-b20a-de81d18bba7a",
 } as const;
 
 const competitor = (idx: number) => mockCompetitors[idx % mockCompetitors.length];
@@ -129,7 +173,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "MSK-001",
         cargo_date: "2026-08-12T09:00:00+03:00",
         auc_type: "Down",
-        order_uid: "3a05d045-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.downLeading,
+          auction_uuid: seedAuctionUuids.downLeading,
         created_at: "2026-07-20T10:15:00+03:00",
         priority_sort: 100,
         price_per_km: 28.5,
@@ -203,7 +248,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 1,
         cargo_num: "MSK-001",
         cargo_date: "2026-08-12T09:00:00+03:00",
-        order_uid: "3a05d045-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.downLeading,
         auc_type: "Down",
         created_at: "2026-07-20T10:15:00+03:00",
       },
@@ -411,7 +456,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "SPB-002",
         cargo_date: "2026-08-15T08:00:00+03:00",
         auc_type: "Up",
-        order_uid: "3a05d046-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.upLosing,
+          auction_uuid: seedAuctionUuids.upLosing,
         created_at: "2026-07-22T14:00:00+03:00",
         priority_sort: 95,
         price_per_km: 32.1,
@@ -485,7 +531,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 2,
         cargo_num: "SPB-002",
         cargo_date: "2026-08-15T08:00:00+03:00",
-        order_uid: "3a05d046-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.upLosing,
         auc_type: "Up",
         created_at: "2026-07-22T14:00:00+03:00",
       },
@@ -694,7 +740,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "EKB-003",
         cargo_date: "2026-08-18T07:00:00+05:00",
         auc_type: "Down",
-        order_uid: "3a05d047-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.downNewcomer,
+          auction_uuid: seedAuctionUuids.downNewcomer,
         created_at: "2026-07-24T09:00:00+05:00",
         priority_sort: 90,
         price_per_km: 18.4,
@@ -768,7 +815,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 3,
         cargo_num: "EKB-003",
         cargo_date: "2026-08-18T07:00:00+05:00",
-        order_uid: "3a05d047-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.downNewcomer,
         auc_type: "Down",
         created_at: "2026-07-24T09:00:00+05:00",
       },
@@ -990,7 +1037,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "NSK-004",
         cargo_date: "2026-08-22T06:00:00+07:00",
         auc_type: "Request",
-        order_uid: "3a05d048-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.requestWinner,
+          auction_uuid: seedAuctionUuids.requestWinner,
         created_at: "2026-07-15T09:00:00+07:00",
         priority_sort: 88,
         price_per_km: 22.0,
@@ -1064,7 +1112,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 4,
         cargo_num: "NSK-004",
         cargo_date: "2026-08-22T06:00:00+07:00",
-        order_uid: "3a05d048-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.requestWinner,
         auc_type: "Request",
         created_at: "2026-07-15T09:00:00+07:00",
       },
@@ -1272,7 +1320,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "KZN-005",
         cargo_date: "2026-08-30T08:00:00+03:00",
         auc_type: "FixPrice",
-        order_uid: "3a05d049-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.fixPriceHidden,
+          auction_uuid: seedAuctionUuids.fixPriceHidden,
         created_at: "2026-07-18T12:00:00+03:00",
         priority_sort: 80,
         price_per_km: null,
@@ -1347,7 +1396,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 5,
         cargo_num: "KZN-005",
         cargo_date: "2026-08-30T08:00:00+03:00",
-        order_uid: "3a05d049-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.fixPriceHidden,
         auc_type: "FixPrice",
         created_at: "2026-07-18T12:00:00+03:00",
       },
@@ -1511,7 +1560,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "SAM-006",
         cargo_date: "2026-07-05T06:00:00+04:00",
         auc_type: "Down",
-        order_uid: "3a05d04a-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.finishedConfirmed,
+          auction_uuid: seedAuctionUuids.finishedConfirmed,
         created_at: "2026-06-10T09:00:00+04:00",
         priority_sort: 50,
         price_per_km: 24.0,
@@ -1585,7 +1635,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 6,
         cargo_num: "SAM-006",
         cargo_date: "2026-07-05T06:00:00+04:00",
-        order_uid: "3a05d04a-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.finishedConfirmed,
         auc_type: "Down",
         created_at: "2026-06-10T09:00:00+04:00",
       },
@@ -1792,7 +1842,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "MSK-007",
         cargo_date: "2026-08-25T07:00:00+03:00",
         auc_type: "Down",
-        order_uid: "3a05d04b-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.downHiddenContacts,
+          auction_uuid: seedAuctionUuids.downHiddenContacts,
         created_at: "2026-07-23T11:00:00+03:00",
         priority_sort: 92,
         price_per_km: 26.0,
@@ -1866,7 +1917,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 7,
         cargo_num: "MSK-007",
         cargo_date: "2026-08-25T07:00:00+03:00",
-        order_uid: "3a05d04b-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.downHiddenContacts,
         auc_type: "Down",
         created_at: "2026-07-23T11:00:00+03:00",
       },
@@ -2049,7 +2100,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "NSK-008",
         cargo_date: "2026-09-15T08:00:00+07:00",
         auc_type: "Up",
-        order_uid: "3a05d04c-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.planningUpcoming,
+          auction_uuid: seedAuctionUuids.planningUpcoming,
         created_at: "2026-07-29T10:00:00+07:00",
         priority_sort: 70,
         price_per_km: null,
@@ -2123,7 +2175,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 8,
         cargo_num: "NSK-008",
         cargo_date: "2026-09-15T08:00:00+07:00",
-        order_uid: "3a05d04c-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.planningUpcoming,
         auc_type: "Up",
         created_at: "2026-07-29T10:00:00+07:00",
       },
@@ -2295,7 +2347,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "RND-009",
         cargo_date: "2026-07-29T07:00:00+03:00",
         auc_type: "Down",
-        order_uid: "3a05d04d-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.stoppedRejected,
+          auction_uuid: seedAuctionUuids.stoppedRejected,
         created_at: "2026-06-25T09:00:00+03:00",
         priority_sort: 40,
         price_per_km: 21.0,
@@ -2369,7 +2422,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 9,
         cargo_num: "RND-009",
         cargo_date: "2026-07-29T07:00:00+03:00",
-        order_uid: "3a05d04d-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.stoppedRejected,
         auc_type: "Down",
         created_at: "2026-06-25T09:00:00+03:00",
       },
@@ -2579,7 +2632,8 @@ export const seedAuctions: SeedAuction[] = [
         cargo_num: "UFA-010",
         cargo_date: "2026-08-05T07:00:00+05:00",
         auc_type: "Up",
-        order_uid: "3a05d04e-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.canceledEmpty,
+          auction_uuid: seedAuctionUuids.canceledEmpty,
         created_at: "2026-06-12T11:00:00+05:00",
         priority_sort: 30,
         price_per_km: null,
@@ -2654,7 +2708,7 @@ export const seedAuctions: SeedAuction[] = [
         id: 10,
         cargo_num: "UFA-010",
         cargo_date: "2026-08-05T07:00:00+05:00",
-        order_uid: "3a05d04e-0e67-4f85-b20a-de81d18bba7a",
+        order_uid: seedOrderUids.canceledEmpty,
         auc_type: "Up",
         created_at: "2026-06-12T11:00:00+05:00",
       },

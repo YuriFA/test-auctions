@@ -75,11 +75,13 @@
 - Keep query keys in a single hierarchical factory (`auctionKeys`) under `entities/auction`, so list, detail, and bets share prefixes and a bet mutation can invalidate every dependent query at once.
 - Place the mock domain dataset under `src/shared/api/mocks/` (a sub-folder of the production `shared/api` segment, not a new top-level segment) and intentionally do not re-export it from `src/shared/api/index.ts`, so pages/widgets/features/entities cannot import mock data and only MSW bootstrap, handlers, and tests can reach it via `@shared/api/mocks`.
 - Bundle list + detail + bets into one `SeedAuction` per UUID so the runtime store (SDD-010) and handlers (SDD-011+) consume a single source of truth, instead of stitching three parallel arrays.
+- Close the contract gap where the spec routes auctions by `auctionUuid` but never exposes it in DTOs by injecting `main.auction_uuid` into list responses through a mock-only `MockAuctionListItemMain` extension type, instead of reinterpreting `order_uid` as the routing key. Rationale: an explicit field is visible in network responses and is forward-compatible if the schema adds the field later. The extension lives in the mock layer only and MUST NOT reach production code.
 - Honor the OpenAPI contract exactly inside the seed: schema-nullable fields use `null`; non-nullable `string` fields use `""` to express "no value"; non-nullable numeric fields (e.g. `AuctionListItemCargoCar.volume/height`) are omitted via `undefined` rather than `null` when the vehicle type does not track them.
 - Cover every enum branch (status, type, trading status, restriction flags) in the seed instead of just the happy path, so UI work in later SDD tasks never assumes only one state.
 
 ## Which AI Suggestions Were Rejected
 
+- Avoid reading `auctionUuid` as semantically equivalent to `main.order_uid`. The OpenAPI spec routes auctions by `auctionUuid: format: uuid` but exposes no such field in DTOs; `main.order_uid` is the only UUID-shaped identifier present in list and detail. Treating them as the same identifier would have avoided inventing a field, but the cost was too high: routing logic would have been hidden behind a `decisions.md` entry, the auction-vs-order separation would have been collapsed, and client links would have read `item.main.order_uid` while the URL said `auctionUuid`. Rejected in favor of a mock-only `main.auction_uuid` extension field (D-011) that is visible in responses, forward-compatible, and keeps the two identities independent.
 - Avoid generating React Query hooks from OpenAPI tooling.
 - Avoid exposing generated OpenAPI artifacts directly to feature and entity layers.
 - Avoid localStorage as the primary source of truth for filters.
@@ -110,7 +112,7 @@
 - Query keys and the bet mutation invalidation plan are defined but not yet consumed; the `entities/auction` slice has no incoming references until SDD-017 wires the first list query.
 - Generated SDK exports ~50 raw OpenAPI types and 4 SDK functions that downstream code must not import directly; the `shared/api` adapter is the boundary that exposes only the DTOs and operations app code needs.
 - The mock domain dataset is exercised by typecheck, oxlint, steiger FSD check, and production build, but no runtime test consumes it yet. The MSW runtime store (SDD-010) and handlers (SDD-011 through SDD-014) will be the first runtime consumers; logic tests (SDD-028) may cover seed invariants.
-- The list DTO does not expose a UUID, but the detail/bets/set-bet path parameters require `auctionUuid` in `format: uuid`. The seed dataset sidesteps this by attaching the UUID to each `SeedAuction`, but the contract gap is real and SDD-010/SDD-011 must decide how the client resolves a list item to its UUID (e.g. inject via a non-spec extension field, expose via the `order_uid` join, or document the limitation in README verification notes).
+- The OpenAPI spec routes auctions by `auctionUuid: format: uuid` in paths but exposes no `auction_uuid` field in any DTO. Per `docs/sdd/decisions.md` D-011 we close this contract gap in the mock layer the way a real backend would: MSW injects `main.auction_uuid` into `AuctionListItem` responses via a mock-only `MockAuctionListItemMain` type. `auction_uuid` is intentionally distinct from `order_uid` (the underlying order's UUID) to preserve the auction-vs-order separation the domain expects. The extension is documented as a deliberate mock-layer deviation and MUST NOT leak into production `shared/api` types or higher FSD layers.
 
 ## What Would Be Improved With One More Day
 

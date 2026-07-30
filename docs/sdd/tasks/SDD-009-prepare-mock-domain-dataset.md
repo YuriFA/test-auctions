@@ -40,11 +40,7 @@ Prepare seed data that can support the required UI and edge cases.
   runtime: the list item, the detail payload, and the bets history. Bundling
   them per-UUID lets the runtime store (SDD-010) and the handlers (SDD-011
   through SDD-014) consume one source of truth.
-- The list DTO does not expose a UUID, but the detail/bets/set-bet endpoints
-  require `auctionUuid` in `format: uuid`. The seed dataset keeps the UUID
-  alongside each list item; the runtime store (SDD-010) will own the
-  list-position → UUID mapping and the list handler (SDD-011) will decide how
-  the UUID reaches the client.
+- The list DTO does not expose a UUID, but the detail/bets/set-bet endpoints require `auctionUuid` in `format: uuid`. Per `docs/sdd/decisions.md` D-011 we close this contract gap in the mock layer the way a real backend would: the `MockAuctionListItemMain` type (in `src/shared/api/mocks/auctions.ts`) extends the generated `AuctionListItemMain` with a required `auction_uuid` field, and each seed list item populates it from `seedAuctionUuids.<key>`. `SeedAuction.uuid === list.main.auction_uuid`, while `main.order_uid` stays independent under `seedOrderUids` so the auction-vs-order separation is preserved. MSW handlers (SDD-011+) will resolve path parameters by matching against `main.auction_uuid`; client links will be built with `params={{ auctionUuid: item.main.auction_uuid }}`. The extension is mock-only and MUST NOT leak into production `shared/api` types or higher FSD layers.
 - Ten seed auctions cover every `AuctionStatus`, every `AuctionType`, and the
   user-facing `TradingStatus` branches exposed by the schema. Edge cases
   included: `hide_bets_history=true` (auction 6), `hide_points_address_and_contacts=true`
