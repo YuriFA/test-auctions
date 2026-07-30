@@ -88,6 +88,7 @@
 
 ## Which Areas Were Checked Especially Carefully
 
+- OpenAPI `format: uuid` fields. Hey API emits these as plain `string`, so typecheck alone cannot catch UUID-shaped values. `order_uid` (per-auction, identical between list and detail) is now a real UUID; `auctionUuid` path parameters and seed auction UUIDs also use the canonical `xxxxxxxx-xxxx-4xxx-8xxx-xxxxxxxxxxxx` form. `chat_id` and `Contact.uid` are typed as `string` without `format: uuid`, so they keep their short string values.
 - Contract-sensitive DTO fields, especially `nullable` fields.
 - Enum differences between list and detail responses.
 - Validation and error handling expectations for `422` responses.
