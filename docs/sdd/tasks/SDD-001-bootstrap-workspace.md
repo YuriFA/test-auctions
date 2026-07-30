@@ -1,37 +1,37 @@
 # SDD-001 Bootstrap Workspace
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Create the initial runnable frontend workspace.
+Создать начальный запускаемый frontend-воркспейс.
 
-## Scope
+## Охват
 
-- Initialize Vite with React and TypeScript.
-- Add baseline dependencies needed by the chosen architecture.
-- Configure TypeScript paths and basic project scripts.
+- Инициализировать Vite с React и TypeScript.
+- Добавить базовые зависимости, нужные выбранной архитектуре.
+- Настроить TypeScript path и базовые скрипты проекта.
 
-## Dependencies
+## Зависимости
 
-- None.
+- Нет.
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- The project starts locally.
-- Base scripts for dev, build, and test are present.
-- TypeScript path aliases are ready for FSD layers.
+- Проект запускается локально.
+- Присутствуют базовые скрипты для dev, build и test.
+- TypeScript path-алиасы готовы для FSD-слоёв.
 
-## Notes And Risks
+## Заметки и риски
 
-- Keep the initial setup minimal.
-- Avoid introducing extra infrastructure before it is needed.
+- Держать начальную установку минимальной.
+- Не вводить лишнюю инфраструктуру до того, как она понадобится.
 
-## Completion Notes
+## Заметки о завершении
 
-- Vite + React + TypeScript bootstrap is in place.
-- Baseline scripts now include `dev`, `build`, `preview`, `typecheck`, `lint`, `lint:fsd`, and `check`.
-- TypeScript path aliases for FSD layers were added.
-- Local verification completed with `pnpm typecheck` and `pnpm build`.
+- Бутстрап Vite + React + TypeScript на месте.
+- Базовые скрипты теперь включают `dev`, `build`, `preview`, `typecheck`, `lint`, `lint:fsd` и `check`.
+- Добавлены TypeScript path-алиасы для FSD-слоёв.
+- Локальная верификация пройдена через `pnpm typecheck` и `pnpm build`.

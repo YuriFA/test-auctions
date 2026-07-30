@@ -1,28 +1,28 @@
 # SDD-027 Runtime Consistency Verification
 
-## Purpose
+## Цель
 
-Verify that the mock runtime behaves consistently across related screens.
+Проверить, что mock runtime ведёт себя консистентно на связанных экранах.
 
-## Scope
+## Охват
 
-- Check list, detail, and bets behavior after a bet is placed.
-- Verify that shared state updates remain consistent.
+- Проверить поведение list, detail и bets после установки ставки.
+- Верифицировать, что общие обновления состояния остаются консистентными.
 
-## Dependencies
+## Зависимости
 
 - `SDD-017`
 - `SDD-020`
 - `SDD-023`
 - `SDD-026`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Current price updates where expected.
-- User bet state updates where expected.
-- User trading status updates where expected.
-- Bets history reflects the mutation result.
+- Текущая цена обновляется там, где ожидается.
+- Состояние ставки пользователя обновляется там, где ожидается.
+- Торговый статус пользователя обновляется там, где ожидается.
+- История ставок отражает результат мутации.
 
-## Notes And Risks
+## Заметки и риски
 
-- This task protects against subtle drift between screens.
+- Эта задача защищает от тонкого расхождения между экранами.

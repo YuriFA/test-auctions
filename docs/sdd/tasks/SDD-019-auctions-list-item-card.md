@@ -1,26 +1,26 @@
 # SDD-019 Auctions List Item Card
 
-## Purpose
+## Цель
 
-Create the auction card presentation used by the list.
+Создать представление карточки аукциона, используемое списком.
 
-## Scope
+## Охват
 
-- Render the required list card fields.
-- Surface the primary action state.
-- Support mobile and desktop layouts.
+- Отрендерить обязательные поля карточки списка.
+- Вывести состояние primary action.
+- Поддержать лейауты mobile и desktop.
 
-## Dependencies
+## Зависимости
 
 - `SDD-017`
 - `SDD-018`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Card shows request number, route, cargo, pricing, statuses, and user bet state.
-- Primary action reflects available business state.
-- Layout remains readable on mobile and desktop.
+- Карточка показывает номер заявки, маршрут, груз, ценообразование, статусы и состояние ставки пользователя.
+- Primary action отражает доступное бизнес-состояние.
+- Лейаут остаётся читаемым на mobile и desktop.
 
-## Notes And Risks
+## Заметки и риски
 
-- Avoid coupling the card directly to raw DTO structure if a mapper is needed.
+- Не связывать карточку напрямую со структурой сырого DTO, если нужен маппер.

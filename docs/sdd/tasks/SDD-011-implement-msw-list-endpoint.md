@@ -1,26 +1,26 @@
 # SDD-011 Implement MSW List Endpoint
 
-## Purpose
+## Цель
 
-Implement the auctions list endpoint according to the schema.
+Реализовать endpoint списка аукционов в соответствии со схемой.
 
-## Scope
+## Охват
 
-- Implement `POST /auctions/list`.
-- Support pagination.
-- Support the required minimum filters.
+- Реализовать `POST /auctions/list`.
+- Поддержать пагинацию.
+- Поддержать обязательный минимум фильтров.
 
-## Dependencies
+## Зависимости
 
 - `SDD-006`
 - `SDD-010`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Response shape matches `AuctionListResponseBase`.
-- Request handling respects the relevant filter fields.
-- Pagination metadata is coherent with filtered results.
+- Форма ответа соответствует `AuctionListResponseBase`.
+- Обработка запроса учитывает релевантные поля фильтров.
+- Метаданные пагинации когерентны с отфильтрованными результатами.
 
-## Notes And Risks
+## Заметки и риски
 
-- Be careful with date and numeric filters.
+- Быть осторожным с date- и numeric-фильтрами.

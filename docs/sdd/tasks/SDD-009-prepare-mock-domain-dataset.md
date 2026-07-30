@@ -1,63 +1,41 @@
 # SDD-009 Prepare Mock Domain Dataset
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Prepare seed data that can support the required UI and edge cases.
+Подготовить сид-данные, способные покрыть требуемый UI и edge cases.
 
-## Scope
+## Охват
 
-- Create seed auctions data.
-- Create detail DTO data.
-- Create bets data.
-- Create the mock cities dictionary.
+- Создать данные сид-аукционов.
+- Создать данные detail DTO.
+- Создать данные ставок.
+- Создать словарь mock-городов.
 
-## Dependencies
+## Зависимости
 
 - `SDD-006`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Mock data covers list, detail, and bets scenarios.
-- Mock data includes a variety of statuses, auction types, and restriction flags.
-- City lookup data exists for required filters.
+- Mock-данные покрывают сценарии list, detail и bets.
+- Mock-данные включают разнообразные статусы, типы аукционов и restriction-флаги.
+- Существуют данные lookup городов для обязательных фильтров.
 
-## Notes And Risks
+## Заметки и риски
 
-- Prepare edge cases early so UI work does not assume only happy paths.
+- Готовить edge cases заранее, чтобы UI-работа не предполагала только happy path.
 
-## Implementation Notes
+## Заметки о реализации
 
-- The seed dataset lives under `src/shared/api/mocks/` and is intentionally
-  not re-exported from `src/shared/api/index.ts`. The folder is treated as
-  dev/test infrastructure reachable via `@shared/api/mocks`; higher FSD layers
-  must not import it directly. This keeps the production `shared/api` adapter
-  free of mock artifacts.
-- Each `SeedAuction` bundles the three DTO shapes that must stay consistent at
-  runtime: the list item, the detail payload, and the bets history. Bundling
-  them per-UUID lets the runtime store (SDD-010) and the handlers (SDD-011
-  through SDD-014) consume one source of truth.
-- The list DTO does not expose a UUID, but the detail/bets/set-bet endpoints require `auctionUuid` in `format: uuid`. Per `docs/sdd/decisions.md` D-011 we close this contract gap in the mock layer the way a real backend would: the `MockAuctionListItemMain` type (in `src/shared/api/mocks/auctions.ts`) extends the generated `AuctionListItemMain` with a required `auction_uuid` field, and each seed list item populates it from `seedAuctionUuids.<key>`. `SeedAuction.uuid === list.main.auction_uuid`, while `main.order_uid` stays independent under `seedOrderUids` so the auction-vs-order separation is preserved. MSW handlers (SDD-011+) will resolve path parameters by matching against `main.auction_uuid`; client links will be built with `params={{ auctionUuid: item.main.auction_uuid }}`. The extension is mock-only and MUST NOT leak into production `shared/api` types or higher FSD layers.
-- Ten seed auctions cover every `AuctionStatus`, every `AuctionType`, and the
-  user-facing `TradingStatus` branches exposed by the schema. Edge cases
-  included: `hide_bets_history=true` (auction 6), `hide_points_address_and_contacts=true`
-  with empty contacts (auctions 5 and 7), `no_view_cargo_price=true` (auction
-  5), `can_set_bet=false` for non-active statuses (auctions 4, 5, 6, 8, 9, 10),
-  no current price (auctions 5, 8, 10), empty bets history (auctions 5, 8, 10),
-  and a rejected/canceled user bet (auction 9).
-- `MockCurrentUser` plus four `MockCompetitors` carry stable organization IDs,
-  INNs, and contact details so the bets endpoint can populate carrier rows
-  consistently across the list, detail, and bets surfaces.
-- `mockCities` exposes the canonical name and `gc_id` for ten real Russian
-  cities used as load/unload points. Route points reference the same names so
-  `load_city` / `unload_city` filter results stay consistent.
-- Where the schema marks a field as `string` (not nullable), empty strings
-  replace `null` to honor the OpenAPI contract — e.g. `RoutePointLocation.loading_address`
-  for hidden-contact auctions and `AuctionShowCargo.price` for auctions
-  without a quoted price. Nullable fields keep `null` to exercise the null
-  branch in downstream UI work.
-- Typecheck, oxlint, steiger FSD check, and production build all pass against
-  the new dataset.
+- Сид-датасет лежит в `src/shared/api/mocks/` и намеренно не реэкспортируется из `src/shared/api/index.ts`. Папка трактуется как dev/test-инфраструктура, доступная через `@shared/api/mocks`; вышележащие FSD-слои не должны импортировать её напрямую. Это держит production-адаптер `shared/api` свободным от mock-артефактов.
+- Каждый `SeedAuction` бандлит три DTO-формы, которые обязаны оставаться согласованнами в рантайме: элемент list, тело detail и история bets. Бандлинг per-UUID позволяет runtime-хранилищу (SDD-010) и обработчикам (SDD-011 — SDD-014) потреблять один источник истины.
+- list DTO не экспонирует UUID, но endpoints detail/bets/set-bet требуют `auctionUuid` в `format: uuid`. Согласно `docs/sdd/decisions.md` D-011 мы закрываем этот контрактный разрыв в mock-слое так, как сделал бы реальный бэкенд: тип `MockAuctionListItemMain` (в `src/shared/api/mocks/auctions.ts`) расширяет сгенерированный `AuctionListItemMain` обязательным полем `auction_uuid`, а каждый сид-элемент list заполняет его из `seedAuctionUuids.<key>`. `SeedAuction.uuid === list.main.auction_uuid`, при этом `main.order_uid` остаётся независимым под `seedOrderUids` — разделение auction-vs-order сохраняется. MSW-обработчики (SDD-011+) резолвят path-параметры по совпадению с `main.auction_uuid`; клиентские ссылки строятся как `params={{ auctionUuid: item.main.auction_uuid }}`. Расширение mock-only и НЕ ДОЛЖНО протекать в production-типы `shared/api` или вышележащие FSD-слои.
+- Десять сид-аукционов покрывают каждое значение `AuctionStatus`, каждый `AuctionType` и пользовательские ветки `TradingStatus`, экспонируемые схемой. Включены edge cases: `hide_bets_history=true` (аукцион 6), `hide_points_address_and_contacts=true` с пустыми контактами (аукционы 5 и 7), `no_view_cargo_price=true` (аукцион 5), `can_set_bet=false` для неактивных статусов (аукционы 4, 5, 6, 8, 9, 10), отсутствие текущей цены (аукционы 5, 8, 10), пустая история ставок (аукционы 5, 8, 10) и отвергнутая/отменённая ставка пользователя (аукцион 9).
+- `MockCurrentUser` и четыре `MockCompetitor` несут стабильные ID организаций, ИНН и контактные данные, чтобы endpoint ставок заполнял строки перевозчиков консистентно между поверхностями list, detail и bets.
+- `mockCities` отдаёт канонические имена и `gc_id` для десяти реальных российских городов, используемых как точки погрузки/выгрузки. Точки маршрута ссылаются на те же имена, поэтому результаты фильтров `load_city` / `unload_city` остаются консистентными.
+- Там, где схема помечает поле как `string` (не nullable), пустые строки заменяют `null`, чтобы соблюсти OpenAPI-контракт — например `RoutePointLocation.loading_address` для аукционов со скрытыми контактами и `AuctionShowCargo.price` для аукционов без котируемой цены. Nullable-поля сохраняют `null`, чтобы прокачать null-ветку в будущей UI-работе.
+- Typecheck, oxlint, steiger FSD-проверка и production-build проходят против нового датасета.

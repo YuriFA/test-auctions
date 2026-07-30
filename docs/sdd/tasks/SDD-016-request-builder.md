@@ -1,25 +1,25 @@
 # SDD-016 Request Builder
 
-## Purpose
+## Цель
 
-Translate validated search params into the API list request shape.
+Транслировать провалидированные search params в форму запроса API списка.
 
-## Scope
+## Охват
 
-- Map search params to `AuctionListRequest`.
-- Handle date, number, boolean, enum, and array fields cleanly.
+- Сопоставить search params с `AuctionListRequest`.
+- Аккуратно обрабатывать поля date, number, boolean, enum и массивы.
 
-## Dependencies
+## Зависимости
 
 - `SDD-006`
 - `SDD-015`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Built requests conform to the expected DTO shape.
-- Only relevant fields are sent.
-- Conversion logic is covered by tests.
+- Построенные запросы соответствуют ожидаемой форме DTO.
+- Отправляются только релевантные поля.
+- Логика конверсии покрыта тестами.
 
-## Notes And Risks
+## Заметки и риски
 
-- Avoid leaking UI-specific naming into raw API request construction.
+- Не допускать протекания UI-специфичных имён в сырое построение API-запроса.

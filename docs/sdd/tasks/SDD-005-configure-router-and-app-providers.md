@@ -1,31 +1,31 @@
 # SDD-005 Configure Router And App Providers
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Create the application shell and runtime providers.
+Создать оболочку приложения и runtime-провайдеры.
 
-## Scope
+## Охват
 
-- Configure TanStack Router in code-based mode.
-- Configure TanStack Query.
-- Add app-level providers, layout shell, and error handling entry points.
+- Настроить TanStack Router в code-based режиме.
+- Настроить TanStack Query.
+- Добавить app-level провайдеры, оболочку лейаута и точки входа обработки ошибок.
 
-## Dependencies
+## Зависимости
 
 - `SDD-001`
 - `SDD-003`
 - `SDD-004`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Base routes resolve correctly.
-- Query client is wired into the app.
-- App shell can host list, detail, bets, and form routes.
+- Базовые маршруты резолвятся корректно.
+- Query-клиент подключён к приложению.
+- Оболочка приложения может принимать маршруты list, detail, bets и form.
 
-## Notes And Risks
+## Заметки и риски
 
-- Keep route definition separate from route-page implementation where useful, while preserving the component naming rule.
+- Там, где это уместно, держать определение маршрута отдельно от реализации страницы маршрута, сохраняя правило именования компонентов.

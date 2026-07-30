@@ -1,24 +1,24 @@
 # SDD-024 Bet Form Schema
 
-## Purpose
+## Цель
 
-Define the validation model for placing a bet.
+Определить модель валидации установки ставки.
 
-## Scope
+## Охват
 
-- Build the React Hook Form and Zod validation schema.
-- Use detail DTO constraints for `min`, `max`, `step`, and available price hints.
+- Построить React Hook Form и Zod-схему валидации.
+- Использовать ограничения detail DTO для `min`, `max`, `step` и подсказок по доступной цене.
 
-## Dependencies
+## Зависимости
 
 - `SDD-012`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Price is required and greater than zero.
-- Conditional constraints from detail DTO are applied when present.
-- Validation behavior is covered by logic tests.
+- Цена обязательна и больше нуля.
+- Условные ограничения из detail DTO применяются, когда они есть.
+- Поведение валидации покрыто logic-тестами.
 
-## Notes And Risks
+## Заметки и риски
 
-- The form must not assume all trading constraint fields are present.
+- Форма не должна предполагать, что все торговые ограничительные поля присутствуют.

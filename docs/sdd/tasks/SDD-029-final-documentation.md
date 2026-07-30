@@ -1,26 +1,26 @@
 # SDD-029 Final Documentation
 
-## Purpose
+## Цель
 
-Finish the submission-facing documentation and record the verification outcome.
+Завершить документацию, обращённую к ревьюеру, и зафиксировать результат верификации.
 
-## Scope
+## Охват
 
-- Complete README run instructions.
-- Complete verification notes.
-- Update `AI_USAGE.md` with final implementation facts and tradeoffs.
+- Дописать инструкции запуска в README.
+- Дописать заметки о верификации.
+- Обновить `AI_USAGE.md` финальными фактами о реализации и tradeoff-ах.
 
-## Dependencies
+## Зависимости
 
 - `SDD-027`
 - `SDD-028`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- README explains how to run the project.
-- README explains what was verified and which limitations remain.
-- `AI_USAGE.md` reflects the real implementation process, accepted decisions, rejected suggestions, and remaining risks.
+- README объясняет, как запустить проект.
+- README объясняет, что проверялось и какие ограничения остались.
+- `AI_USAGE.md` отражает реальный процесс реализации, принятые решения, отклонённые предложения и остаточные риски.
 
-## Notes And Risks
+## Заметки и риски
 
-- This documentation should match the codebase as it actually exists, not the intended design only.
+- Документация должна соответствовать кодовой базе, как она реально существует, а не только задуманному дизайну.

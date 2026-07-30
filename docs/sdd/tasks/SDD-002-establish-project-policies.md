@@ -1,36 +1,36 @@
 # SDD-002 Establish Project Policies
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Create the key project documentation that defines implementation constraints.
+Создать ключевую проектную документацию, задающую ограничения реализации.
 
-## Scope
+## Охват
 
-- Create `AGENTS.md`.
-- Create initial `AI_USAGE.md`.
-- Prepare README scaffolding for later verification notes.
+- Создать `AGENTS.md`.
+- Создать первичный `AI_USAGE.md`.
+- Подготовить скаффолдинг README под будущие заметки о верификации.
 
-## Dependencies
+## Зависимости
 
-- `SDD-001` is optional but recommended before README setup.
+- `SDD-001` опционален, но рекомендован перед настройкой README.
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- `AGENTS.md` exists with project-level AI rules.
-- `AI_USAGE.md` exists with the required sections.
-- README has a reserved section for run and verification instructions.
+- `AGENTS.md` существует с проектными AI-правилами.
+- `AI_USAGE.md` существует с обязательными разделами.
+- В README зарезервирован раздел под инструкции запуска и верификации.
 
-## Notes And Risks
+## Заметки и риски
 
-- Keep `AGENTS.md` policy-only.
-- `AI_USAGE.md` should be updated throughout the project, not only at the end.
+- Держать `AGENTS.md` только в политике.
+- `AI_USAGE.md` обновляется на протяжении всего проекта, а не только в финале.
 
-## Completion Notes
+## Заметки о завершении
 
-- `AGENTS.md` exists and remains policy-only.
-- `AI_USAGE.md` exists and has been updated to reflect actual staged progress and risks.
-- `README.md` now contains project-specific run, verification, and limitation sections instead of the generic Vite template.
+- `AGENTS.md` существует и остаётся только в политике.
+- `AI_USAGE.md` существует и обновлён в соответствии с реальным прогрессом и рисками.
+- `README.md` теперь содержит проектно-специфичные разделы запуска, верификации и ограничений вместо шаблонного Vite-шаблона.

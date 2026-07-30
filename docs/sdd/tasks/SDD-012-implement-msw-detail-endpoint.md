@@ -1,25 +1,25 @@
 # SDD-012 Implement MSW Detail Endpoint
 
-## Purpose
+## Цель
 
-Implement the auction detail endpoint according to the schema.
+Реализовать endpoint детальных данных аукциона в соответствии со схемой.
 
-## Scope
+## Охват
 
-- Implement `GET /auctions/{auctionUuid}`.
-- Return detail DTOs with realistic restriction and nullable combinations.
+- Реализовать `GET /auctions/{auctionUuid}`.
+- Возвращать detail DTO с реалистичными комбинациями restriction и nullable.
 
-## Dependencies
+## Зависимости
 
 - `SDD-006`
 - `SDD-010`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Response shape matches `AuctionShowResponse`.
-- Missing-resource and error scenarios can be returned.
-- Restriction flags are represented explicitly in mock data.
+- Форма ответа соответствует `AuctionShowResponse`.
+- Можно вернуть сценарии отсутствия ресурса и ошибок.
+- Restriction-флаги явно представлены в mock-данных.
 
-## Notes And Risks
+## Заметки и риски
 
-- This endpoint drives multiple screens and rules, so hidden-field behavior must be testable.
+- Этот endpoint двигает несколько экранов и правил, поэтому поведение скрытых полей должно быть тестируемым.

@@ -1,26 +1,26 @@
 # SDD-021 Restrictions Handling
 
-## Purpose
+## Цель
 
-Enforce DTO-driven restrictions in the UI.
+Обеспечить DTO-driven ограничения в UI.
 
-## Scope
+## Охват
 
-- Handle `can_set_bet`.
-- Handle `hide_bets_history`.
-- Handle `hide_points_address_and_contacts`.
-- Handle `no_view_cargo_price`.
+- Обработать `can_set_bet`.
+- Обработать `hide_bets_history`.
+- Обработать `hide_points_address_and_contacts`.
+- Обработать `no_view_cargo_price`.
 
-## Dependencies
+## Зависимости
 
 - `SDD-020`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Restricted data is hidden when the DTO requires it.
-- Restricted actions are disabled or replaced with clear UI states.
-- The UI behavior is deterministic for each restriction combination.
+- Закрытые данные скрыты, когда этого требует DTO.
+- Закрытые действия отключены или заменены ясными UI-состояниями.
+- Поведение UI детерминировано для каждой комбинации ограничений.
 
-## Notes And Risks
+## Заметки и риски
 
-- This logic is easy to spread across components accidentally; keep it deliberate.
+- Эту логику легко случайно размазать по компонентам; держать её осознанной.

@@ -1,26 +1,26 @@
 # SDD-014 Implement MSW Set Bet Endpoint
 
-## Purpose
+## Цель
 
-Implement the bet mutation endpoint with realistic validation behavior.
+Реализовать endpoint мутации ставки с реалистичным поведением валидации.
 
-## Scope
+## Охват
 
-- Implement `POST /auctions/{auctionUuid}/bets`.
-- Support success, not found, and validation failure cases.
-- Return `application/problem+json` validation errors for `422`.
+- Реализовать `POST /auctions/{auctionUuid}/bets`.
+- Поддержать сценарии успеха, отсутствия ресурса и провала валидации.
+- Возвращать ошибки валидации `application/problem+json` для `422`.
 
-## Dependencies
+## Зависимости
 
 - `SDD-006`
 - `SDD-010`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Request validation follows the schema and business constraints.
-- Validation failures match the documented error shape.
-- Success updates shared runtime state.
+- Валидация запроса следует схеме и бизнес-ограничениям.
+- Провалы валидации соответствуют задокументированной форме ошибки.
+- Успех обновляет общее runtime-состояние.
 
-## Notes And Risks
+## Заметки и риски
 
-- This endpoint should not only accept data, it must change the app-visible runtime state.
+- Этот endpoint должен не только принимать данные, но и менять app-видимое runtime-состояние.

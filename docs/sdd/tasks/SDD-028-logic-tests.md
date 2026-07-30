@@ -1,29 +1,29 @@
 # SDD-028 Logic Tests
 
-## Purpose
+## Цель
 
-Cover the most critical pure logic with focused automated tests.
+Покрыть наиболее критичную чистую логику сфокусированными автоматическими тестами.
 
-## Scope
+## Охват
 
-- Test search params parsing.
-- Test request builder logic.
-- Test view model mappers.
-- Test bet validation schema.
+- Тест на парсинг search params.
+- Тест на логику request builder.
+- Тест на view-model мапперы.
+- Тест на схему валидации ставки.
 
-## Dependencies
+## Зависимости
 
 - `SDD-015`
 - `SDD-016`
 - `SDD-023`
 - `SDD-024`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- The selected logic tests are implemented and pass.
-- Tests cover normal and edge-case inputs.
-- Test failures would meaningfully catch regression in contract handling.
+- Выбранные logic-тесты реализованы и проходят.
+- Тесты покрывают обычные и edge-case входы.
+- Провалы тестов осмысленно ловят регрессию в обработке контракта.
 
-## Notes And Risks
+## Заметки и риски
 
-- Keep tests focused on logic that is easiest to regress and hardest to inspect visually.
+- Держать тесты сфокусированными на логике, которую проще всего регрессить и сложнее всего осмотреть визуально.

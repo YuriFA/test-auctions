@@ -1,28 +1,28 @@
 # SDD-017 Auctions List Query
 
-## Purpose
+## Цель
 
-Load and render the auctions list data flow.
+Загрузить и отрендерить поток данных списка аукционов.
 
-## Scope
+## Охват
 
-- Implement the list query.
-- Connect pagination state.
-- Add loading, empty, and error states.
+- Реализовать list-query.
+- Подключить состояние пагинации.
+- Добавить состояния loading, empty и error.
 
-## Dependencies
+## Зависимости
 
 - `SDD-007`
 - `SDD-008`
 - `SDD-011`
 - `SDD-016`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- The list loads through TanStack Query.
-- Pagination controls affect the active query.
-- Required UI states are visible and meaningful.
+- Список грузится через TanStack Query.
+- Контролы пагинации влияют на активный запрос.
+- Обязательные UI-состояния видимы и осмысленны.
 
-## Notes And Risks
+## Заметки и риски
 
-- Keep the data-loading layer separate from card presentation logic.
+- Держать слой загрузки данных отделённым от логики представления карточки.

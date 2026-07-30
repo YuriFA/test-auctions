@@ -1,29 +1,29 @@
 # SDD-007 Build Shared API Layer
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Wrap generated API artifacts behind application-owned adapters.
+Обернуть сгенерированные API-артефакты за приложением владеемыми адаптерами.
 
-## Scope
+## Охват
 
-- Create `shared/api` client setup.
-- Add auction-focused API modules over generated SDK calls.
-- Keep generated code hidden from higher layers.
+- Создать настройку клиента `shared/api`.
+- Добавить доменные API-модули поверх сгенерированных SDK-вызовов.
+- Держать сгенерированный код скрытым от вышележащих слоёв.
 
-## Dependencies
+## Зависимости
 
 - `SDD-006`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- The app uses `shared/api` modules instead of importing generated SDK directly.
-- API entry points are grouped coherently by domain.
-- The boundary between generated code and app code is explicit.
+- Приложение использует модули `shared/api` вместо прямого импорта сгенерированного SDK.
+- Точки входа API сгруппированы когерентно по доменам.
+- Граница между сгенерированным кодом и кодом приложения — явная.
 
-## Notes And Risks
+## Заметки и риски
 
-- This task is important for keeping FSD boundaries clean.
+- Эта задача важна для сохранения границ FSD чистыми.

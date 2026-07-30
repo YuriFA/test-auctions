@@ -1,45 +1,45 @@
-# SDD Overview
+# SDD-обзор
 
-## Goal
+## Цель
 
-This folder contains the implementation decomposition for the freight auctions SPA.
+В этой папке лежит декомпозиция реализации для SPA грузовых аукционов.
 
-The plan follows a specification-driven development approach:
+План следует подходу specification-driven development:
 
-- start from `docs/openapi.auctions.v0.json`
-- preserve clear architectural boundaries
-- implement in small, verifiable increments
-- capture decisions before they are encoded in multiple places
+- стартуем от `docs/openapi.auctions.v0.json`
+- сохраняем чёткие архитектурные границы
+- реализуем мелкими проверяемыми инкрементами
+- фиксируем решения до того, как они закодируются в нескольких местах
 
-## Source Inputs
+## Исходные материалы
 
-- Requirements: `docs/project_requirements.md`
-- API contract: `docs/openapi.auctions.v0.json`
-- AI/policy rules: `AGENTS.md`
+- Требования: `docs/project_requirements.md`
+- API-контракт: `docs/openapi.auctions.v0.json`
+- AI/полиси-правила: `AGENTS.md`
 
-## Chosen Direction
+## Выбранное направление
 
 - React + TypeScript + Vite
-- TanStack Router in code-based mode
-- TanStack Query with handwritten query logic
-- Hey API for generated SDK and types
-- Zustand for targeted UI state
-- MSW with a single in-memory runtime store
+- TanStack Router в code-based режиме
+- TanStack Query с рукописной query-логикой
+- Hey API для сгенерированных SDK и типов
+- Zustand для точечного UI-state
+- MSW с единым in-memory runtime-хранилищем
 - Tailwind CSS + `shadcn/ui`
 - Feature-Sliced Design
 
-## Task Layout
+## Структура задач
 
-- `decisions.md` contains the agreed architectural choices.
-- `tasks/` contains decomposed implementation tasks.
-- Each task file includes:
-  - purpose
-  - scope
-  - dependencies
-  - acceptance criteria
-  - notes and risks
+- `decisions.md` содержит согласованные архитектурные решения.
+- `tasks/` содержит декомпозированные задачи реализации.
+- Каждый файл задачи включает:
+  - цель
+  - охват
+  - зависимости
+  - критерии приёмки
+  - заметки и риски
 
-## Task Index
+## Индекс задач
 
 1. `SDD-001` Bootstrap Workspace
 2. `SDD-002` Establish Project Policies
@@ -71,26 +71,26 @@ The plan follows a specification-driven development approach:
 28. `SDD-028` Logic Tests
 29. `SDD-029` Final Documentation
 
-## Execution Order
+## Порядок исполнения
 
-1. Foundation and policies
-2. OpenAPI integration and API boundaries
-3. Mock runtime and handlers
-4. Routing, search params, and list flow
-5. Detail, bets, and bet form flows
-6. Tests, verification, and final documentation
+1. Фундамент и полиси
+2. Интеграция OpenAPI и API-границы
+3. Mock runtime и обработчики
+4. Роутинг, search params и флоу списка
+5. Флоу detail, bets и формы ставки
+6. Тесты, верификация и финальная документация
 
-## Planned Routes
+## Запланированные маршруты
 
 - `/auctions`
 - `/auctions/$auctionUuid`
 - `/auctions/$auctionUuid/bets`
 - `/auctions/$auctionUuid/bet`
 
-## Cross-Cutting Rules
+## Сквозные правила
 
-- All React component files use `*.component.tsx`.
-- Generated OpenAPI files are read-only and isolated.
-- Query hooks are not generated.
-- URL search params are the source of truth for filters.
-- Contract accuracy has higher priority than convenience.
+- Все файлы React-компонентов используют суффикс `*.component.tsx`.
+- Сгенерированные OpenAPI-файлы — read-only и изолированы.
+- Query-хуки не генерируются.
+- URL search params — источник истины для фильтров.
+- Точность контракта важнее удобства.

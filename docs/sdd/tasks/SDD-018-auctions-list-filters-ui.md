@@ -1,27 +1,27 @@
 # SDD-018 Auctions List Filters UI
 
-## Purpose
+## Цель
 
-Implement the filters UI and synchronize it with URL state.
+Реализовать UI фильтров и синхронизировать его с состоянием URL.
 
-## Scope
+## Охват
 
-- Add the required minimum filters.
-- Bind filter values to search params.
-- Integrate the cities dictionary.
+- Добавить обязательный минимум фильтров.
+- Привязать значения фильтров к search params.
+- Интегрировать словарь городов.
 
-## Dependencies
+## Зависимости
 
 - `SDD-009`
 - `SDD-015`
 - `SDD-017`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Filter interactions update the URL.
-- Refreshing or sharing the URL preserves filter state.
-- City-based filters use the mock dictionary.
+- Взаимодействия с фильтрами обновляют URL.
+- Обновление или шеринг URL сохраняет состояние фильтров.
+- Городские фильтры используют mock-словарь.
 
-## Notes And Risks
+## Заметки и риски
 
-- Avoid hidden local state becoming the real source of truth.
+- Не допускать, чтобы скрытое локальное состояние стало настоящим источником истины.

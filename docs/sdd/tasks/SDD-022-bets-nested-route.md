@@ -1,26 +1,26 @@
 # SDD-022 Bets Nested Route
 
-## Purpose
+## Цель
 
-Implement the nested route for auction bets history.
+Реализовать вложенный маршрут для истории ставок аукциона.
 
-## Scope
+## Охват
 
-- Add `/auctions/$auctionUuid/bets`.
-- Connect route access to detail-driven restrictions.
+- Добавить `/auctions/$auctionUuid/bets`.
+- Связать доступ к маршруту с detail-driven ограничениями.
 
-## Dependencies
+## Зависимости
 
 - `SDD-005`
 - `SDD-020`
 - `SDD-021`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Bets route resolves as a nested auction route.
-- When history is hidden, the route shows a restricted state instead of normal content.
-- When allowed, the route can load bets data.
+- Маршрут bets резолвится как вложенный маршрут аукциона.
+- Когда история скрыта, маршрут показывает restricted-состояние вместо нормального контента.
+- Когда разрешено, маршрут может грузить данные bets.
 
-## Notes And Risks
+## Заметки и риски
 
-- Route behavior should be consistent whether reached by link or direct URL entry.
+- Поведение маршрута должно быть консистентным при переходе по ссылке и при прямом вводе URL.

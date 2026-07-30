@@ -1,29 +1,29 @@
 # SDD-004 Configure Styling Foundation
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Set up the chosen styling stack and UI primitives.
+Настроить выбранный стек стилизации и UI-примитивы.
 
-## Scope
+## Охват
 
-- Configure Tailwind CSS.
-- Initialize `shadcn/ui`.
-- Define the minimal design tokens and base app styling.
+- Настроить Tailwind CSS.
+- Инициализировать `shadcn/ui`.
+- Определить минимальные design tokens и базовый стиль приложения.
 
-## Dependencies
+## Зависимости
 
 - `SDD-001`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Tailwind works in the app.
-- `shadcn/ui` components can be added to the project.
-- The base theme supports desktop and mobile layouts.
+- Tailwind работает в приложении.
+- Компоненты `shadcn/ui` можно добавлять в проект.
+- Базовая тема поддерживает desktop- и mobile-лейауты.
 
-## Notes And Risks
+## Заметки и риски
 
-- Avoid over-designing before real screens exist.
+- Не «пере-дизайнить» до того, как появятся реальные экраны.

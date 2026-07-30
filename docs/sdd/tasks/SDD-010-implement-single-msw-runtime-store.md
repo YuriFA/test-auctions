@@ -1,25 +1,25 @@
 # SDD-010 Implement Single MSW Runtime Store
 
-## Purpose
+## Цель
 
-Create one shared runtime state for all mock handlers.
+Создать единое общее runtime-состояние для всех mock-обработчиков.
 
-## Scope
+## Охват
 
-- Implement the in-memory data store.
-- Expose read and mutation operations for handlers.
-- Ensure list, detail, and bets views derive from the same source.
+- Реализовать in-memory data store.
+- Экспонировать операции чтения и мутации для обработчиков.
+- Обеспечить, что list, detail и bets выводятся из одного источника.
 
-## Dependencies
+## Зависимости
 
 - `SDD-009`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- All handlers use the same in-memory state.
-- Runtime updates are visible across all related endpoints.
-- State changes do not require duplicated patching in multiple handlers.
+- Все обработчики используют одно и то же in-memory состояние.
+- Runtime-обновления видны на всех связанных endpoints.
+- Изменения состояния не требуют дублированного патчинга в нескольких обработчиках.
 
-## Notes And Risks
+## Заметки и риски
 
-- This is the main protection against inconsistent mock behavior.
+- Это главная защита от неконсистентного поведения mock-а.

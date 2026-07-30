@@ -1,25 +1,25 @@
 # SDD-013 Implement MSW Bets Endpoint
 
-## Purpose
+## Цель
 
-Implement the bets history endpoint according to the schema.
+Реализовать endpoint истории ставок в соответствии со схемой.
 
-## Scope
+## Охват
 
-- Implement `GET /auctions/{auctionUuid}/bets`.
-- Support normal, empty, and hidden-history flows at the app level.
+- Реализовать `GET /auctions/{auctionUuid}/bets`.
+- Поддержать на уровне приложения сценарии normal, empty и hidden-history.
 
-## Dependencies
+## Зависимости
 
 - `SDD-006`
 - `SDD-010`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Response shape matches `BetListResponse`.
-- Empty bets scenarios are possible.
-- Returned data can support UI rendering for rank, winner, and cancel states.
+- Форма ответа соответствует `BetListResponse`.
+- Возможны сценарии с пустой историей ставок.
+- Возвращаемые данные могут поддерживать рендер UI для ранжирования, победителя и состояний отмены.
 
-## Notes And Risks
+## Заметки и риски
 
-- Hidden-history gating belongs to the broader detail-driven flow, not to this endpoint alone.
+- Гейтинг hidden-history относится к более широкому detail-driven флоу, а не к этому endpoint-у в одиночку.

@@ -1,28 +1,28 @@
 # SDD-025 Bet Form Route
 
-## Purpose
+## Цель
 
-Implement the bet-entry route reachable by direct link.
+Реализовать маршрут ввода ставки, доступный по прямой ссылке.
 
-## Scope
+## Охват
 
-- Add `/auctions/$auctionUuid/bet`.
-- Render the bet form route.
-- Handle unavailable state when betting is not allowed.
+- Добавить `/auctions/$auctionUuid/bet`.
+- Отрендерить маршрут формы ставки.
+- Обработать состояние недоступности, когда ставить нельзя.
 
-## Dependencies
+## Зависимости
 
 - `SDD-005`
 - `SDD-020`
 - `SDD-021`
 - `SDD-024`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- The bet form opens by route.
-- Users cannot submit when betting is not allowed.
-- The route explains unavailable state clearly.
+- Форма ставки открывается по маршруту.
+- Пользователи не могут отправить форму, когда ставить нельзя.
+- Маршрут ясно объясняет состояние недоступности.
 
-## Notes And Risks
+## Заметки и риски
 
-- The route should still be safe if the URL is opened directly.
+- Маршрут должен оставаться безопасным, даже если URL открыт напрямую.

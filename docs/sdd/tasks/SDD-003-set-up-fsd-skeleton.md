@@ -1,37 +1,37 @@
 # SDD-003 Set Up FSD Skeleton
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Prepare the project structure around Feature-Sliced Design boundaries.
+Подготовить структуру проекта вокруг границ Feature-Sliced Design.
 
-## Scope
+## Охват
 
-- Create the core `src` layer folders.
-- Establish import boundaries and naming expectations.
-- Reserve locations for API, generated code, and shared utilities.
+- Создать основные папки слоя `src`.
+- Установить границы импортов и ожидания от именования.
+- Зарезервировать места под API, сгенерированный код и shared-утилиты.
 
-## Dependencies
+## Зависимости
 
 - `SDD-001`
 - `SDD-002`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- `app`, `pages`, `widgets`, `features`, `entities`, and `shared` folders exist.
-- API integration points have a clear home under `shared/api`.
-- There is no direct dependency from higher layers to generated code.
+- Существуют папки `app`, `pages`, `widgets`, `features`, `entities` и `shared`.
+- Точки интеграции API имеют чётное место под `shared/api`.
+- Нет прямой зависимости от вышележащих слоёв к сгенерированному коду.
 
-## Notes And Risks
+## Заметки и риски
 
-- Keep boundaries explicit early to avoid later refactors.
+- Зафиксировать границы рано, чтобы избежать поздних рефакторингов.
 
-## Completion Notes
+## Заметки о завершении
 
-- Core source folders now exist for `app`, `pages`, `widgets`, `features`, `entities`, and `shared`.
-- `shared/api`, `shared/config`, `shared/lib`, and `shared/ui` placeholders were added.
-- Source entrypoint now uses `src/app/app.component.tsx`, which aligns the bootstrap with the chosen naming rule.
-- Generated API code is still not present, but the folder structure already reserves a clear integration boundary.
+- Созданы основные исходные папки для `app`, `pages`, `widgets`, `features`, `entities` и `shared`.
+- Добавлены заглушки `shared/api`, `shared/config`, `shared/lib` и `shared/ui`.
+- Точка входа теперь использует `src/app/app.component.tsx`, что выравнивает бутстрап с выбранным правилом именования.
+- Сгенерированного API-кода пока нет, но структура папок уже резервирует чёткую границу интеграции.

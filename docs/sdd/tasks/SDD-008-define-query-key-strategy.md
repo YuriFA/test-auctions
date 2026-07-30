@@ -1,30 +1,30 @@
 # SDD-008 Define Query Key Strategy
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Define consistent query keys and invalidation rules before features are implemented.
+Определить консистентные query-ключи и правила инвалидации до того, как фичи будут реализованы.
 
-## Scope
+## Охват
 
-- Define query keys for auctions list, detail, and bets.
-- Define the invalidation plan for bet mutations.
-- Decide where query helpers live in the codebase.
+- Определить query-ключи для list, detail и bets аукционов.
+- Определить план инвалидации для мутаций ставки.
+- Решить, где в кодовой базе живут query-хелперы.
 
-## Dependencies
+## Зависимости
 
 - `SDD-005`
 - `SDD-007`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Query keys are documented in code or a dedicated helper module.
-- Bet mutation invalidates the intended queries consistently.
-- No duplicate or ad-hoc query key patterns are introduced.
+- Query-ключи задокументированы в коде или в выделенном хелпер-модуле.
+- Мутация ставки консистентно инвалидирует предполагаемые запросы.
+- Нет дублирующих или ad-hoc паттернов query-ключей.
 
-## Notes And Risks
+## Заметки и риски
 
-- Query-key discipline reduces later cache bugs.
+- Дисциплина query-ключей снижает количество поздних cache-багов.

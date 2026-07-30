@@ -1,30 +1,30 @@
 # SDD-006 Introduce OpenAPI Codegen
 
-## Status
+## Статус
 
-Completed.
+Завершено.
 
-## Purpose
+## Цель
 
-Introduce generated API artifacts based on the provided OpenAPI schema.
+Ввести сгенерированные API-артефакты на основе предоставленной OpenAPI-схемы.
 
-## Scope
+## Охват
 
-- Configure Hey API.
-- Generate SDK and types from `docs/openapi.auctions.v0.json`.
-- Add a regeneration command.
+- Настроить Hey API.
+- Сгенерировать SDK и типы из `docs/openapi.auctions.v0.json`.
+- Добавить команду регенерации.
 
-## Dependencies
+## Зависимости
 
 - `SDD-001`
 - `SDD-003`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Generated artifacts are created from the provided schema.
-- SDK and types are generated without query hooks.
-- Regeneration is scriptable and documented.
+- Сгенерированные артефакты создаются из предоставленной схемы.
+- SDK и типы генерируются без query-хуков.
+- Регенерация скриптуема и задокументирована.
 
-## Notes And Risks
+## Заметки и риски
 
-- Treat generated files as read-only.
+- Трактовать сгенерированные файлы как read-only.

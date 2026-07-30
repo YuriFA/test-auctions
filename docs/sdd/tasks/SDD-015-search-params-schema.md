@@ -1,25 +1,25 @@
 # SDD-015 Search Params Schema
 
-## Purpose
+## Цель
 
-Define safe parsing rules for list page search params.
+Определить безопасные правила парсинга search params страницы списка.
 
-## Scope
+## Охват
 
-- Build the Zod schema for search params.
-- Define fallback values.
-- Support the selected filter set.
+- Построить Zod-схему для search params.
+- Определить fallback-значения.
+- Поддержать выбранный набор фильтров.
 
-## Dependencies
+## Зависимости
 
 - `SDD-005`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Invalid search params do not break the page.
-- Fallback values are explicit and predictable.
-- URL parsing can support the request builder.
+- Невалидные search params не ломают страницу.
+- Fallback-значения явные и предсказуемые.
+- Парсинг URL способен поддерживать request builder.
 
-## Notes And Risks
+## Заметки и риски
 
-- Search-param correctness is important for routing, testing, and reproducibility.
+- Корректность search params важна для роутинга, тестирования и воспроизводимости.

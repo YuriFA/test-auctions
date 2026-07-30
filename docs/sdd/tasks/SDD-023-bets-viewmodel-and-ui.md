@@ -1,26 +1,26 @@
 # SDD-023 Bets ViewModel And UI
 
-## Purpose
+## Цель
 
-Render auction bets history in a review-friendly way.
+Отрендерить историю ставок аукциона удобным для просмотра образом.
 
-## Scope
+## Охват
 
-- Load bets data.
-- Build derived presentation values.
-- Show participants count, ranking, price fields, and empty states.
+- Загрузить данные bets.
+- Построить производные значения представления.
+- Показать количество участников, ранжирование, ценовые поля и empty-состояния.
 
-## Dependencies
+## Зависимости
 
 - `SDD-013`
 - `SDD-022`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Bets list is rendered with the required fields.
-- Participants count is derived consistently from available data.
-- Empty states and canceled-bet information are visible.
+- Список ставок рендерится с обязательными полями.
+- Количество участников последовательно выводится из доступных данных.
+- Empty-состояния и информация об отменённых ставках видимы.
 
-## Notes And Risks
+## Заметки и риски
 
-- Derived values should be documented when the API does not expose them directly.
+- Производные значения должны быть задокументированы, когда API не экспонирует их напрямую.

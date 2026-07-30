@@ -1,27 +1,27 @@
 # SDD-020 Detail Page Composition
 
-## Purpose
+## Цель
 
-Implement the main auction detail route and screen structure.
+Реализовать основной маршрут и структуру экрана детальной карточки аукциона.
 
-## Scope
+## Охват
 
-- Load detail data.
-- Render main auction information.
-- Render organizer, payment, routes, cargo, and trading sections.
+- Загрузить detail-данные.
+- Отрендерить основную информацию аукциона.
+- Отрендерить секции организатора, оплаты, маршрутов, груза и торгов.
 
-## Dependencies
+## Зависимости
 
 - `SDD-007`
 - `SDD-008`
 - `SDD-012`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Detail route loads correctly by `auctionUuid`.
-- Core sections from the detail DTO are rendered.
-- Nullable data is handled without UI breakage.
+- Маршрут detail корректно грузится по `auctionUuid`.
+- Рендерятся основные секции из detail DTO.
+- Nullable-данные обрабатываются без поломки UI.
 
-## Notes And Risks
+## Заметки и риски
 
-- The detail page becomes the control center for restrictions and downstream route access.
+- Страница detail становится контрольным центром для ограничений и downstream-доступа к маршрутам.

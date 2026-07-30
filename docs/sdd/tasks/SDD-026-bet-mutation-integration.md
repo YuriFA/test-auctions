@@ -1,29 +1,29 @@
 # SDD-026 Bet Mutation Integration
 
-## Purpose
+## Цель
 
-Connect the bet form to the mutation and cache lifecycle.
+Подключить форму ставки к мутации и жизненному циклу кеша.
 
-## Scope
+## Охват
 
-- Submit `POST /auctions/{auctionUuid}/bets`.
-- Map server validation errors into form UI.
-- Show success and error toasts.
-- Invalidate affected queries.
+- Отправлять `POST /auctions/{auctionUuid}/bets`.
+- Мапить серверные ошибки валидации в UI формы.
+- Показывать success- и error-toast.
+- Инвалидировать затронутые запросы.
 
-## Dependencies
+## Зависимости
 
 - `SDD-008`
 - `SDD-014`
 - `SDD-024`
 - `SDD-025`
 
-## Acceptance Criteria
+## Критерии приёмки
 
-- Successful submission updates the user-visible state after refetch or invalidation.
-- `422` validation errors are surfaced in the form.
-- Success and failure feedback are visible.
+- Успешная отправка обновляет user-видимое состояние после refetch или инвалидации.
+- Ошибки валидации `422` выводятся в форме.
+- Видна обратная связь успеха и неудачи.
 
-## Notes And Risks
+## Заметки и риски
 
-- Cache invalidation must cover list, detail, and bets.
+- Инвалидация кеша должна покрывать list, detail и bets.
