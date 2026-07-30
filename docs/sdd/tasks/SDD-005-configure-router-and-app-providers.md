@@ -1,5 +1,9 @@
 # SDD-005 Configure Router And App Providers
 
+## Status
+
+Completed.
+
 ## Purpose
 
 Create the application shell and runtime providers.
