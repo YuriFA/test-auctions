@@ -21,6 +21,7 @@
 - Wired Hey API codegen against `docs/openapi.auctions.v0.json` with the bundled fetch client and SDK + schemas plugins, output isolated to `src/shared/api/generated/`.
 - Built the `shared/api` adapter: domain entry points (`fetchAuctionList`, `fetchAuctionDetail`, `fetchBets`, `placeBet`) over the generated SDK, plus `ApiError`/`ApiValidationError` normalization for `application/problem+json` and `422` responses.
 - Defined the TanStack Query key strategy in `src/entities/auction/api/query-keys.ts` (hierarchical `auctionKeys` factory covering list, detail, and bets) and a `betMutationInvalidationTargets` helper listing every query that must refetch after a successful bet.
+- Prepared the mock domain dataset in `src/shared/api/mocks/` covering ten seed auctions with matched list/detail/bets DTOs, the mock cities dictionary, the current mock user, and four competing carriers. The dataset exercises every `AuctionStatus`, every `AuctionType`, and the user-facing `TradingStatus` branches plus every restriction flag (`hide_bets_history`, `hide_points_address_and_contacts`, `no_view_cargo_price`, `can_set_bet`), null-price and empty-bets edge cases, and a canceled user bet.
 
 ## Current SDD Coverage
 
@@ -33,8 +34,9 @@
   - `SDD-006 Introduce OpenAPI Codegen`
   - `SDD-007 Build Shared API Layer`
   - `SDD-008 Define Query Key Strategy`
+  - `SDD-009 Prepare Mock Domain Dataset`
 - Not covered yet in code:
-  - `SDD-009` and all later implementation tasks
+  - `SDD-010` and all later implementation tasks
 
 ## Notes On Current Coverage
 
@@ -47,6 +49,7 @@
 - `SDD-006` is completed: Hey API generates the SDK and types into `src/shared/api/generated/` via `pnpm codegen`. The config lives in `openapi-ts.config.ts` and uses the bundled fetch client (no separate `@hey-api/client-fetch` runtime dep — it ships inside `@hey-api/openapi-ts` since v0.73). The local OpenAPI path must start with `./` so v0.99 treats it as a relative path rather than the Hey API cloud shorthand. The generated folder is excluded from oxlint via `.oxlintrc.json` `ignorePatterns` and treated as read-only; downstream layers must reach it through the `shared/api` Public API adapter that SDD-007 will introduce.
 - `SDD-007` is completed: the `shared/api` segment exposes four adapter functions (`fetchAuctionList`, `fetchAuctionDetail`, `fetchBets`, `placeBet`) and the DTO types app code needs, all routed through `src/shared/api/index.ts`. Adapters translate Hey API's `RequestResult` into thrown `ApiError` / `ApiValidationError` so callers can use `try/catch` and type-narrow with `isApiValidationError`. The error normalizer handles `application/problem+json`, the `422` validation payload with field-level `errors`, and network failures where `response` is undefined. The generated folder remains reachable only via relative imports inside `shared/api`; oxlint has no `no-restricted-paths` equivalent yet, so the boundary is enforced by folder layout and Public API rather than lint.
 - `SDD-008` is completed: the `entities/auction` slice owns the query key factory `auctionKeys` (`all`, `lists`, `list(filters)`, `details`, `detail(uuid)`, `bets(uuid, options)`) and the `betMutationInvalidationTargets(uuid)` helper, exposed via the slice Public API. The keys are hierarchical so invalidating a parent automatically refreshes nested queries; bets is a child of detail so the bet mutation's invalidation plan reads as documentation. Steiger's `fsd/insignificant-slice` rule is turned off in `steiger.config.ts` because the slice is intentionally forward-looking — features in SDD-017+ will be its first consumers.
+- `SDD-009` is completed: the mock domain dataset lives in `src/shared/api/mocks/` and is intentionally not re-exported from `src/shared/api/index.ts`, so higher FSD layers cannot reach it. The seed covers ten auctions (list + detail + bets per UUID), the mock cities dictionary (10 cities with `gc_id`), the current mock user, and four competing carriers. Every `AuctionStatus`, `AuctionType`, and user-facing `TradingStatus` enum branch is exercised, plus restriction flags (`hide_bets_history`, `hide_points_address_and_contacts`, `no_view_cargo_price`, `can_set_bet`), null/empty price states, empty bets histories, and a canceled user bet. Schema-nullable fields use `null` to exercise the null branch in later UI work; non-nullable `string` fields (e.g. `RoutePointLocation.loading_address`, `AuctionShowCargo.price`) use `""` to honor the OpenAPI contract.
 - The current UI is still only a styled bootstrap shell with placeholder pages, not the auctions application.
 
 ## What Decisions Were Made By The Candidate
@@ -70,6 +73,10 @@
 - Keep generated OpenAPI artifacts read-only and excluded from lint; reach them only through the handwritten `shared/api` adapter.
 - Wrap generated SDK calls in `shared/api` adapter functions that throw unified `ApiError` / `ApiValidationError` instead of leaking Hey API's `RequestResult` shape to callers.
 - Keep query keys in a single hierarchical factory (`auctionKeys`) under `entities/auction`, so list, detail, and bets share prefixes and a bet mutation can invalidate every dependent query at once.
+- Place the mock domain dataset under `src/shared/api/mocks/` (a sub-folder of the production `shared/api` segment, not a new top-level segment) and intentionally do not re-export it from `src/shared/api/index.ts`, so pages/widgets/features/entities cannot import mock data and only MSW bootstrap, handlers, and tests can reach it via `@shared/api/mocks`.
+- Bundle list + detail + bets into one `SeedAuction` per UUID so the runtime store (SDD-010) and handlers (SDD-011+) consume a single source of truth, instead of stitching three parallel arrays.
+- Honor the OpenAPI contract exactly inside the seed: schema-nullable fields use `null`; non-nullable `string` fields use `""` to express "no value"; non-nullable numeric fields (e.g. `AuctionListItemCargoCar.volume/height`) are omitted via `undefined` rather than `null` when the vehicle type does not track them.
+- Cover every enum branch (status, type, trading status, restriction flags) in the seed instead of just the happy path, so UI work in later SDD tasks never assumes only one state.
 
 ## Which AI Suggestions Were Rejected
 
@@ -95,12 +102,14 @@
 - Some product expectations are broader than the exact response shapes in OpenAPI, so a few UI values may need to be derived from available data.
 - The schema is detailed and contains many nullable fields, which increases the chance of accidental UI assumptions during implementation.
 - MSW consistency across list, detail, and bets views can regress if state updates are implemented in multiple places instead of one runtime store.
-- The current bootstrap does not yet include React Hook Form, Zod, or MSW integration. TanStack Router and TanStack Query are wired in as of `SDD-005`; Tailwind CSS and `shadcn/ui` as of `SDD-004`; Hey API SDK as of `SDD-006`; `shared/api` adapter as of `SDD-007`; query key strategy as of `SDD-008`.
+- The current bootstrap does not yet include React Hook Form, Zod, or MSW integration. TanStack Router and TanStack Query are wired in as of `SDD-005`; Tailwind CSS and `shadcn/ui` as of `SDD-004`; Hey API SDK as of `SDD-006`; `shared/api` adapter as of `SDD-007`; query key strategy as of `SDD-008`; mock domain dataset as of `SDD-009`.
 - shadcn-generated components ship with two exports by default; they must be split into `*.component.tsx` plus `*.styles.ts` on each `shadcn add` to satisfy the project lint rule.
 - The Playwright smoke test in `scripts/route-smoke.mjs` assumes a running dev server; it is not wired into a CI script yet.
 - The `shared/api` adapter is exercised by typecheck and build but not yet by a runtime test; MSW handlers (SDD-010+) and logic tests (SDD-028) will cover behaviour.
 - Query keys and the bet mutation invalidation plan are defined but not yet consumed; the `entities/auction` slice has no incoming references until SDD-017 wires the first list query.
 - Generated SDK exports ~50 raw OpenAPI types and 4 SDK functions that downstream code must not import directly; the `shared/api` adapter is the boundary that exposes only the DTOs and operations app code needs.
+- The mock domain dataset is exercised by typecheck, oxlint, steiger FSD check, and production build, but no runtime test consumes it yet. The MSW runtime store (SDD-010) and handlers (SDD-011 through SDD-014) will be the first runtime consumers; logic tests (SDD-028) may cover seed invariants.
+- The list DTO does not expose a UUID, but the detail/bets/set-bet path parameters require `auctionUuid` in `format: uuid`. The seed dataset sidesteps this by attaching the UUID to each `SeedAuction`, but the contract gap is real and SDD-010/SDD-011 must decide how the client resolves a list item to its UUID (e.g. inject via a non-spec extension field, expose via the `order_uid` join, or document the limitation in README verification notes).
 
 ## What Would Be Improved With One More Day
 
