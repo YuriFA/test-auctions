@@ -100,6 +100,21 @@ This file defines the project-level rules for any AI/LLM agent working in this r
   - `hide_points_address_and_contacts`
   - `no_view_cargo_price`
 
+## Code Comment Rules
+
+- Default to writing no comments.
+- Add a comment only when the WHY is non-obvious: a hidden constraint, a subtle invariant, a workaround for a specific bug, or behavior that would surprise a reader.
+- Do not explain WHAT the code does — well-named identifiers already do that.
+- Do not reference the current task, fix, callers, or issue numbers ("used by X", "added for the Y flow", "fixes #123"); those belong in commit messages and PR descriptions, not the code.
+- File-level JSDoc blocks are reserved for Public API modules (`index.ts`) where they document the segment's purpose and consumers. Implementation files do not need file-level headers.
+- Prefer tests over comments: an invariant expressed in a test is enforceable; in a comment it rots.
+
+## Testing Conventions
+
+- Co-locate tests next to the module they exercise (`*.test.ts`).
+- Do not create `__tests__/` directories; they break FSD Public API boundaries.
+- Name test files after the module they cover: `search-params.ts` ↔ `search-params.test.ts`.
+
 ## Testing And Verification Rules
 
 - The project must run locally.
