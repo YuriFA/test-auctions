@@ -51,3 +51,10 @@ export {
 } from "./runtime/store";
 export type { PlaceBetResult } from "./runtime/store";
 
+// SDD-011+ — MSW handlers. The array is the single shared source of truth for
+// the browser worker (`./browser.ts`) and the Node test server. The browser
+// worker itself is intentionally NOT re-exported here — `msw/browser` is a
+// side-effectful import that only the dev-mode `src/main.tsx` bootstrap should
+// reach via dynamic `import("@shared/api/mocks/browser")`.
+export { mockHandlers } from "./handlers";
+
