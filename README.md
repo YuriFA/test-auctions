@@ -39,6 +39,7 @@ pnpm typecheck
 pnpm lint
 pnpm lint:fsd
 pnpm check
+pnpm codegen        # regenerate OpenAPI SDK + types from docs/openapi.auctions.v0.json
 ```
 
 ## Verification
@@ -49,9 +50,10 @@ Current bootstrap verification:
 - TypeScript project references are configured
 - baseline lint config is present
 - source folders are aligned with the chosen architecture direction
+- Hey API codegen regenerates the SDK into `src/shared/api/generated/`
 
 ## Limitations
 
 - The auctions domain flows are not implemented yet.
-- TanStack Router, TanStack Query, Hey API, MSW, Tailwind CSS, and `shadcn/ui` are not wired yet.
+- Hey API, TanStack Router, TanStack Query, Tailwind CSS, and `shadcn/ui` are wired; React Hook Form, Zod, and MSW are not yet integrated.
 - This README will be expanded as implementation tasks are completed.

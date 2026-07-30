@@ -1,5 +1,9 @@
 # SDD-006 Introduce OpenAPI Codegen
 
+## Status
+
+Completed.
+
 ## Purpose
 
 Introduce generated API artifacts based on the provided OpenAPI schema.

@@ -10,6 +10,7 @@
     "lint": "oxlint",
     "lint:fsd": "steiger ./src --reporter json",
     "check": "pnpm typecheck && pnpm lint",
+    "codegen": "openapi-ts",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@feature-sliced/steiger-plugin": "^0.7.0",
+    "@hey-api/openapi-ts": "^0.99.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.17",
