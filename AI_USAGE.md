@@ -14,18 +14,20 @@
 - Единое MSW runtime-хранилище (`runtime/store.ts`): чтения + `writeBet` + `resetMockRuntime()`, сид через `structuredClone`. `writeBet` возвращает discriminated union `PlaceBetResult`, чтобы handler'ы мапили failure-ветки в HTTP без повторной валидации.
 - MSW-handler'ы на все 4 эндпоинта: `POST /auctions/list` (SDD-011), `GET /auctions/{auctionUuid}` (SDD-012), `GET /auctions/{auctionUuid}/bets` (SDD-013), `POST /auctions/{auctionUuid}/bets` (SDD-014). Все ошибки идут с `content-type: application/problem+json`.
 - URL-контракт фильтров списка в `features/auction-filters` (SDD-015): parse/serialize/defaults с round-trip-инвариантом, 47 TDD-тестов. Vitest + Zod установлены, `pnpm test`/`pnpm test:run` добавлены.
+- Request builder `buildAuctionListRequest` в `features/auction-filters/lib/request-builder.ts` (SDD-016): транслирует типизированный объект фильтров в тело `AuctionListRequest`, пропуская default-значения, фильтруя UI-only enum (`auc_type: 'Unknown'`), не протекая в admin-only поля. 31 TDD-тест.
 
 ## Замечания о текущем покрытии
 
 - UI пока placeholder-оболочка, не приложение аукционов. Инфраструктура зрелая.
-- `SDD-001..014` завершены. `SDD-015` завершена (первая TDD-задача, Vitest). `SDD-016+` — UI и флоу.
+- `SDD-001..014` завершены. `SDD-015` (URL-контракт фильтров) и `SDD-016` (request builder) завершены как TDD-задачи на Vitest. `SDD-017+` — UI и флоу.
 - `SDD-005`: TanStack Router в code-based режиме (`RouterProvider` + `QueryClientProvider` в `app.component.tsx`); QueryClient-синглтон в `app/lib/`; маршруты в `app/routes/`, страницы в `pages/<slice>/ui/`.
 - `SDD-007`: адаптер превращает `RequestResult` Hey API в `ApiError`/`ApiValidationError`; граница `generated` держится на структуре папок и Public API.
 - `SDD-008`: иерархические ключи делают bets потомком detail — план инвалидации читается как документация. steiger-правило `fsd/insignificant-slice` отключено до SDD-017 (первого потребителя).
 - `SDD-010`: один module-level `state.auctions` для всех handler'ов; мутация `writeBet` отвергает предыдущую активную ставку, пересчитывает места, обновляет trading-блок в list+detail DTO согласованно. 404 на неизвестном UUID, 422 на `price <= 0`.
 - `SDD-011..014`: каждый handler — тонкая HTTP-обёртка над store, владеет только HTTP-конвертом; path-паттерн `*/api/v1/auctions/...` с leading-wildcard работает и в browser-worker, и в Node `setupServer`. Односегментный placeholder `:auctionUuid` + метод-диспатч MSW держат handlers без конфликтов.
 - `SDD-014`: спецификация помечает 200-ответ set-bet как `unknown`; адаптер `placeBet` возвращает `void`, mock тем не менее отдаёт `BetItem` — forward-compatible.
-- `SDD-015`: контракт в `features/auction-filters` (новый feature-слайс). Реализация без runtime-Zod — это прямая JSON-подобная трансформация; Zod пригодится в SDD-024. URL не содержит admin-only полей (`customer`, `per_page`); они появятся в SDD-016 (Request Builder).
+- `SDD-015`: контракт в `features/auction-filters` (новый feature-слайс). Реализация без runtime-Zod — это прямая JSON-подобная трансформация; Zod пригодится в SDD-024. URL не содержит admin-only полей (`customer`, `per_page`).
+- `SDD-016`: builder `buildAuctionListRequest` — чистая функция `AuctionsListFilters → AuctionListRequest`. Default-значения не отправляются (пустой фильтр → `{}`), `auc_type: 'Unknown'` отсекается (UI-only), `weight_*`/`volume_*` намеренно не маппятся (D-014). Canonical-имя `AuctionListRequest` добавлено в Public API `shared/api` (ранее был только alias `AuctionListFilters`).
 - Smoke-скрипты: list (7 сценариев / 33 assertion), detail (6 / 25), bets (9 / 34), set-bet (9 / ~55). Запускаются по требованию через `npx tsx scripts/msw-*-smoke.mjs`; в `pnpm check` не входят.
 
 ## Какие решения принял кандидат

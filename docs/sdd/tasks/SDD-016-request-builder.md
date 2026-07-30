@@ -2,7 +2,7 @@
 
 ## Статус
 
-Не начато.
+Завершено.
 
 ## Цель
 
@@ -41,3 +41,13 @@
 
 - Не допускать протекания UI-специфичных имён в сырое построение API-запроса.
 - Builder — чистая функция, поэтому тесты не требуют MSW или моков; только `describe`/`it` с фикстурами.
+
+## Заметки о реализации
+
+- Builder живёт в `src/features/auction-filters/lib/request-builder.ts` и экспортирован через Public API слайса как `buildAuctionListRequest`. Тесты co-located в `request-builder.test.ts` (31 assertion, ALL OK).
+- Возвращает `AuctionListRequest` из `@shared/api` (canonical-имя добавлено в Public API `shared/api/index.ts` ранее было недоступно — только alias `AuctionListFilters`). Импорт из `@shared/api/generated` напрямую запрещён правилом `fsd/no-public-api-sidestep`.
+- Default-значения НЕ отправляются: пустой parsed → `{}`, `page !== 1` → `{page}`, `is_oldest === true` → `{is_oldest}`. Это держит тело запроса минимальным и устойчивым к изменению дефолтов, как в SDD-015 для URL.
+- `auc_type: 'Unknown'` (в URL-фильтре) absent в API enum (`'Request'|'Up'|'Down'|'FixPrice'`) — фильтруется перед отправкой. Если после фильтрации массив пуст, ключ не появляется вовсе.
+- Числовые range/dates/booleans кодируются только при наличии значения (`typeof === 'number'` / truthy / `typeof === 'boolean'`), что прямо соответствует optional-полям `AuctionListRequest`.
+- `weight_*`/`volume_*` намеренно НЕ маппятся (D-014) — их нет ни в URL-контракте SDD-015, ни в builder, ни в UI SDD-018. Admin-only поля (`customer`, `customer_ids`, `auction_ids`, `per_page`) также отсутствуют. Тесты явно проверяют отсутствие этих ключей.
+- Builder — первый потребитель canonical-имени `AuctionListRequest` из Public API `shared/api`; до этого использовался только alias `AuctionListFilters`.
