@@ -1,5 +1,9 @@
 # SDD-004 Configure Styling Foundation
 
+## Status
+
+Pending.
+
 ## Purpose
 
 Set up the chosen styling stack and UI primitives.

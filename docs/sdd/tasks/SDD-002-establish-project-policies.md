@@ -1,5 +1,9 @@
 # SDD-002 Establish Project Policies
 
+## Status
+
+Completed.
+
 ## Purpose
 
 Create the key project documentation that defines implementation constraints.
@@ -24,3 +28,9 @@ Create the key project documentation that defines implementation constraints.
 
 - Keep `AGENTS.md` policy-only.
 - `AI_USAGE.md` should be updated throughout the project, not only at the end.
+
+## Completion Notes
+
+- `AGENTS.md` exists and remains policy-only.
+- `AI_USAGE.md` exists and has been updated to reflect actual staged progress and risks.
+- `README.md` now contains project-specific run, verification, and limitation sections instead of the generic Vite template.

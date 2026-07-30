@@ -125,6 +125,13 @@ This file defines the project-level rules for any AI/LLM agent working in this r
   - what risks remain
   - what would be improved with one more day
 
+## Task Tracking Rules
+
+- Keep SDD task files aligned with real implementation progress.
+- When work finishes, review the statuses of the most recent relevant tasks, preferably only the last up to 3 touched tasks.
+- If a task status is outdated, update it before concluding the work.
+- Do not mark a task as completed unless its acceptance criteria are actually satisfied.
+
 ## Working Assumptions Already Chosen
 
 - UI state library: Zustand

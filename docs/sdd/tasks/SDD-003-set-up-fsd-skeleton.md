@@ -1,5 +1,9 @@
 # SDD-003 Set Up FSD Skeleton
 
+## Status
+
+Completed.
+
 ## Purpose
 
 Prepare the project structure around Feature-Sliced Design boundaries.
@@ -24,3 +28,10 @@ Prepare the project structure around Feature-Sliced Design boundaries.
 ## Notes And Risks
 
 - Keep boundaries explicit early to avoid later refactors.
+
+## Completion Notes
+
+- Core source folders now exist for `app`, `pages`, `widgets`, `features`, `entities`, and `shared`.
+- `shared/api`, `shared/config`, `shared/lib`, and `shared/ui` placeholders were added.
+- Source entrypoint now uses `src/app/app.component.tsx`, which aligns the bootstrap with the chosen naming rule.
+- Generated API code is still not present, but the folder structure already reserves a clear integration boundary.
