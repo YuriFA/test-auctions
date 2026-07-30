@@ -1,16 +1,15 @@
 /**
- * One-off Node smoke for the MSW `GET /auctions/{auctionUuid}` handler (SDD-012).
+ * One-off Node smoke for the MSW `GET /auctions/{auctionUuid}` handler.
  *
  * Mirrors the route-smoke philosophy: no test runner, no committed dependency —
  * just `node --experimental-strip-types` against the live handler module. The
- * script is intentionally not part of `pnpm check`; it runs on demand, the
- * same way the SDD-011 list smoke does.
+ * script is intentionally not part of `pnpm check`; it runs on demand.
  *
  * Coverage:
  *   - success on a known seed UUID returns the `AuctionShowResponse` shape
  *     (required top-level fields: main, organizer, contacts, cargo, trading,
  *     payment, assembly, routes, admitted_organizations),
- *   - `main.order_uid` is present and distinct from the path UUID (D-011),
+ *   - `main.order_uid` is present and distinct from the path UUID,
  *   - restriction flags surface as expected per seed:
  *       • finishedConfirmed → trading.hide_bets_history === true
  *       • fixPriceHidden → trading.no_view_cargo_price === true AND
@@ -19,8 +18,8 @@
  *   - 404 on an unknown UUID returns `ProblemDetail` (`application/problem+json`)
  *     with code/title/message,
  *   - the detail route does NOT match `/auctions/{uuid}/bets` (single-segment
- *     placeholder); the bets path falls through. The bets handler lands in
- *     SDD-013; for now we only verify the detail placeholder is scoped tight.
+ *     placeholder); the bets path falls through. We only verify the detail
+ *     placeholder is scoped tight.
  */
 import { setupServer } from 'msw/node'
 import { mockHandlers } from '../src/shared/api/mocks/handlers/index.ts'
@@ -78,7 +77,7 @@ server.listen({ onUnhandledRequest: 'error' })
     typeof json?.main?.cargo_num === 'string' && json.main.cargo_num.length > 0,
   )
   assert(
-    'success main.order_uid differs from path UUID (D-011)',
+    'success main.order_uid differs from path UUID',
     typeof json?.main?.order_uid === 'string' &&
       json.main.order_uid !== seedAuctionUuids.downLeading,
     `order_uid=${json?.main?.order_uid}`,
@@ -153,9 +152,8 @@ server.listen({ onUnhandledRequest: 'error' })
 // --- case 6: detail route does not over-match /auctions/{uuid}/bets ----------
 //
 // The detail handler's `:auctionUuid` consumes exactly one path segment. A
-// `/bets` suffix must fall through. The bets handler lands in SDD-013; for now
-// we relax MSW's unhandled policy to `warn` and observe that the detail body
-// does not surface at the nested path.
+// `/bets` suffix must fall through. We relax MSW's unhandled policy to `warn`
+// and observe that the detail body does not surface at the nested path.
 
 server.close()
 server.listen({ onUnhandledRequest: 'warn' })

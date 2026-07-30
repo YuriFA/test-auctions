@@ -1,11 +1,9 @@
 /**
- * One-off Node smoke for the MSW `GET /auctions/{auctionUuid}/bets` handler
- * (SDD-013).
+ * One-off Node smoke for the MSW `GET /auctions/{auctionUuid}/bets` handler.
  *
  * Mirrors the route-smoke philosophy: no test runner, no committed dependency —
  * just `node --experimental-strip-types` against the live handler module. The
- * script is intentionally not part of `pnpm check`; it runs on demand, the
- * same way the SDD-011 list and SDD-012 detail smokes do.
+ * script is intentionally not part of `pnpm check`; it runs on demand.
  *
  * Coverage:
  *   - success on a known UUID returns the `BetListResponse` shape
@@ -17,7 +15,7 @@
  *   - empty bets list on `canceledEmpty` returns `{ bets: [] }` (not 404,
  *     not null) — empty-state contract,
  *   - `hide_bets_history` does NOT gate the bets endpoint itself (the gate is
- *     detail-driven per SDD-021); `finishedConfirmed` still returns its bets,
+ *     detail-driven); `finishedConfirmed` still returns its bets,
  *   - 404 on an unknown UUID returns `ProblemDetail`
  *     (`application/problem+json`) with code/title/message,
  *   - the bets path does NOT over-match `/auctions/{uuid}` (detail) — the
@@ -159,7 +157,7 @@ server.listen({ onUnhandledRequest: 'error' })
 // --- case 7: hide_bets_history does NOT gate the bets endpoint ------------
 //
 // finishedConfirmed detail DTO has trading.hide_bets_history === true. The
-// restriction is a UI gate (SDD-021), not an endpoint gate — bets endpoint
+// restriction is a UI gate, not an endpoint gate — bets endpoint
 // still returns the history so the UI layer can decide.
 
 {
@@ -194,7 +192,7 @@ server.listen({ onUnhandledRequest: 'error' })
 //
 // The bets handler's two-segment suffix `/bets` plus single-segment
 // `:auctionUuid` keep it disjoint from the detail handler. A request without
-// the `/bets` suffix should hit the detail handler (SDD-012), not this one —
+// the `/bets` suffix should hit the detail handler, not this one —
 // so the detail DTO shape (not `{ bets: [] }`) is what comes back.
 
 {

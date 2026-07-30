@@ -1,27 +1,10 @@
-/**
- * MSW handler for `GET /auctions/{auctionUuid}` (SDD-012 / D-009).
- *
- * Thin HTTP envelope over `readAuctionDetail` from the single runtime store
- * (SDD-010). All DTO shape, restriction flags, and trading side-effects live
- * in the store; this module only:
- *   - resolves the `auctionUuid` path parameter,
- *   - returns the detail DTO as JSON on a hit,
- *   - returns a 404 `ProblemDetail` (`application/problem+json`) on a miss.
- *
- * The path matches the full SDK URL — `@hey-api/client-fetch` joins
- * `baseUrl: '/api/v1'` from `client.gen.ts` with the SDK's relative
- * `/auctions/{auctionUuid}`, producing `/api/v1/auctions/{auctionUuid}`.
- * The `:auctionUuid` placeholder consumes a single path segment, so the
- * sibling `/auctions/{auctionUuid}/bets` route (SDD-013) does not match here.
- */
 import { HttpResponse, http } from 'msw'
 
 import type { ProblemDetail } from '../../generated'
 import { readAuctionDetail } from '../runtime/store'
 
-// `*` prefix matches any origin so the same handler works under the browser
-// worker (where the SDK fetches against the current host) and the Node test
-// server (where `fetch` runs against a synthetic `http://localhost` URL).
+// Single-segment placeholder guarantees `/auctions/{uuid}/bets` does not
+// match here. See auctions-list.ts for the leading-wildcard rationale.
 const AUCTIONS_DETAIL_PATH = '*/api/v1/auctions/:auctionUuid'
 
 export const auctionsDetailHandler = http.get(

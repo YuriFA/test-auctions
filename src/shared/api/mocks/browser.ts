@@ -1,5 +1,5 @@
 /**
- * Browser-side MSW worker (SDD-011+).
+ * Browser-side MSW worker.
  *
  * Eager-importing `msw/browser` would pull the worker runtime into every
  * consumer of the mocks Public API, including Node test bundles. The browser

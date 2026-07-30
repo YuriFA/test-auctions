@@ -1,11 +1,9 @@
 /**
- * One-off Node smoke for the MSW `POST /auctions/{auctionUuid}/bets` handler
- * (SDD-014).
+ * One-off Node smoke for the MSW `POST /auctions/{auctionUuid}/bets` handler.
  *
  * Mirrors the route-smoke philosophy: no test runner, no committed dependency —
  * just `node --experimental-strip-types` against the live handler module. The
- * script is intentionally not part of `pnpm check`; it runs on demand, the
- * same way the SDD-011/012/013 smokes do.
+ * script is intentionally not part of `pnpm check`; it runs on demand.
  *
  * Coverage:
  *   - success on a known UUID with a valid price returns 200 with a BetItem-

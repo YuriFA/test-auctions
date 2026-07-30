@@ -1,17 +1,3 @@
-/**
- * Single in-memory MSW runtime store (SDD-010 / D-009).
- *
- * One singleton source of truth for every mock handler. The list, detail, and
- * bets endpoints all derive from `state.auctions`; the bet mutation writes
- * through the same state so handlers never have to patch each other. The seed
- * dataset stays read-only — `resetMockRuntime()` rebuilds a fresh deep clone,
- * which is what tests will call to keep state deterministic.
- *
- * This module is mock-only. It is not re-exported from `src/shared/api` and
- * higher FSD layers cannot reach it. MSW handlers (SDD-011+) and unit tests
- * are the only consumers, via the `@shared/api/mocks` Public API.
- */
-
 import type {
   AuctionListMeta,
   AuctionListRequest,
@@ -59,7 +45,7 @@ function createInitialState(): MockRuntimeState {
   return { auctions, nextBetId: maxBetId + 1 }
 }
 
-/** Reset the runtime back to the seed snapshot. Tests call this in `beforeEach`. */
+/** Reset the runtime back to the seed snapshot. */
 export function resetMockRuntime(): void {
   state = createInitialState()
 }
@@ -106,17 +92,12 @@ export type PlaceBetResult =
   | { ok: false; status: 422; problem: ValidationProblem }
 
 /**
- * Apply a user bet to the runtime. The price is the with-VAT amount, matching
- * `SetBetRequest.price`. The mutation:
- *   - rejects the user's previously active bet (the seed models this as
- *     `is_rejected = true, place = null, cancel_reason = "..."`),
- *   - inserts the new bet,
- *   - recomputes places for every active bet in the auction,
- *   - refreshes the trading block on both detail and list DTOs so list,
- *     detail, and bets reads all observe the same update.
+ * Apply a user bet. Rejects the user's previously active bet, inserts the
+ * new bet, recomputes places, and refreshes the trading block in both
+ * detail and list DTOs so list/detail/bets reads stay consistent.
  *
- * The function never throws — it returns a discriminated union so MSW handlers
- * can map the failure case directly onto the matching HTTP response.
+ * Never throws — returns a discriminated union so MSW handlers map the
+ * failure case directly onto the matching HTTP response.
  */
 export function writeBet(uuid: string, price: number): PlaceBetResult {
   if (!Number.isFinite(price) || price <= 0) {
@@ -223,10 +204,9 @@ function recomputePlaces(auction: SeedAuction): void {
 function compareForRank(a: BetItem, b: BetItem, direction: AuctionType | undefined): number {
   const priceA = a.price_with_vat ?? 0
   const priceB = b.price_with_vat ?? 0
-  // Down auctions: lowest bet wins. Up auctions: highest bet wins.
+  // Down auctions: lowest bet wins. Up: highest. Other types fall to lowest.
   const diff = direction === 'Up' ? priceB - priceA : priceA - priceB
   if (diff !== 0) return diff
-  // Tie-break by earliest bet first so the ranking is stable.
   return (a.id ?? 0) - (b.id ?? 0)
 }
 
@@ -338,8 +318,8 @@ function updateListTrading(
 }
 
 /**
- * Compute the next acceptable price one step away from `current` in the
- * auction direction. Returns `null` when either input is missing.
+ * Next acceptable price one step away from `current` in the auction
+ * direction. Returns `null` when either input is missing.
  */
 function nextAvailablePrice(
   current: number | null | undefined,
@@ -351,12 +331,9 @@ function nextAvailablePrice(
   return Math.max(0, Math.round(raw * 100) / 100)
 }
 
-/**
- * Narrower trading status set exposed by the list DTO. The detail DTO's
- * `TradingStatus` adds `OnPending`, `ChoosingWinner`, and `Accepted` which the
- * list DTO does not surface; when we re-derive status after a bet, the value
- * is always within the narrower set.
- */
+// Narrower trading status set exposed by the list DTO. The detail DTO's
+// TradingStatus adds OnPending, ChoosingWinner, Accepted which the list DTO
+// does not surface; we collapse them onto the nearest list equivalent.
 type ListTradingStatus =
   | 'NotParticipating'
   | 'Leading'
@@ -366,8 +343,6 @@ type ListTradingStatus =
   | 'Unknown'
 
 function toListTradingStatus(status: TradingStatus): ListTradingStatus {
-  // The detail DTO allows three extra variants; we collapse them onto the
-  // nearest list-DTO equivalent so the seed never produces an illegal value.
   if (status === 'OnPending' || status === 'ChoosingWinner') return 'Losing'
   if (status === 'Accepted') return 'Confirmed'
   return status
@@ -562,10 +537,8 @@ function buildMeta(
   pagedCount: number,
 ): AuctionListMeta {
   const lastPage = perPage === 0 ? 1 : Math.ceil(total / perPage)
-  // Both `total === 0` (everything filtered out) and `page > lastPage`
-  // (over-paginated request) produce an empty slice. In either case `from`
-  // and `to` must read as 0 — Laravel's paginator reports the same and the
-  // spec marks both fields as plain `integer`, so 0 is the safe shape.
+  // Empty slice (filtered out OR page > lastPage) must read from=0, to=0 —
+  // matches Laravel paginator and the integer (non-nullable) contract.
   const from = pagedCount === 0 ? 0 : (page - 1) * perPage + 1
   const to = pagedCount === 0 ? 0 : Math.min(page * perPage, total)
   return {

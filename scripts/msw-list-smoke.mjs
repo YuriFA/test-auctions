@@ -1,17 +1,16 @@
 /**
- * One-off Node smoke for the MSW `POST /auctions/list` handler (SDD-011).
+ * One-off Node smoke for the MSW `POST /auctions/list` handler.
  *
  * Mirrors the route-smoke philosophy: no test runner, no committed dependency —
  * just `node --experimental-strip-types` against the live handler module. The
- * script is intentionally not part of `pnpm check`; it runs on demand, the
- * same way the SDD-010 store smoke did.
+ * script is intentionally not part of `pnpm check`; it runs on demand.
  *
  * Coverage:
  *   - default body returns all 10 seed auctions with coherent meta,
  *   - `per_page` + `page` paginates and updates `from`/`to`/`last_page`,
  *   - a typed filter (`auc_type: ['Down']`) narrows the set,
  *   - a free-text filter (`cargo_num`) returns the expected single record,
- *   - each list item carries the injected `main.auction_uuid` (D-011),
+ *   - each list item carries the injected `main.auction_uuid`,
  *   - malformed JSON body collapses to 422 with a `ValidationProblem`.
  */
 import { setupServer } from 'msw/node'

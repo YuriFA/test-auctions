@@ -1,5 +1,5 @@
 /**
- * Aggregate MSW handler list (SDD-011+).
+ * Aggregate MSW handler list.
  *
  * Both the browser worker (`../browser.ts`) and the Node test server (used by
  * smoke scripts and logic tests) consume this single array, so handlers are

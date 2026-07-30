@@ -7,20 +7,11 @@ import type {
 
 import { mockCompetitors, mockCurrentUser } from './user'
 
-/**
- * Mock-only extension of `AuctionListItemMain` that exposes the auction's
- * routing UUID as `auction_uuid`.
- *
- * The OpenAPI spec routes auctions by `auctionUuid: format: uuid` in path
- * parameters (`/auctions/{auctionUuid}`, bets, set-bet) but does not expose
- * an `auction_uuid` field in any response DTO. Per `docs/sdd/decisions.md`
- * D-011 we treat this as a contract gap that a real backend would close, and
- * the mock handler therefore injects `main.auction_uuid` into list items so
- * the client can navigate from list to detail without guessing. The field is
- * a deliberate, documented deviation from the generated DTO and MUST NOT be
- * added to the production `shared/api` types — it lives in the mock layer
- * only.
- */
+// Mock-only extension of AuctionListItemMain that exposes the routing UUID
+// as `auction_uuid`. The spec routes by `auctionUuid: format: uuid` in paths
+// but exposes no `auction_uuid` field in any DTO. Deliberate, documented
+// deviation from the generated DTO — MUST NOT leak into production
+// `shared/api` types.
 export type MockAuctionListItemMain = AuctionListItemMain & {
   auction_uuid: string
 }
@@ -29,18 +20,10 @@ export type MockAuctionListItem = Omit<AuctionListItem, 'main'> & {
   main?: MockAuctionListItemMain
 }
 
-/**
- * A single mock auction bundling the three DTO shapes that the runtime store
- * must keep consistent: the list item (for `POST /auctions/list`), the detail
- * payload (for `GET /auctions/{uuid}`), and the bets history (for
- * `GET /auctions/{uuid}/bets`).
- *
- * `uuid` is the routing identifier — it matches the injected
- * `main.auction_uuid` extension field and is what the client puts into
- * `/auctions/$auctionUuid` paths. It is intentionally distinct from
- * `main.order_uid` (the underlying order's UUID), which the spec exposes
- * inside the DTO.
- */
+// Bundles the three DTO shapes that the runtime store must keep consistent:
+// list item, detail, bets history. `uuid` is the routing identifier (matches
+// the injected `main.auction_uuid`); intentionally distinct from
+// `main.order_uid` (underlying order's UUID).
 export interface SeedAuction {
   uuid: string
   list: MockAuctionListItem
@@ -48,11 +31,8 @@ export interface SeedAuction {
   bets: BetItem[]
 }
 
-/**
- * Routing UUIDs for seed auctions. These are the values that appear in path
- * parameters and in the injected `main.auction_uuid` extension field. The
- * sequential last segment keeps them human-distinguishable in tests.
- */
+// Routing UUIDs for seed auctions. Sequential last segment keeps them
+// human-distinguishable in tests.
 export const seedAuctionUuids = {
   downLeading: '00000000-0000-4000-8000-000000000001',
   upLosing: '00000000-0000-4000-8000-000000000002',
@@ -149,8 +129,7 @@ function makeUserBet(
 }
 
 /**
- * Seed auctions. Each entry covers at least one of the matrices called out by
- * SDD-009 acceptance criteria:
+ * Seed auctions. Each entry covers at least one of the matrices below:
  *
  *   - status (Planning, Auction, DeterminateWinner, WaitDeal, InProgress,
  *     Finished, Stopped, Canceled, Unknown)
@@ -161,8 +140,8 @@ function makeUserBet(
  *     `no_view_cargo_price`, `can_set_bet`)
  *   - empty / null edge cases (no bets, null current price, user not bidding)
  *
- * The dataset is intentionally small but exercises every enum branch at least
- * once, so UI work in later SDD tasks never assumes only happy paths.
+ * Intentionally small but exercises every enum branch at least once, so UI
+ * work never assumes only happy paths.
  */
 export const seedAuctions: SeedAuction[] = [
   {
