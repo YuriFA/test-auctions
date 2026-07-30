@@ -96,7 +96,12 @@ export function readAuctionList(
   );
   const sorted = applySort(filtered, filters);
   const { page, perPage, paged } = applyPagination(sorted, filters);
-  const meta: AuctionListMeta = buildMeta(sorted.length, page, perPage);
+  const meta: AuctionListMeta = buildMeta(
+    sorted.length,
+    page,
+    perPage,
+    paged.length,
+  );
   return {
     data: paged.map((auction) => auction.list),
     meta,
@@ -604,10 +609,15 @@ function buildMeta(
   total: number,
   page: number,
   perPage: number,
+  pagedCount: number,
 ): AuctionListMeta {
   const lastPage = perPage === 0 ? 1 : Math.ceil(total / perPage);
-  const from = total === 0 ? 0 : (page - 1) * perPage + 1;
-  const to = Math.min(page * perPage, total);
+  // Both `total === 0` (everything filtered out) and `page > lastPage`
+  // (over-paginated request) produce an empty slice. In either case `from`
+  // and `to` must read as 0 — Laravel's paginator reports the same and the
+  // spec marks both fields as plain `integer`, so 0 is the safe shape.
+  const from = pagedCount === 0 ? 0 : (page - 1) * perPage + 1;
+  const to = pagedCount === 0 ? 0 : Math.min(page * perPage, total);
   return {
     current_page: page,
     from,
