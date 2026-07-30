@@ -1,5 +1,9 @@
 # SDD-008 Define Query Key Strategy
 
+## Status
+
+Completed.
+
 ## Purpose
 
 Define consistent query keys and invalidation rules before features are implemented.
