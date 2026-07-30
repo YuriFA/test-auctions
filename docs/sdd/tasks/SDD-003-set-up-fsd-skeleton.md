@@ -1,0 +1,26 @@
+# SDD-003 Set Up FSD Skeleton
+
+## Purpose
+
+Prepare the project structure around Feature-Sliced Design boundaries.
+
+## Scope
+
+- Create the core `src` layer folders.
+- Establish import boundaries and naming expectations.
+- Reserve locations for API, generated code, and shared utilities.
+
+## Dependencies
+
+- `SDD-001`
+- `SDD-002`
+
+## Acceptance Criteria
+
+- `app`, `pages`, `widgets`, `features`, `entities`, and `shared` folders exist.
+- API integration points have a clear home under `shared/api`.
+- There is no direct dependency from higher layers to generated code.
+
+## Notes And Risks
+
+- Keep boundaries explicit early to avoid later refactors.
