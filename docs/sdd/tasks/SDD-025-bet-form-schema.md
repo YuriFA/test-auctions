@@ -2,7 +2,23 @@
 
 ## Статус
 
-Не начато.
+Готово. Создан feature-слайс `features/bet-form`: Zod-фабрика
+`betFormSchema(constraints)` в `lib/bet-form-schema.ts` + тип
+`BetPriceConstraints` (`min`/`max`/`step`/`base`, все
+`number | null | undefined`); значения `null`/`undefined` схлопываются
+в «ограничение отсутствует». Один `superRefine` на поле `price`
+последовательно проверяет: required → coerce (string/number)
+→ finite → `> 0` → min → max → step-alignment от `base` (по умолчанию 0) с floating-point epsilon. Все issue'ы добавляются в `path: []`,
+поэтому итоговая ошибка резолвится на `['price']` без дублирования
+полного пути. Нечисловой ввод (`'abc'`, `''`, `null`, `undefined`)
+возвращает структурную ошибку, а не исключение. `available` в схему
+не входит — это UI-подсказка. 27 TDD-тестов покрывают required,
+coercion (string/whitespace/NaN), min/max (boundary, null, undefined),
+step (alignment from 0 и base, drift tolerance, null/zero), combined
+constraints, output shape. Public API слайса (`features/bet-form/index.ts`)
+экспортирует `betFormSchema`, `BetPriceConstraints`, `BetFormValues`.
+Верификация: `pnpm fmt && pnpm lint && pnpm test:run && pnpm build` —
+всё чисто (231 тест в suites).
 
 ## Цель
 
