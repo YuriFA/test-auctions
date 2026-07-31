@@ -1,1 +1,1 @@
-export * from './ui/auction-bet-form.component'
+export * from './ui/auction-bet-form-page.component'

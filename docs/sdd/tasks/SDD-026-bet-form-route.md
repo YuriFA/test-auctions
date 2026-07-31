@@ -2,7 +2,22 @@
 
 ## Статус
 
-Не начато.
+Готово. Маршрут `/auctions/$auctionUuid/bet` уже был зарегистрирован
+в `route-tree.ts` как child `auctionDetailRoute`; в SDD-026 подключён
+shell `AuctionBetFormPage`
+(`pages/auction-bet-form/ui/auction-bet-form-page.component.tsx`) и
+content `AuctionBetForm` (`auction-bet-form.component.tsx`).
+Content-компонент повторяет detail-first паттерн SDD-023:
+detail-pending → skeleton, detail-error → "Аукцион недоступен",
+vm-missing → "Аукцион не найден", `!restrictions.canPlaceBet` →
+restricted card ("Ставка недоступна" с Alert "Нельзя поставить
+ставку"). Гейт читается через `deriveAuctionRestrictions(vm).canPlaceBet`
+(SDD-022), не через прямой reading `vm.canSetBet`. Smoke
+(`scripts/route-smoke.mjs`) расширен тремя bets-кейсами: valid UUID
+с can_set_bet=true → h1 "Ставка по аукциону" и section "Цена";
+`requestWinner` seed (can_set_bet=false) → h1 "Ставка недоступна" и
+alert "Нельзя поставить ставку"; unknown UUID → detail-driven
+"Аукцион недоступен".
 
 ## Цель
 

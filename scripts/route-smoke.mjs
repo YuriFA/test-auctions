@@ -9,6 +9,8 @@ const page = await browser.newPage()
 const DOWN_LEADING_UUID = '00000000-0000-4000-8000-000000000001'
 // finishedConfirmed seed pins trading.hide_bets_history = true.
 const FINISHED_HIDDEN_BETS_UUID = '00000000-0000-4000-8000-000000000006'
+// requestWinner seed pins trading.can_set_bet = false (auction is finished).
+const REQUEST_WINNER_UUID = '00000000-0000-4000-8000-000000000004'
 
 const cases = [
   { path: '/', expect: { url: '/auctions', h1: 'Аукционы' } },
@@ -40,11 +42,31 @@ const cases = [
       alert: 'История скрыта',
     },
   },
+  // Bet form opens with an h1 and a price input when can_set_bet=true.
+  {
+    path: `/auctions/${DOWN_LEADING_UUID}/bet`,
+    expect: {
+      url: `/auctions/${DOWN_LEADING_UUID}/bet`,
+      h1: 'Ставка по аукциону',
+      section: 'Цена',
+    },
+  },
+  // Bet form is gated when can_set_bet=false — restricted card replaces the form.
+  {
+    path: `/auctions/${REQUEST_WINNER_UUID}/bet`,
+    expect: {
+      url: `/auctions/${REQUEST_WINNER_UUID}/bet`,
+      h1: 'Ставка недоступна',
+      alert: 'Нельзя поставить ставку',
+    },
+  },
+  // Unknown UUID on the bet route surfaces the detail-driven error card.
   {
     path: '/auctions/abc-123/bet',
     expect: {
       url: '/auctions/abc-123/bet',
-      h1: 'Place or update a bet',
+      h1: 'Аукцион недоступен',
+      alert: 'Не удалось загрузить',
     },
   },
   { path: '/totally/unknown', expect: { h1: 'Page not found' } },

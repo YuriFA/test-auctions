@@ -2,7 +2,43 @@
 
 ## Статус
 
-Не начато.
+Готово. Мутация `usePlaceBet(auctionUuid)` в
+`entities/auction/api/use-place-bet.ts` оборачивает `placeBet` адаптер
+через `useMutation`, по success инвалидирует
+`betMutationInvalidationTargets(auctionUuid)` (list + detail + bets —
+согласованная картина после ставки). Форма `BetForm` в
+`features/bet-form/ui/bet-form.component.tsx` использует React Hook
+Form (`useForm<{ price: string }, undefined, BetFormValues>`) с
+`zodResolver(betFormSchema(constraints))`. Constraints читаются из
+detail-VM (`{ min: vm.priceMin, max: vm.priceMax, step: vm.priceStep,
+base: vm.priceStart }`), `available` передаётся как placeholder и как
+текстовая подсказка под полем; шаг и границы min/max видны в
+`CardDescription` ("от X · до Y · шаг Z"). Когда `step > 0`, поле
+цены рендерится как stepper: `InputGroup` с двумя `InputGroupButton`
+(`−`/`+` иконки lucide). Хелперы `nextStepPrice`/`prevStepPrice` в
+`lib/bet-form-schema.ts` — чистые функции, которые snap'ят к
+ближайшему step-aligned значению от `base` и clamp'ят к `min`/`max`
+(15 TDD-тестов на хелперы). Клик `+` из пустого input'а сеет от
+`available ?? min ?? base ?? 0` и сразу делает шаг вверх. Кнопки
+disable'ятся на границах (at max для `+`, at min для `−`) и пока
+`mutation.isPending`. На submit: `mutateAsync(values.price)`
+(значение уже type-narrowed до number через 3-generic `useForm`),
+`ApiValidationError` мапится в field errors (`field === 'price'` →
+`setError('price', { message })`, остальные поля → `root.serverError`),
+прочие `ApiError` → root error через Alert. Состояние `isPending`
+отключает submit + меняет лейбл на "Сохранение…". On success —
+`useNavigate` на `/auctions/$auctionUuid/bets` (user видит свою ставку
+в истории после инвалидации). Toast-уведомления намеренно не
+добавлены: success фидбек — это навигация на bets-страницу с
+обновлённым списком, error фидбек — inline Alert; shadcn Sonner в
+проекте нет, тянуть его только ради этого сценария неоправданно.
+Установлены `react-hook-form@^7.83` и `@hookform/resolvers@^5.5`.
+Полная верификация: `pnpm fmt && pnpm lint && pnpm test:run && pnpm
+build && pnpm smoke` — всё зелёное (246 тестов, 8 smoke-скриптов);
+новый `scripts/bet-form-smoke.mjs` покрывает stepper-интеракцию
+(рендер +/-, seed от available + step, повторный шаг, обратный шаг,
+submit интерактивность); msw-set-bet-smoke покрывает мутационный
+контракт (200/422/404, problem+json).
 
 ## Цель
 
