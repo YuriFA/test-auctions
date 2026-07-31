@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+
 import { App } from './app/app.component'
 
 // MSW is a dev-only mock layer. In production the dynamic import is
@@ -7,7 +8,9 @@ import { App } from './app/app.component'
 // the worker runtime never ship in the bundle. Awaiting `worker.start()` here
 // guarantees no app fetch leaves the page before the worker is ready.
 async function enableMockWorker(): Promise<void> {
-  if (import.meta.env.PROD) {return}
+  if (import.meta.env.PROD) {
+    return
+  }
   const { worker } = await import('@shared/api/mocks/browser')
   await worker.start({ onUnhandledRequest: 'bypass' })
 }

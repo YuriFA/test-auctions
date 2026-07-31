@@ -1,22 +1,15 @@
+import { Button, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@shared/ui'
+import { useSearch } from '@tanstack/react-router'
 import { SlidersHorizontalIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useSearch } from '@tanstack/react-router'
 
-import { Button, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@shared/ui'
-
-import {
-  DEFAULT_AUCTIONS_LIST_FILTERS,
-  countActiveFilters,
-} from '../lib/search-params'
+import { DEFAULT_AUCTIONS_LIST_FILTERS, countActiveFilters } from '../lib/search-params'
 import { AuctionFiltersForm } from './auction-filters-form.component'
 
 export function AuctionFilters() {
   const [open, setOpen] = useState(false)
   const search = useSearch({ from: '/auctions' })
-  const filters = useMemo(
-    () => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }),
-    [search],
-  )
+  const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
   const activeCount = countActiveFilters(filters)
 
   return (

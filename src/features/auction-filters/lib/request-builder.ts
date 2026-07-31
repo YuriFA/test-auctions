@@ -45,10 +45,18 @@ export function buildAuctionListRequest(parsed: AuctionsListFilters): AuctionLis
     request.current_price_to = parsed.current_price_to
   }
 
-  if (parsed.create_date_from) {request.create_date_from = parsed.create_date_from}
-  if (parsed.create_date_to) {request.create_date_to = parsed.create_date_to}
-  if (parsed.load_date_from) {request.load_date_from = parsed.load_date_from}
-  if (parsed.load_date_to) {request.load_date_to = parsed.load_date_to}
+  if (parsed.create_date_from) {
+    request.create_date_from = parsed.create_date_from
+  }
+  if (parsed.create_date_to) {
+    request.create_date_to = parsed.create_date_to
+  }
+  if (parsed.load_date_from) {
+    request.load_date_from = parsed.load_date_from
+  }
+  if (parsed.load_date_to) {
+    request.load_date_to = parsed.load_date_to
+  }
 
   if (typeof parsed.is_available === 'boolean') {
     request.is_available = parsed.is_available

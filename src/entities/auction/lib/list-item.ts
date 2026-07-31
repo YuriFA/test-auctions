@@ -9,7 +9,9 @@ export type AuctionListItemVM = {
 
 export function toAuctionListItemVM(item: AuctionListItem): AuctionListItemVM | null {
   const auctionUuid = extractAuctionUuid(item)
-  if (!auctionUuid) {return null}
+  if (!auctionUuid) {
+    return null
+  }
   return {
     auctionUuid,
     cargoNum: item.main?.cargo_num ?? '',

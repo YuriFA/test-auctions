@@ -1,9 +1,9 @@
-import type { AuctionType } from '@shared/api'
 import {
   describeAuctionStatusCode,
   describeAuctionType,
   describeTradingStatus,
 } from '@entities/auction'
+import type { AuctionType } from '@shared/api'
 import { cities } from '@shared/config'
 import {
   Button,
@@ -292,16 +292,10 @@ export function AuctionFiltersForm({ onApplied }: Props) {
   )
 }
 
-function FilterSection({
-  title,
-  children,
-}: {
-  title: string
-  children: React.ReactNode
-}) {
+function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <fieldset className="space-y-2">
-      <legend className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <legend className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
         {title}
       </legend>
       {children}

@@ -1,7 +1,6 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
-
 import type { AuctionListRequest, AuctionListResponse } from '@shared/api'
 import { fetchAuctionList } from '@shared/api'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 import type { AuctionListItemVM } from '../lib/list-item'
 import { toAuctionListItemVM } from '../lib/list-item'

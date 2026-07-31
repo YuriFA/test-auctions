@@ -1,18 +1,14 @@
+import { Input } from '@shared/ui'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { SearchIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useSearch } from '@tanstack/react-router'
-
-import { Input } from '@shared/ui'
 
 import { DEFAULT_AUCTIONS_LIST_FILTERS, toAuctionsListSearch } from '../lib/search-params'
 
 export function AuctionSearchInput() {
   const navigate = useNavigate({ from: '/auctions' })
   const search = useSearch({ from: '/auctions' })
-  const filters = useMemo(
-    () => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }),
-    [search],
-  )
+  const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
 
   const [local, setLocal] = useState(filters.cargo_num)
   useEffect(() => {
@@ -30,8 +26,8 @@ export function AuctionSearchInput() {
   }
 
   return (
-    <div className="relative w-full flex">
-      <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+    <div className="relative flex w-full">
+      <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         type="text"
         inputMode="text"
@@ -44,7 +40,7 @@ export function AuctionSearchInput() {
             commit()
           }
         }}
-        className="pl-8 w-48 flex-1 max-w-full"
+        className="w-48 max-w-full flex-1 pl-8"
       />
     </div>
   )

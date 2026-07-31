@@ -1,6 +1,6 @@
+import { AuctionBets } from '@pages/auction-bets'
 import { createRoute } from '@tanstack/react-router'
 
-import { AuctionBets } from '@pages/auction-bets'
 import { auctionDetailRoute } from './auction-detail.route'
 
 export const auctionBetsRoute = createRoute({

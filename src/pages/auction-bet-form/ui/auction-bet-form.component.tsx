@@ -9,7 +9,7 @@ export function AuctionBetForm() {
         <Link
           to="/auctions/$auctionUuid"
           params={{ auctionUuid }}
-          className="text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground"
+          className="text-xs font-medium tracking-wide text-muted-foreground uppercase hover:text-foreground"
         >
           ← Back to auction
         </Link>

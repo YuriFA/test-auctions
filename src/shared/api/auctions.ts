@@ -1,3 +1,4 @@
+import { normalizeApiError } from './errors'
 import type {
   AuctionListItem,
   AuctionListRequest,
@@ -5,7 +6,6 @@ import type {
   AuctionShowResponse,
 } from './generated'
 import { getAuction, listAuctions } from './generated'
-import { normalizeApiError } from './errors'
 
 export type AuctionListFilters = AuctionListRequest
 export type AuctionListResponse = AuctionListResponseBase

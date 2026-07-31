@@ -1,7 +1,6 @@
-import { Link } from '@tanstack/react-router'
-
-import { cn } from '@shared/lib/cn'
 import type { AuctionListItemVM } from '@entities/auction'
+import { cn } from '@shared/lib/cn'
+import { Link } from '@tanstack/react-router'
 
 interface Props {
   item: AuctionListItemVM
@@ -22,7 +21,7 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
         'hover:border-primary/40 focus-visible:border-primary/40 focus-visible:outline-none',
       )}
     >
-      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+      <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
         {item.aucType ?? '—'}
       </span>
       <span className="text-sm font-semibold">{item.cargoNum || 'Без номера заявки'}</span>

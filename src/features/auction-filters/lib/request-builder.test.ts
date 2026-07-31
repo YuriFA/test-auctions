@@ -1,10 +1,9 @@
+import type { AuctionListRequest } from '@shared/api'
 import { describe, expect, it } from 'vitest'
 
-import type { AuctionListRequest } from '@shared/api'
-
+import { buildAuctionListRequest } from './request-builder'
 import type { AuctionsListFilters } from './search-params'
 import { DEFAULT_AUCTIONS_LIST_FILTERS } from './search-params'
-import { buildAuctionListRequest } from './request-builder'
 
 // Builder is a pure function: defaults collapse to {}, non-default values
 // map to the matching AuctionListRequest field with the right type. No

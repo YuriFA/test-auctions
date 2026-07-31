@@ -1,5 +1,4 @@
 export * from './button.component'
-export * from './button.styles'
 export * from './checkbox.component'
 export * from './field.component'
 export * from './input.component'

@@ -46,7 +46,9 @@ for (const c of cases) {
   const okH1 = h1.includes(c.expect.h1)
   const okCode = !c.expect.code || code === c.expect.code
   const status = okUrl && okH1 && okCode ? 'OK  ' : 'FAIL'
-  if (status === 'FAIL') {failed++}
+  if (status === 'FAIL') {
+    failed++
+  }
   console.log(`${status} ${c.path.padEnd(28)} -> url=${url} h1="${h1}" code="${code}"`)
 }
 

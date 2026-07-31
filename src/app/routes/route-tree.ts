@@ -9,9 +9,5 @@ import { rootRoute } from './root.route'
 export const routeTree = rootRoute.addChildren([
   indexRoute,
   auctionsRoute,
-  auctionDetailRoute.addChildren([
-    auctionDetailIndexRoute,
-    auctionBetsRoute,
-    auctionBetFormRoute,
-  ]),
+  auctionDetailRoute.addChildren([auctionDetailIndexRoute, auctionBetsRoute, auctionBetFormRoute]),
 ])

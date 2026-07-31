@@ -38,7 +38,10 @@ if (await headerSearch.count()) {
   )
 }
 
-check('no inline filter panel before opening', (await page.locator('fieldset > legend').count()) === 0)
+check(
+  'no inline filter panel before opening',
+  (await page.locator('fieldset > legend').count()) === 0,
+)
 
 // Open sheet — sections render; checkbox toggle does NOT yet touch URL.
 await trigger.click()
@@ -101,7 +104,10 @@ check('filter trigger visible on mobile', mobileVisible)
 if (mobileVisible) {
   await mobileTrigger.click()
   await page.waitForTimeout(300)
-  check('sheet opens on mobile trigger click', (await page.locator('fieldset > legend').count()) >= 6)
+  check(
+    'sheet opens on mobile trigger click',
+    (await page.locator('fieldset > legend').count()) >= 6,
+  )
 }
 
 await browser.close()

@@ -64,7 +64,9 @@ export function readAuctionBets(
   options: { includeCanceled?: boolean } = {},
 ): BetItem[] | undefined {
   const auction = findAuction(uuid)
-  if (!auction) {return undefined}
+  if (!auction) {
+    return undefined
+  }
   const includeCanceled = options.includeCanceled === true
   return auction.bets
     .filter((bet) => includeCanceled || !bet.is_rejected)
@@ -206,7 +208,9 @@ function compareForRank(a: BetItem, b: BetItem, direction: AuctionType | undefin
   const priceB = b.price_with_vat ?? 0
   // Down auctions: lowest bet wins. Up: highest. Other types fall to lowest.
   const diff = direction === 'Up' ? priceB - priceA : priceA - priceB
-  if (diff !== 0) {return diff}
+  if (diff !== 0) {
+    return diff
+  }
   return (a.id ?? 0) - (b.id ?? 0)
 }
 
@@ -250,7 +254,9 @@ function updateDetailTrading(
   worseThanPrevious: boolean,
 ): void {
   const trading: AuctionShowTrading | undefined = auction.detail.trading
-  if (!trading) {return}
+  if (!trading) {
+    return
+  }
 
   const direction = auctionDirection(auction)
   if (leading) {
@@ -291,7 +297,9 @@ function updateListTrading(
   worseThanPrevious: boolean,
 ): void {
   const listTrading = (auction.list as MockAuctionListItem).trading
-  if (!listTrading) {return}
+  if (!listTrading) {
+    return
+  }
 
   if (leading) {
     const price = listTrading.price ?? {}
@@ -326,7 +334,9 @@ function nextAvailablePrice(
   step: number | null | undefined,
   direction: AuctionType | undefined,
 ): number | null {
-  if (current == null || step == null) {return null}
+  if (current == null || step == null) {
+    return null
+  }
   const raw = direction === 'Up' ? current + step : current - step
   return Math.max(0, Math.round(raw * 100) / 100)
 }
@@ -343,8 +353,12 @@ type ListTradingStatus =
   | 'Unknown'
 
 function toListTradingStatus(status: TradingStatus): ListTradingStatus {
-  if (status === 'OnPending' || status === 'ChoosingWinner') {return 'Losing'}
-  if (status === 'Accepted') {return 'Confirmed'}
+  if (status === 'OnPending' || status === 'ChoosingWinner') {
+    return 'Losing'
+  }
+  if (status === 'Accepted') {
+    return 'Confirmed'
+  }
   return status
 }
 
@@ -514,8 +528,12 @@ function applySort(auctions: SeedAuction[], filters: AuctionListRequest): SeedAu
   return [...auctions].sort((a, b) => {
     const left = a.list.main?.created_at ?? ''
     const right = b.list.main?.created_at ?? ''
-    if (left < right) {return -1 * direction}
-    if (left > right) {return 1 * direction}
+    if (left < right) {
+      return -1 * direction
+    }
+    if (left > right) {
+      return 1 * direction
+    }
     return 0
   })
 }

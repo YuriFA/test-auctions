@@ -1,6 +1,6 @@
+import { normalizeApiError } from './errors'
 import type { BetListResponse, SetBetRequest } from './generated'
 import { listBets, setBet } from './generated'
-import { normalizeApiError } from './errors'
 
 export type BetsListResponse = BetListResponse
 export type PlaceBetInput = SetBetRequest

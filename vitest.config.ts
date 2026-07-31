@@ -1,4 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
+
 import { defineConfig } from 'vitest/config'
 
 // Aliases mirror vite.config.ts and tsconfig.app.json so tests import the

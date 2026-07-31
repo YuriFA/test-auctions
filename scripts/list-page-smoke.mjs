@@ -8,7 +8,9 @@ const page = await browser.newPage()
 const failures = []
 function check(label, ok, detail = '') {
   const status = ok ? 'OK  ' : 'FAIL'
-  if (!ok) {failures.push(label)}
+  if (!ok) {
+    failures.push(label)
+  }
   console.log(`${status} ${label}${detail ? ` — ${detail}` : ''}`)
 }
 

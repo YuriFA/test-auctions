@@ -14,8 +14,9 @@
  *   - malformed JSON body collapses to 422 with a `ValidationProblem`.
  */
 import { setupServer } from 'msw/node'
-import { mockHandlers } from '../src/shared/api/mocks/handlers/index.ts'
+
 import { seedAuctionUuids } from '../src/shared/api/mocks/auctions.ts'
+import { mockHandlers } from '../src/shared/api/mocks/handlers/index.ts'
 
 const server = setupServer(...mockHandlers)
 server.listen({ onUnhandledRequest: 'error' })
@@ -25,7 +26,9 @@ let failures = 0
 
 function assert(name, condition, detail = '') {
   const status = condition ? 'OK  ' : 'FAIL'
-  if (!condition) {failures++}
+  if (!condition) {
+    failures++
+  }
   console.log(`${status} ${name}${detail ? ` — ${detail}` : ''}`)
 }
 

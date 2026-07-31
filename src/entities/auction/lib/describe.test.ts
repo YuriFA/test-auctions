@@ -1,6 +1,5 @@
-import { describe, expect, it } from 'vitest'
-
 import type { AuctionStatus, AuctionType, TradingStatus } from '@shared/api'
+import { describe, expect, it } from 'vitest'
 
 import {
   AUCTION_STATUS_CODES,

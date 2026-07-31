@@ -4,7 +4,6 @@ import type {
   AuctionShowResponse,
   BetItem,
 } from '../generated'
-
 import { mockCompetitors, mockCurrentUser } from './user'
 
 // Mock-only extension of AuctionListItemMain that exposes the routing UUID

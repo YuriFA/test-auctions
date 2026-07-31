@@ -27,16 +27,19 @@
  * across all scenarios.
  */
 import { setupServer } from 'msw/node'
+
+import { seedAuctionUuids } from '../src/shared/api/mocks/auctions.ts'
 import { mockHandlers } from '../src/shared/api/mocks/handlers/index.ts'
 import { resetMockRuntime } from '../src/shared/api/mocks/runtime/store.ts'
-import { seedAuctionUuids } from '../src/shared/api/mocks/auctions.ts'
 
 const BASE = 'http://localhost'
 let failures = 0
 
 function assert(name, condition, detail = '') {
   const status = condition ? 'OK  ' : 'FAIL'
-  if (!condition) {failures++}
+  if (!condition) {
+    failures++
+  }
   console.log(`${status} ${name}${detail ? ` — ${detail}` : ''}`)
 }
 
