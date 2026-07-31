@@ -179,6 +179,13 @@ const uuid = main.auction_uuid ?? orderUid
   - request builder logic
   - view model mappers
   - bet validation schema
+- Before committing, run the full verification sequence in order:
+  1. `pnpm fmt` — apply oxfmt formatting first, so subsequent lint/tests run against the same shape that will land in the commit.
+  2. `pnpm lint` — oxlint must pass clean.
+  3. `pnpm test:run` — all logic tests must pass.
+  4. `pnpm build` — `tsc --noEmit` + Vite build must succeed.
+  5. `pnpm smoke` (or specific smoke scripts) when the change touches routes, MSW handlers, or any user-visible page flow.
+  Skipping any step is not allowed; if a step fails, fix the cause before committing.
 - Before committing, re-read every comment added in this change. Delete any that paraphrase the code or reference the task; replace workaround flags with better types.
 - README must document:
   - how to run the project
