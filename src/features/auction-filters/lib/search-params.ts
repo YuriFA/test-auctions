@@ -176,13 +176,14 @@ export function isDefaultFilters(value: AuctionsListFilters): boolean {
   return countActiveFilters(value) === 0
 }
 
+// `cargo_num` is intentionally excluded: the search input is a separate
+// primary action in the page header and shouldn't bump the filter counter.
 // Arrays count as one field regardless of length; an optional counts as
 // active when present (true OR false), since defaults are `undefined`.
 export function countActiveFilters(value: AuctionsListFilters): number {
   let count = 0
   if (value.page !== DEFAULT_PAGE) {count += 1}
   if (value.is_oldest !== DEFAULT_IS_OLDEST) {count += 1}
-  if (value.cargo_num) {count += 1}
   if (value.load_city) {count += 1}
   if (value.unload_city) {count += 1}
   if (value.auc_type.length > 0) {count += 1}

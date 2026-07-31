@@ -107,6 +107,8 @@ This file defines the project-level rules for any AI/LLM agent working in this r
 - Map DTOs to view models in the query hook (`select` option of `useQuery`), not at render time. Render-time mapping runs every render and couples the view to raw DTO shapes.
 - Presentational components take generic intent callbacks (`onIntent`, `onSelect`), not business-specific names (`onPrefetch`, `onFilterActivate`). The parent decides what the signal means; the child just emits it.
 - The interface should be neat, adaptive, and convenient to review on desktop and mobile.
+- When the same JSX structure (element + className + children pattern) repeats, extract it into a local component. Do not replace repetition with class-string constants (`const SECTION_CLASS = '...'`) — class strings belong inline on the element that uses them. A component carries semantics and props; a class constant only hides the obvious.
+- Prefer local helper components inside the same `*.component.tsx` file when the helper is used only there. Promote to its own file only when consumed by more than one component.
 - Respect DTO-driven restrictions in the UI, including:
   - `can_set_bet`
   - `hide_bets_history`

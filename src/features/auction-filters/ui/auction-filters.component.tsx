@@ -23,7 +23,7 @@ export function AuctionFilters() {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         render={
-          <Button type="button" variant="outline" size="sm">
+          <Button type="button" variant="outline">
             <SlidersHorizontalIcon />
             Фильтры
             {activeCount > 0 && (
@@ -34,13 +34,11 @@ export function AuctionFilters() {
           </Button>
         }
       />
-      <SheetContent side="right" className="w-full sm:max-w-md">
+      <SheetContent side="right" className="w-full p-0 sm:max-w-md">
         <SheetHeader>
           <SheetTitle>Фильтры</SheetTitle>
         </SheetHeader>
-        <div className="flex-1 overflow-y-auto px-6 pb-6">
-          <AuctionFiltersForm onApplied={() => setOpen(false)} />
-        </div>
+        <AuctionFiltersForm onApplied={() => setOpen(false)} />
       </SheetContent>
     </Sheet>
   )

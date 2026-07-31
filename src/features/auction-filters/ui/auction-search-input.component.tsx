@@ -2,10 +2,9 @@ import { SearchIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 
-import { DEFAULT_AUCTIONS_LIST_FILTERS, toAuctionsListSearch } from '../lib/search-params'
+import { Input } from '@shared/ui'
 
-const INPUT_CLASS =
-  'h-9 w-full rounded-md border border-input bg-background pl-9 pr-3 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:border-primary focus-visible:outline-none'
+import { DEFAULT_AUCTIONS_LIST_FILTERS, toAuctionsListSearch } from '../lib/search-params'
 
 export function AuctionSearchInput() {
   const navigate = useNavigate({ from: '/auctions' })
@@ -31,9 +30,9 @@ export function AuctionSearchInput() {
   }
 
   return (
-    <div className="relative w-full max-w-xs">
+    <div className="relative w-full flex">
       <SearchIcon className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-      <input
+      <Input
         type="text"
         inputMode="text"
         value={local}
@@ -45,7 +44,7 @@ export function AuctionSearchInput() {
             commit()
           }
         }}
-        className={INPUT_CLASS}
+        className="pl-8 w-48 flex-1 max-w-full"
       />
     </div>
   )

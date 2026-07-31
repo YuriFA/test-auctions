@@ -21,16 +21,23 @@ await page.goto(`${BASE}/auctions`, { waitUntil: 'networkidle' })
 const headerSearch = page.locator('input[placeholder*="номеру заявки"]').first()
 check('search input visible in page header', await headerSearch.isVisible())
 
+const trigger = page.getByRole('button', { name: /Фильтры/ }).first()
+check('filter trigger visible', await trigger.isVisible())
+
 if (await headerSearch.count()) {
   await headerSearch.fill('12345')
   await headerSearch.blur()
   await page.waitForURL(/cargo_num=12345/, { timeout: 2000 }).catch(() => {})
   check('search commits to URL on blur', page.url().includes('cargo_num=12345'), page.url())
+
+  const triggerText = (await trigger.textContent()) ?? ''
+  check(
+    'search does not bump filter counter (separate primary action)',
+    !/\d/.test(triggerText.replace('Фильтры', '').trim()),
+    `trigger="${triggerText.trim()}"`,
+  )
 }
 
-// Trigger visible; no inline panel before opening.
-const trigger = page.getByRole('button', { name: /Фильтры/ }).first()
-check('filter trigger visible', await trigger.isVisible())
 check('no inline filter panel before opening', (await page.locator('fieldset > legend').count()) === 0)
 
 // Open sheet — sections render; checkbox toggle does NOT yet touch URL.
@@ -39,8 +46,8 @@ await page.waitForTimeout(300)
 const legends = await page.locator('fieldset > legend').allTextContents()
 check('sheet renders filter sections after open', legends.length >= 6, `count=${legends.length}`)
 
-const downLabel = page.locator('label:has-text("На понижение")').first()
-await downLabel.locator('input[type="checkbox"]').click()
+const downField = page.locator('[data-slot="field"]:has(label:has-text("На понижение"))').first()
+await downField.locator('[data-slot="checkbox"]').click()
 await page.waitForTimeout(200)
 check('checkbox draft is not committed until Apply', !page.url().includes('auc_type'))
 
@@ -51,6 +58,13 @@ await page.waitForURL(/auc_type=Down/, { timeout: 2000 }).catch(() => {})
 await page.waitForTimeout(400)
 check('Apply commits filters to URL', page.url().includes('auc_type=Down'), page.url())
 check('Apply closes the sheet', (await page.locator('fieldset > legend').count()) === 0)
+
+const triggerTextAfterApply = (await trigger.textContent()) ?? ''
+check(
+  'filter counter reflects committed non-search filters',
+  triggerTextAfterApply.includes('1'),
+  `trigger="${triggerTextAfterApply.trim()}"`,
+)
 
 // Close paths still work: open again, dismiss via backdrop.
 await trigger.click()

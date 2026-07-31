@@ -337,7 +337,13 @@ describe('countActiveFilters', () => {
       status: ['Leading'],
       cargo_num: 'MSK-001',
     }
-    expect(countActiveFilters(value)).toBe(3)
+    expect(countActiveFilters(value)).toBe(2)
+  })
+
+  it('does not count cargo_num — search is a separate primary action', () => {
+    expect(
+      countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, cargo_num: 'MSK-001' }),
+    ).toBe(0)
   })
 
   it('counts is_available as active when set to true OR false', () => {
