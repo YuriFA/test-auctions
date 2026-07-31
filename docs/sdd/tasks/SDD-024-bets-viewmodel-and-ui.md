@@ -2,7 +2,17 @@
 
 ## Статус
 
-Не начато.
+Готово. Реализация вошла в SDD-023: VM-mapper `toAuctionBetsVM` в
+`entities/auction/lib/bets.ts` (9 TDD-тестов: happy-path, empty list,
+nullable-цены, отменённая ставка с причиной, participantCount по
+уникальным `organization_id`, сохранение порядка входящего массива,
+default empty string для отсутствующих строк, null-vs-0 для `place`).
+Query-hook `useAuctionBets` со `select`-маппингом, страница
+`AuctionBetsPage` (shell) + `AuctionBets` (content) потребляет только
+типизированный VM и рендерит место в рейтинге, победителя (Crown),
+отмену с причиной, цену с/без НДС, перевозчика, дату. Empty- и
+restricted-состояния визуально различимы. Подробности — в статусе
+SDD-023 и AI_USAGE.md.
 
 ## Цель
 
