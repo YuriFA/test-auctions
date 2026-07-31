@@ -1,4 +1,4 @@
-import type { AuctionListItem, AuctionStatus, AuctionType } from '@shared/api'
+import type { AuctionListItem, AuctionStatus, AuctionType, TradingStatus } from '@shared/api'
 import { extractAuctionUuid } from '@shared/api'
 
 import { describeAuctionStatus, describeAuctionType, describeTradingStatus } from './describe'
@@ -25,6 +25,7 @@ export type AuctionListItemVM = {
 
   auctionStatus: AuctionStatus | undefined
   auctionStatusLabel: string
+  tradingStatus: TradingStatus | undefined
   tradingStatusLabel: string
   canSetBet: boolean
   hasUserBet: boolean
@@ -78,6 +79,7 @@ export function toAuctionListItemVM(item: AuctionListItem): AuctionListItemVM | 
 
     auctionStatus,
     auctionStatusLabel: auctionStatus ? describeAuctionStatus(auctionStatus) : '—',
+    tradingStatus: statusMobile,
     tradingStatusLabel: statusMobile ? describeTradingStatus(statusMobile) : '—',
     canSetBet: Boolean(trading?.can_set_bet),
     hasUserBet: Boolean(your?.bet),

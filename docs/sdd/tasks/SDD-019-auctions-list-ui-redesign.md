@@ -2,7 +2,13 @@
 
 ## Статус
 
-Не начато.
+Завершено. Formatters и badge-variant mapping'и покрыты TDD (20 + 11 тестов).
+shadcn `Badge` cva расширена тремя semantic variants (`info`/`success`/`warning`)
+через CSS-переменные `:root`/`.dark` (oklch). Карточка переписана с sectioned
+layout: 8 новых stateless presentation-компонентов в `pages/auctions-list/ui/`,
+все используют готовые VM-поля и formatters из `@entities/auction`. Smoke
+подтверждает рендер 17 desktop / 10 mobile карточек, корректность badge-color
+distribution и сохранность hover-prefetch.
 
 ## Цель
 
