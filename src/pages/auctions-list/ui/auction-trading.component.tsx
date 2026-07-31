@@ -2,10 +2,7 @@ import type { AuctionListItemVM } from '@entities/auction'
 import { formatPrice, formatPricePerKm } from '@entities/auction'
 
 interface Props {
-  item: Pick<
-    AuctionListItemVM,
-    'currentPrice' | 'pricePerKm' | 'hasUserBet' | 'userLastBet'
-  >
+  item: Pick<AuctionListItemVM, 'currentPrice' | 'pricePerKm' | 'hasUserBet' | 'userLastBet'>
 }
 
 // Trading block: current price is the second-most-prominent element after the
@@ -32,14 +29,14 @@ export function AuctionTrading({ item }: Props) {
         </div>
       )}
       <dl className="flex flex-col gap-0.5 text-xs text-muted-foreground">
-        {item.pricePerKm != null && item.pricePerKm > 0 && (
-          <div className="flex gap-1">
-            <dt>Цена/км:</dt>
-            <dd className="font-medium text-foreground">
-              {formatPricePerKm(item.currentPrice, item.pricePerKm)}
-            </dd>
-          </div>
-        )}
+        <div className="flex gap-1">
+          <dt>Цена/км:</dt>
+          <dd className="font-medium text-foreground">
+            {item.pricePerKm != null && item.pricePerKm > 0
+              ? formatPricePerKm(item.currentPrice, item.pricePerKm)
+              : '-'}
+          </dd>
+        </div>
         {hasUserBet && (
           <div className="flex gap-1 py-1">
             <dt>Моя ставка:</dt>
