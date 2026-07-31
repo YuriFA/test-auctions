@@ -35,9 +35,6 @@ export function AuctionCargo({ name, weight, volume, bodyType }: Props) {
       )}
       {volume != null && (
         <div className="flex items-center gap-1.5">
-          <span className="flex size-3.5 items-center justify-center text-[0.625rem]" aria-hidden>
-            м³
-          </span>
           <dt className="sr-only">Объём</dt>
           <dd>{formatVolume(volume)}</dd>
         </div>

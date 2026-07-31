@@ -41,13 +41,13 @@ export function AuctionTrading({ item }: Props) {
           </div>
         )}
         {hasUserBet && (
-          <div className="flex gap-1">
+          <div className="flex gap-1 py-1">
             <dt>Моя ставка:</dt>
             <dd className="font-medium text-foreground">{formatPrice(item.userLastBet)}</dd>
           </div>
         )}
         {!hasUserBet && (
-          <div>
+          <div className="py-1">
             <dt className="italic">Нет моей ставки</dt>
           </div>
         )}
