@@ -1,5 +1,6 @@
 export * from './api/query-keys'
 export { useAuctionsList } from './api/use-auctions-list'
+export { usePrefetchAuctionDetail } from './api/use-prefetch-auction-detail'
 export type { AuctionsListViewData } from './api/use-auctions-list'
 export type { AuctionListItemVM } from './lib/list-item'
 export { toAuctionListItemVM } from './lib/list-item'

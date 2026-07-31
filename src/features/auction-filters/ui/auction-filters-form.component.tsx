@@ -9,7 +9,10 @@ import {
   Button,
   Checkbox,
   Field,
+  FieldGroup,
   FieldLabel,
+  FieldLegend,
+  FieldSet,
   Input,
   Select,
   SelectContent,
@@ -78,8 +81,9 @@ export function AuctionFiltersForm({ onApplied }: Props) {
       autoComplete="off"
     >
       <div className="flex-1 overflow-y-auto p-4">
-        <div className="flex flex-col gap-5">
-          <FilterSection title="Тип аукциона">
+        <FieldGroup>
+          <FieldSet>
+            <FieldLegend>Тип аукциона</FieldLegend>
             <Controller
               control={form.control}
               name="auc_type"
@@ -94,9 +98,10 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                 />
               )}
             />
-          </FilterSection>
+          </FieldSet>
 
-          <FilterSection title="Статус аукциона">
+          <FieldSet>
+            <FieldLegend>Статус аукциона</FieldLegend>
             <Controller
               control={form.control}
               name="statuses"
@@ -111,9 +116,10 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                 />
               )}
             />
-          </FilterSection>
+          </FieldSet>
 
-          <FilterSection title="Мой статус в торгах">
+          <FieldSet>
+            <FieldLegend>Мой статус в торгах</FieldLegend>
             <Controller
               control={form.control}
               name="status"
@@ -128,9 +134,10 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                 />
               )}
             />
-          </FilterSection>
+          </FieldSet>
 
-          <FilterSection title="Маршрут">
+          <FieldSet>
+            <FieldLegend>Маршрут</FieldLegend>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field orientation="vertical">
                 <FieldLabel htmlFor="load_city">Город погрузки</FieldLabel>
@@ -139,7 +146,7 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                   name="load_city"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="load_city" className="h-9 w-full">
+                      <SelectTrigger id="load_city" className="w-full">
                         <SelectValue placeholder="Любой город" />
                       </SelectTrigger>
                       <SelectContent>
@@ -161,7 +168,7 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                   name="unload_city"
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger id="unload_city" className="h-9 w-full">
+                      <SelectTrigger id="unload_city" className="w-full">
                         <SelectValue placeholder="Любой город" />
                       </SelectTrigger>
                       <SelectContent>
@@ -177,32 +184,24 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                 />
               </Field>
             </div>
-          </FilterSection>
+          </FieldSet>
 
-          <FilterSection title="Дата погрузки">
+          <FieldSet>
+            <FieldLegend>Дата погрузки</FieldLegend>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field orientation="vertical">
                 <FieldLabel htmlFor="load_date_from">С</FieldLabel>
-                <Input
-                  id="load_date_from"
-                  type="date"
-                  className="h-9"
-                  {...form.register('load_date_from')}
-                />
+                <Input id="load_date_from" type="date" {...form.register('load_date_from')} />
               </Field>
               <Field orientation="vertical">
                 <FieldLabel htmlFor="load_date_to">По</FieldLabel>
-                <Input
-                  id="load_date_to"
-                  type="date"
-                  className="h-9"
-                  {...form.register('load_date_to')}
-                />
+                <Input id="load_date_to" type="date" {...form.register('load_date_to')} />
               </Field>
             </div>
-          </FilterSection>
+          </FieldSet>
 
-          <FilterSection title="Текущая цена (₽)">
+          <FieldSet>
+            <FieldLegend>Текущая цена (₽)</FieldLegend>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field orientation="vertical">
                 <FieldLabel htmlFor="current_price_from">От</FieldLabel>
@@ -216,7 +215,6 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                       inputMode="decimal"
                       min={0}
                       placeholder="0"
-                      className="h-9"
                       value={field.value ?? ''}
                       onChange={(e) => field.onChange(parseOptionalNumber(e.target.value))}
                       onBlur={field.onBlur}
@@ -236,7 +234,6 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                       inputMode="decimal"
                       min={0}
                       placeholder="∞"
-                      className="h-9"
                       value={field.value ?? ''}
                       onChange={(e) => field.onChange(parseOptionalNumber(e.target.value))}
                       onBlur={field.onBlur}
@@ -245,10 +242,11 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                 />
               </Field>
             </div>
-          </FilterSection>
+          </FieldSet>
 
-          <FilterSection title="Дополнительно">
-            <div className="flex flex-col gap-2">
+          <FieldSet>
+            <FieldLegend>Дополнительно</FieldLegend>
+            <FieldGroup>
               <Controller
                 control={form.control}
                 name="is_available"
@@ -277,9 +275,9 @@ export function AuctionFiltersForm({ onApplied }: Props) {
                   </Field>
                 )}
               />
-            </div>
-          </FilterSection>
-        </div>
+            </FieldGroup>
+          </FieldSet>
+        </FieldGroup>
       </div>
 
       <div className="sticky bottom-0 flex items-center justify-between gap-2 border-t border-border bg-popover p-4">
@@ -289,17 +287,6 @@ export function AuctionFiltersForm({ onApplied }: Props) {
         <Button type="submit">Применить</Button>
       </div>
     </form>
-  )
-}
-
-function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <fieldset className="space-y-2">
-      <legend className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-        {title}
-      </legend>
-      {children}
-    </fieldset>
   )
 }
 
@@ -352,7 +339,7 @@ function CheckboxList<T extends string | number>({
   idPrefix: string
 }) {
   return (
-    <div className="flex flex-col gap-2">
+    <FieldGroup>
       {options.map((option) => {
         const id = `${idPrefix}-${option.value}`
         const checked = selected.includes(option.value)
@@ -367,6 +354,6 @@ function CheckboxList<T extends string | number>({
           </Field>
         )
       })}
-    </div>
+    </FieldGroup>
   )
 }

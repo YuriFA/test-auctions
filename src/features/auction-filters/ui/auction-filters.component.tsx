@@ -1,4 +1,13 @@
-import { Button, Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@shared/ui'
+import {
+  Badge,
+  Button,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@shared/ui'
 import { useSearch } from '@tanstack/react-router'
 import { SlidersHorizontalIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
@@ -17,12 +26,12 @@ export function AuctionFilters() {
       <SheetTrigger
         render={
           <Button type="button" variant="outline">
-            <SlidersHorizontalIcon />
+            <SlidersHorizontalIcon data-icon="inline-start" />
             Фильтры
             {activeCount > 0 && (
-              <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-semibold text-primary-foreground">
+              <Badge variant="secondary" className="min-w-5 rounded-full px-1.5">
                 {activeCount}
-              </span>
+              </Badge>
             )}
           </Button>
         }
@@ -30,6 +39,9 @@ export function AuctionFilters() {
       <SheetContent side="right" className="w-full p-0 sm:max-w-md">
         <SheetHeader>
           <SheetTitle>Фильтры</SheetTitle>
+          <SheetDescription className="sr-only">
+            Параметры фильтрации списка аукционов
+          </SheetDescription>
         </SheetHeader>
         <AuctionFiltersForm onApplied={() => setOpen(false)} />
       </SheetContent>

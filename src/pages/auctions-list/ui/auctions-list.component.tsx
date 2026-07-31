@@ -1,22 +1,28 @@
-import { auctionKeys, useAuctionsList } from '@entities/auction'
+import { useAuctionsList, usePrefetchAuctionDetail } from '@entities/auction'
 import {
   DEFAULT_AUCTIONS_LIST_FILTERS,
   buildAuctionListRequest,
   toAuctionsListSearch,
 } from '@features/auction-filters'
-import { fetchAuctionDetail } from '@shared/api'
 import { cn } from '@shared/lib/cn'
-import { useQueryClient } from '@tanstack/react-query'
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Empty,
+  EmptyDescription,
+  EmptyTitle,
+  Skeleton,
+} from '@shared/ui'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useCallback, useMemo } from 'react'
 
 import { AuctionListItemCard } from './auction-list-item-card.component'
 
-const PREFETCH_STALE_TIME_MS = 60_000
-
 export function AuctionsList() {
   const navigate = useNavigate({ from: '/auctions' })
-  const queryClient = useQueryClient()
+  const prefetchAuctionDetail = usePrefetchAuctionDetail()
 
   const search = useSearch({ from: '/auctions' })
   const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
@@ -40,24 +46,16 @@ export function AuctionsList() {
 
   const handleIntent = useCallback(
     (auctionUuid: string) => {
-      void queryClient.prefetchQuery({
-        queryKey: auctionKeys.detail(auctionUuid),
-        queryFn: () => fetchAuctionDetail(auctionUuid),
-        // Avoid refetch on click after hover-prefetch.
-        staleTime: PREFETCH_STALE_TIME_MS,
-      })
+      prefetchAuctionDetail(auctionUuid)
     },
-    [queryClient],
+    [prefetchAuctionDetail],
   )
 
   if (query.isPending) {
     return (
       <div className="flex flex-col gap-3" aria-busy="true" aria-live="polite">
         {Array.from({ length: 5 }).map((_, idx) => (
-          <div
-            key={idx}
-            className="h-20 animate-pulse rounded-lg border border-border bg-muted/40"
-          />
+          <Skeleton key={idx} className="h-20" />
         ))}
       </div>
     )
@@ -65,19 +63,15 @@ export function AuctionsList() {
 
   if (query.isError) {
     return (
-      <section className="flex flex-col items-center gap-3 rounded-lg border border-destructive/50 bg-destructive/5 p-8 text-center">
-        <h2 className="text-base font-semibold text-destructive">Не удалось загрузить аукционы</h2>
-        <p className="max-w-prose text-sm text-muted-foreground">
+      <Alert variant="destructive">
+        <AlertTitle>Не удалось загрузить аукционы</AlertTitle>
+        <AlertDescription>
           {query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'}
-        </p>
-        <button
-          type="button"
-          onClick={() => setPage(filters.page)}
-          className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted"
-        >
+        </AlertDescription>
+        <Button variant="outline" size="sm" onClick={() => setPage(filters.page)}>
           Повторить
-        </button>
-      </section>
+        </Button>
+      </Alert>
     )
   }
 
@@ -85,13 +79,13 @@ export function AuctionsList() {
 
   if (items.length === 0) {
     return (
-      <section className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border bg-card p-10 text-center">
-        <h2 className="text-base font-semibold">Ничего не найдено</h2>
-        <p className="max-w-prose text-sm text-muted-foreground">
+      <Empty>
+        <EmptyTitle>Ничего не найдено</EmptyTitle>
+        <EmptyDescription>
           Под текущие фильтры не подошёл ни один аукцион. Попробуйте сбросить фильтры или изменить
           диапазоны.
-        </p>
-      </section>
+        </EmptyDescription>
+      </Empty>
     )
   }
 
@@ -109,25 +103,25 @@ export function AuctionsList() {
       </section>
 
       <nav className="flex items-center justify-between gap-3" aria-label="Пагинация">
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setPage(currentPage - 1)}
           disabled={query.isFetching || currentPage <= 1}
-          className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
           Назад
-        </button>
+        </Button>
         <span className="text-sm text-muted-foreground">
           {currentPage} / {lastPage}
         </span>
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setPage(currentPage + 1)}
           disabled={query.isFetching || currentPage >= lastPage}
-          className="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50"
         >
           Вперёд
-        </button>
+        </Button>
       </nav>
     </>
   )

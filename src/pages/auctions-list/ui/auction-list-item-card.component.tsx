@@ -1,6 +1,6 @@
 import type { AuctionCardPrimaryAction, AuctionListItemVM } from '@entities/auction'
 import { deriveAuctionCardPrimaryAction } from '@entities/auction'
-import { cn } from '@shared/lib/cn'
+import { Badge, Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from '@shared/ui'
 import { Link } from '@tanstack/react-router'
 
 interface Props {
@@ -59,26 +59,6 @@ function Field({ label, value }: FieldProps) {
   )
 }
 
-interface PillProps {
-  children: string
-  tone?: 'neutral' | 'accent' | 'muted'
-}
-
-function Pill({ children, tone = 'neutral' }: PillProps) {
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center rounded-md border px-1.5 py-0.5 text-[0.625rem] font-medium tracking-wide uppercase',
-        tone === 'neutral' && 'border-border bg-background text-foreground',
-        tone === 'accent' && 'border-primary/30 bg-primary/10 text-primary',
-        tone === 'muted' && 'border-transparent bg-muted text-muted-foreground',
-      )}
-    >
-      {children}
-    </span>
-  )
-}
-
 function PrimaryActionLink({
   action,
   auctionUuid,
@@ -88,9 +68,9 @@ function PrimaryActionLink({
 }) {
   if (action.kind === 'disabled') {
     return (
-      <span className="inline-flex h-7 items-center justify-center rounded-md border border-dashed border-border px-2 text-[0.625rem] font-medium tracking-wide text-muted-foreground uppercase">
+      <Button variant="outline" size="sm" disabled>
         {action.label}
-      </span>
+      </Button>
     )
   }
 
@@ -98,24 +78,25 @@ function PrimaryActionLink({
   // infers params typing from the literal, so a computed value would lose it.
   if (action.route === 'bet') {
     return (
-      <Link
-        to="/auctions/$auctionUuid/bet"
-        params={{ auctionUuid }}
-        className="inline-flex h-7 items-center justify-center rounded-md bg-primary px-3 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+      <Button
+        size="sm"
+        nativeButton={false}
+        render={<Link to="/auctions/$auctionUuid/bet" params={{ auctionUuid }} />}
       >
         {action.label}
-      </Link>
+      </Button>
     )
   }
 
   return (
-    <Link
-      to="/auctions/$auctionUuid/bets"
-      params={{ auctionUuid }}
-      className="inline-flex h-7 items-center justify-center rounded-md border border-border bg-background px-3 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+    <Button
+      variant="outline"
+      size="sm"
+      nativeButton={false}
+      render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}
     >
       {action.label}
-    </Link>
+    </Button>
   )
 }
 
@@ -128,37 +109,36 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
   })
 
   return (
-    <article
-      onMouseEnter={handleIntent}
-      onFocus={handleIntent}
-      className={cn(
-        'group relative flex flex-col gap-3 rounded-lg border border-border bg-card p-4 text-card-foreground shadow-sm transition-colors',
-        'hover:border-primary/40 focus-within:border-primary/40',
-      )}
-    >
-      {/* Stretched link covers the whole card for "click anywhere -> detail". */}
-      <Link
-        to="/auctions/$auctionUuid"
-        params={{ auctionUuid: item.auctionUuid }}
-        aria-label={`Открыть аукцион ${item.cargoNum || 'без номера'}`}
-        className="absolute inset-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
-      />
+    <Card onMouseEnter={handleIntent} onFocus={handleIntent}>
+      <CardHeader>
+        <CardTitle>
+          <Link
+            to="/auctions/$auctionUuid"
+            params={{ auctionUuid: item.auctionUuid }}
+            aria-label={`Открыть аукцион ${item.cargoNum || 'без номера'}`}
+          >
+            {item.cargoNum || 'Без номера заявки'}
+          </Link>
+        </CardTitle>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="secondary">{item.aucTypeLabel}</Badge>
+          <Badge variant="outline">{item.auctionStatusLabel}</Badge>
+          {item.tradingStatusLabel !== '—' && (
+            <Badge variant="default">{item.tradingStatusLabel}</Badge>
+          )}
+        </div>
+      </CardHeader>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <h3 className="text-sm font-semibold">{item.cargoNum || 'Без номера заявки'}</h3>
-        <Pill tone="muted">{item.aucTypeLabel}</Pill>
-        <Pill>{item.auctionStatusLabel}</Pill>
-        {item.tradingStatusLabel !== '—' && <Pill tone="accent">{item.tradingStatusLabel}</Pill>}
-      </div>
+      <CardContent>
+        <div className="flex flex-col gap-1">
+          <p className="text-sm font-medium text-foreground">
+            {item.direction || 'Маршрут не задан'}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Погрузка: {tryFormatDate(item.loadDate)} · Разгрузка: {tryFormatDate(item.unloadDate)}
+          </p>
+        </div>
 
-      <div className="flex flex-col gap-1">
-        <p className="text-sm font-medium text-foreground">{item.direction || 'Маршрут не задан'}</p>
-        <p className="text-xs text-muted-foreground">
-          Погрузка: {tryFormatDate(item.loadDate)} · Разгрузка: {tryFormatDate(item.unloadDate)}
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <dl className="grid grid-cols-2 gap-x-4 gap-y-2 sm:grid-cols-4">
           <Field label="Груз" value={item.cargoName || '—'} />
           <Field label="Тип кузова" value={item.cargoBodyType || '—'} />
@@ -174,12 +154,11 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
             />
           )}
         </dl>
+      </CardContent>
 
-        {/* z-10 lifts the CTA above the stretched link so it stays clickable. */}
-        <div className="relative z-10 self-start sm:self-end">
-          <PrimaryActionLink action={action} auctionUuid={item.auctionUuid} />
-        </div>
-      </div>
-    </article>
+      <CardFooter className="justify-end">
+        <PrimaryActionLink action={action} auctionUuid={item.auctionUuid} />
+      </CardFooter>
+    </Card>
   )
 }

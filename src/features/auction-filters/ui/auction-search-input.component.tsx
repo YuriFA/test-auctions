@@ -1,4 +1,4 @@
-import { Input } from '@shared/ui'
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@shared/ui'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { SearchIcon } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -26,9 +26,11 @@ export function AuctionSearchInput() {
   }
 
   return (
-    <div className="relative flex w-full">
-      <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-      <Input
+    <InputGroup className="w-48 max-w-full">
+      <InputGroupAddon align="inline-start">
+        <SearchIcon />
+      </InputGroupAddon>
+      <InputGroupInput
         type="text"
         inputMode="text"
         value={local}
@@ -40,8 +42,7 @@ export function AuctionSearchInput() {
             commit()
           }
         }}
-        className="w-48 max-w-full flex-1 pl-8"
       />
-    </div>
+    </InputGroup>
   )
 }

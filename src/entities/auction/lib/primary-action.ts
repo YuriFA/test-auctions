@@ -9,11 +9,7 @@ import type { AuctionStatus } from '@shared/api'
 //   2. `can_set_bet && !hasUserBet` -> place-bet.
 //   3. `can_set_bet && hasUserBet`  -> change-bet.
 //   4. otherwise                    -> view-bets (still readable, just no input).
-export type AuctionCardPrimaryActionKind =
-  | 'place-bet'
-  | 'change-bet'
-  | 'view-bets'
-  | 'disabled'
+export type AuctionCardPrimaryActionKind = 'place-bet' | 'change-bet' | 'view-bets' | 'disabled'
 
 export type AuctionCardPrimaryActionRoute = 'bet' | 'bets' | 'detail'
 
