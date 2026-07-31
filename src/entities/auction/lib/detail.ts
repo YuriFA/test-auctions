@@ -128,7 +128,8 @@ export type AuctionDetailVM = {
   // routes
   routes: AuctionDetailRoutePointVM[]
 
-  // restrictions — SDD-022 will centralize, detail reads flags directly today
+  // Raw restriction flags — consumers derive interpretation via
+  // deriveAuctionRestrictions (SDD-022), never read these directly in UI.
   canSetBet: boolean
   hideBetsHistory: boolean
   hidePointsAddressAndContacts: boolean

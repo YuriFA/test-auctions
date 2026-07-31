@@ -2,7 +2,18 @@
 
 ## Статус
 
-Не начато.
+Готово. Добавлен чистый owner-модуль `deriveAuctionRestrictions`
+в `entities/auction/lib/restrictions.ts` (7 TDD-тестов: all-open,
+каждый флаг индивидуально инвертируется, fully-locked, независимость
+флагов). Detail-страница деривирует `restrictions` один раз в
+`AuctionDetailContent` и пробрасывает в детей; прямые чтения
+`vm.hideBetsHistory`/`hidePointsAddressAndContacts`/`noViewCargoPrice`/
+`canSetBet` (вне primary-action) убраны. `deriveAuctionCardPrimaryAction`
+получает `canSetBet: restrictions.canPlaceBet` — SDD-020 читает
+результат SDD-022, не сырой флаг. Контрактное ограничение: list-item
+DTO не содержит `hide_bets_history` и `no_view_cargo_price` — карточка
+не может энфорсить эти флаги без detail-данных; в матрице приёмки это
+остаётся будущей работой, если контракт расширится.
 
 ## Цель
 

@@ -20,6 +20,11 @@ export type {
   AuctionCardPrimaryActionSource,
 } from './lib/primary-action'
 export { deriveAuctionCardPrimaryAction } from './lib/primary-action'
+export type {
+  AuctionRestrictionSource,
+  AuctionRestrictions,
+} from './lib/restrictions'
+export { deriveAuctionRestrictions } from './lib/restrictions'
 export {
   AUCTION_STATUS_CODES,
   AUCTION_STATUS_LABELS,

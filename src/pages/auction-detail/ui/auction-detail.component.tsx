@@ -1,9 +1,10 @@
-import type { AuctionDetailVM } from '@entities/auction'
+import type { AuctionDetailVM, AuctionRestrictions } from '@entities/auction'
 import {
   AuctionStatusBadge,
   AuctionTypeBadge,
   TradingStatusBadge,
   deriveAuctionCardPrimaryAction,
+  deriveAuctionRestrictions,
   formatDate,
   formatPrice,
   useAuctionDetail,
@@ -87,14 +88,24 @@ interface ContentProps {
 }
 
 function AuctionDetailContent({ vm, auctionUuid }: ContentProps) {
+  const restrictions = useMemo(
+    () =>
+      deriveAuctionRestrictions({
+        canSetBet: vm.canSetBet,
+        hideBetsHistory: vm.hideBetsHistory,
+        hidePointsAddressAndContacts: vm.hidePointsAddressAndContacts,
+        noViewCargoPrice: vm.noViewCargoPrice,
+      }),
+    [vm.canSetBet, vm.hideBetsHistory, vm.hidePointsAddressAndContacts, vm.noViewCargoPrice],
+  )
   const action = useMemo(
     () =>
       deriveAuctionCardPrimaryAction({
         auctionStatus: vm.auctionStatus,
-        canSetBet: vm.canSetBet,
+        canSetBet: restrictions.canPlaceBet,
         hasUserBet: vm.hasUserBet,
       }),
-    [vm.auctionStatus, vm.canSetBet, vm.hasUserBet],
+    [vm.auctionStatus, restrictions.canPlaceBet, vm.hasUserBet],
   )
 
   return (
@@ -118,20 +129,20 @@ function AuctionDetailContent({ vm, auctionUuid }: ContentProps) {
         </div>
       </header>
 
-      <DetailActionBar action={action} auctionUuid={auctionUuid} vm={vm} />
+      <DetailActionBar action={action} auctionUuid={auctionUuid} restrictions={restrictions} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <OrganizerCard vm={vm} />
-        <ContactsCard vm={vm} />
+        <ContactsCard vm={vm} restrictions={restrictions} />
         <PaymentCard vm={vm} />
-        <YourBetCard vm={vm} />
+        <YourBetCard vm={vm} restrictions={restrictions} />
       </div>
 
-      <RoutesCard vm={vm} />
+      <RoutesCard vm={vm} restrictions={restrictions} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <CargoCard vm={vm} />
-        <TradingCard vm={vm} />
+        <TradingCard vm={vm} restrictions={restrictions} />
       </div>
     </PageContainer>
   )
@@ -155,13 +166,13 @@ function BackLink() {
 interface DetailActionBarProps {
   action: ReturnType<typeof deriveAuctionCardPrimaryAction>
   auctionUuid: string
-  vm: AuctionDetailVM
+  restrictions: AuctionRestrictions
 }
 
 // Two distinct Link branches keep `to` a string literal — TanStack Router
 // infers params typing from the literal. The disabled branch renders a plain
 // Button. The bets-link is suppressed when the auction hides its history.
-function DetailActionBar({ action, auctionUuid, vm }: DetailActionBarProps) {
+function DetailActionBar({ action, auctionUuid, restrictions }: DetailActionBarProps) {
   if (action.kind === 'disabled') {
     return (
       <div className="flex flex-wrap items-center gap-2">
@@ -183,7 +194,7 @@ function DetailActionBar({ action, auctionUuid, vm }: DetailActionBarProps) {
           {action.label}
         </Button>
       )}
-      {!vm.hideBetsHistory && (
+      {restrictions.canViewBetsHistory && (
         <Button variant="ghost" nativeButton={false} render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}>
           История ставок
         </Button>
@@ -226,11 +237,16 @@ function OrganizerCard({ vm }: { vm: AuctionDetailVM }) {
   )
 }
 
-function ContactsCard({ vm }: { vm: AuctionDetailVM }) {
+function ContactsCard({
+  vm,
+  restrictions,
+}: {
+  vm: AuctionDetailVM
+  restrictions: AuctionRestrictions
+}) {
   // hide_points_address_and_contacts also hides organizer-level contacts per
-  // SDD-022 matrix. SDD-022 will own the rule centrally; detail reads the
-  // flag directly today.
-  if (vm.hidePointsAddressAndContacts) {
+  // SDD-022 matrix — derived once in the parent via deriveAuctionRestrictions.
+  if (!restrictions.canViewContacts) {
     return null
   }
   if (vm.contacts.length === 0) {
@@ -274,7 +290,13 @@ function ContactsCard({ vm }: { vm: AuctionDetailVM }) {
   )
 }
 
-function RoutesCard({ vm }: { vm: AuctionDetailVM }) {
+function RoutesCard({
+  vm,
+  restrictions,
+}: {
+  vm: AuctionDetailVM
+  restrictions: AuctionRestrictions
+}) {
   if (vm.routes.length === 0) {
     return null
   }
@@ -297,7 +319,7 @@ function RoutesCard({ vm }: { vm: AuctionDetailVM }) {
                   <span className="text-sm text-muted-foreground">· {point.cityName}</span>
                 )}
               </div>
-              {!vm.hidePointsAddressAndContacts && point.loadingAddress && (
+              {restrictions.canViewContacts && point.loadingAddress && (
                 <div className="text-xs text-muted-foreground">{point.loadingAddress}</div>
               )}
               {(point.startDate || point.endDate) && (
@@ -325,7 +347,7 @@ function RoutesCard({ vm }: { vm: AuctionDetailVM }) {
                   {point.cargo.oversized && <span className="ml-2">· негабарит</span>}
                 </div>
               )}
-              {!vm.hidePointsAddressAndContacts && (point.contactName || point.contactPhone) && (
+              {restrictions.canViewContacts && (point.contactName || point.contactPhone) && (
                 <div className="text-xs text-muted-foreground">
                   {point.contactName}
                   {point.contactPhone && (
@@ -417,7 +439,13 @@ function PaymentCard({ vm }: { vm: AuctionDetailVM }) {
   )
 }
 
-function TradingCard({ vm }: { vm: AuctionDetailVM }) {
+function TradingCard({
+  vm,
+  restrictions,
+}: {
+  vm: AuctionDetailVM
+  restrictions: AuctionRestrictions
+}) {
   return (
     <Card>
       <CardHeader>
@@ -429,7 +457,7 @@ function TradingCard({ vm }: { vm: AuctionDetailVM }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="text-sm">
-        {vm.noViewCargoPrice ? (
+        {!restrictions.canViewCargoPrice ? (
           <p className="text-muted-foreground">
             Цены скрыты организатором торгов.
           </p>
@@ -472,7 +500,13 @@ function PriceRow({
   )
 }
 
-function YourBetCard({ vm }: { vm: AuctionDetailVM }) {
+function YourBetCard({
+  vm,
+  restrictions,
+}: {
+  vm: AuctionDetailVM
+  restrictions: AuctionRestrictions
+}) {
   // The user's own bet is rendered separately from the bets history (SDD-023)
   // — this card is the "current state" snapshot.
   if (!vm.hasUserBet) {
@@ -483,7 +517,7 @@ function YourBetCard({ vm }: { vm: AuctionDetailVM }) {
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            {vm.canSetBet
+            {restrictions.canPlaceBet
               ? 'Вы ещё не сделали ставку по этому аукциону.'
               : 'Ставки по этому аукциону недоступны.'}
           </p>
