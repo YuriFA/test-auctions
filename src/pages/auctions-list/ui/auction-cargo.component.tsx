@@ -20,10 +20,10 @@ export function AuctionCargo({ name, weight, volume, bodyType }: Props) {
   return (
     <dl className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
       {name && (
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0 w-full">
           <Package className="size-3.5" aria-hidden />
           <dt className="sr-only">Груз</dt>
-          <dd className="font-medium text-foreground">{name}</dd>
+          <dd>{name}</dd>
         </div>
       )}
       {weight != null && (
