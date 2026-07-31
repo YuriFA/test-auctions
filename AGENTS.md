@@ -150,6 +150,9 @@ const API_AUC_TYPES = ['Request', 'Up', 'Down', 'FixPrice'] as const
 ## Testing And Verification Rules
 
 - The project must run locally.
+- Smoke scripts (`scripts/*-smoke.mjs`) live outside `pnpm check`.
+  - `pnpm smoke` is the single entry point: it starts `vite dev` on `:5175`, waits until it is ready, runs every smoke (MSW-node first via `tsx`, then browser smokes via Playwright), and tears the dev server down on success or failure. Override the port with `SMOKE_PORT` / `SMOKE_BASE` if needed.
+  - For a narrower run, invoke a script directly: `node scripts/list-page-smoke.mjs` (browser group — needs `pnpm dev` up) or `pnpm exec tsx scripts/msw-list-smoke.mjs` (MSW-node group — no dev server needed).
 - At minimum, maintain logic tests for:
   - search params parsing
   - request builder logic

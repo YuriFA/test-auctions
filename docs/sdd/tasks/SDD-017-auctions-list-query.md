@@ -46,4 +46,4 @@
 - Состояния: skeleton (5 анимированных placeholder-блоков), empty (dashed border + подсказка), error (destructive border + кнопка «Повторить»). `isFetching` снижает opacity списка при дозагрузке следующей страницы.
 - Пагинация: кнопки «Назад»/«Вперёд» + индикатор «current / last». `lastPage <= 1` скрывает контрол. `setPage` обновляет URL через `navigate({ search: ... })`, что автоматически перезапускает query.
 - `fsd/insignificant-slice` остался отключенным в `steiger.config.ts` (comment обновлён): `entities/auction` и `features/auction-filters` имеют по одному потребителю до SDD-018/019.
-- Smoke-скрипт `scripts/list-page-smoke.mjs` (не в `pnpm check`): 4 проверки — h1, 10 карточек, hover-prefetch GET на detail, наличие/отсутствие пагинации. Запуск: `node scripts/list-page-smoke.mjs` при поднятом `pnpm dev`.
+- Smoke-скрипт `scripts/list-page-smoke.mjs` (не в `pnpm check`): 4 проверки — h1, наличие карточек, hover-prefetch GET на detail, наличие/отсутствие пагинации. Запуск: весь набор через `pnpm smoke` (сам поднимает dev); узкий прогон — `node scripts/list-page-smoke.mjs` при поднятом `pnpm dev`.
