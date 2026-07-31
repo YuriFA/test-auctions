@@ -5,20 +5,20 @@ OpenAPI contract (`docs/openapi.auctions.v0.json`), mocked end-to-end with MSW.
 
 ## Stack
 
-| Concern | Choice |
-| --- | --- |
-| UI library | React + TypeScript |
-| Build tool | Vite |
-| Routing | TanStack Router (code-based, typed `validateSearch`) |
-| Server state | TanStack Query (handwritten hooks, generated SDK isolated) |
-| Forms | React Hook Form |
-| Validation | Zod |
-| Mock API | MSW (single in-memory runtime store) |
-| Client UI state | Zustand |
-| Styling | Tailwind CSS v4 + `shadcn/ui` |
-| Architecture | Feature-Sliced Design |
-| Codegen | Hey API → `src/shared/api/generated/` |
-| Formatter / linter | oxfmt + oxlint, plus Steiger for FSD boundaries |
+| Concern            | Choice                                                     |
+| ------------------ | ---------------------------------------------------------- |
+| UI library         | React + TypeScript                                         |
+| Build tool         | Vite                                                       |
+| Routing            | TanStack Router (code-based, typed `validateSearch`)       |
+| Server state       | TanStack Query (handwritten hooks, generated SDK isolated) |
+| Forms              | React Hook Form                                            |
+| Validation         | Zod                                                        |
+| Mock API           | MSW (single in-memory runtime store)                       |
+| Client UI state    | Zustand                                                    |
+| Styling            | Tailwind CSS v4 + `shadcn/ui`                              |
+| Architecture       | Feature-Sliced Design                                      |
+| Codegen            | Hey API → `src/shared/api/generated/`                      |
+| Formatter / linter | oxfmt + oxlint, plus Steiger for FSD boundaries            |
 
 ## Run
 
