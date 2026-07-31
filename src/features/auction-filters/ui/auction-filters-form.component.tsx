@@ -246,7 +246,7 @@ export function AuctionFiltersForm({ onApplied }: Props) {
 
           <FieldSet>
             <FieldLegend>Дополнительно</FieldLegend>
-            <FieldGroup>
+            <FieldGroup data-slot="checkbox-group">
               <Controller
                 control={form.control}
                 name="is_available"
@@ -339,7 +339,7 @@ function CheckboxList<T extends string | number>({
   idPrefix: string
 }) {
   return (
-    <FieldGroup>
+    <FieldGroup data-slot="checkbox-group">
       {options.map((option) => {
         const id = `${idPrefix}-${option.value}`
         const checked = selected.includes(option.value)
