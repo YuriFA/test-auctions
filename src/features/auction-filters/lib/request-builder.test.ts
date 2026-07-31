@@ -45,7 +45,10 @@ describe('buildAuctionListRequest', () => {
 
   describe('cargo_num', () => {
     it('maps non-empty cargo_num as a string', () => {
-      const filters: AuctionsListFilters = { ...DEFAULT_AUCTIONS_LIST_FILTERS, cargo_num: 'MSK-001' }
+      const filters: AuctionsListFilters = {
+        ...DEFAULT_AUCTIONS_LIST_FILTERS,
+        cargo_num: 'MSK-001',
+      }
       expect(buildAuctionListRequest(filters)).toEqual({ cargo_num: 'MSK-001' })
     })
 
@@ -230,14 +233,14 @@ describe('buildAuctionListRequest', () => {
   })
 
   describe('leakage guards', () => {
-    it('does not emit weight_* fields (out of minimum scope per D-014)', () => {
+    it('does not emit weight_* fields', () => {
       const filters: AuctionsListFilters = { ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 2 }
       const request = buildAuctionListRequest(filters)
       expect(request).not.toHaveProperty('weight_from')
       expect(request).not.toHaveProperty('weight_to')
     })
 
-    it('does not emit volume_* fields (out of minimum scope per D-014)', () => {
+    it('does not emit volume_* fields', () => {
       const filters: AuctionsListFilters = { ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 2 }
       const request = buildAuctionListRequest(filters)
       expect(request).not.toHaveProperty('volume_from')

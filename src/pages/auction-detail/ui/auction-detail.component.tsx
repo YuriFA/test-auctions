@@ -1,6 +1,6 @@
 import { Link, useParams } from '@tanstack/react-router'
 
-export function AuctionDetailComponent() {
+export function AuctionDetail() {
   const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid' })
 
   return (
@@ -8,6 +8,7 @@ export function AuctionDetailComponent() {
       <header className="flex flex-col gap-2">
         <Link
           to="/auctions"
+          search={{}}
           className="text-xs font-medium uppercase tracking-wide text-muted-foreground hover:text-foreground"
         >
           ← Back to auctions

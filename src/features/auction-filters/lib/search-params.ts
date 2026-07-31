@@ -99,15 +99,15 @@ export function parseAuctionsListSearchParams(
 }
 
 function parsePage(raw: string | null): number {
-  if (raw === null) return DEFAULT_PAGE
+  if (raw === null) {return DEFAULT_PAGE}
   const num = Number(raw)
-  if (!Number.isInteger(num) || num <= 0) return DEFAULT_PAGE
+  if (!Number.isInteger(num) || num <= 0) {return DEFAULT_PAGE}
   return num
 }
 
 function parseSortFlag(raw: string | null): boolean {
-  if (raw === 'true') return true
-  if (raw === 'false') return false
+  if (raw === 'true') {return true}
+  if (raw === 'false') {return false}
   return DEFAULT_IS_OLDEST
 }
 
@@ -122,49 +122,46 @@ function parseNumericStatuses(values: string[]): number[] {
   return values
     .map((v) => Number(v))
     .filter(
-      (n): n is number =>
-        Number.isInteger(n) && n >= AUCTION_STATUS_MIN && n <= AUCTION_STATUS_MAX,
+      (n): n is number => Number.isInteger(n) && n >= AUCTION_STATUS_MIN && n <= AUCTION_STATUS_MAX,
     )
 }
 
 function parseOptionalNumber(raw: string | null): number | undefined {
-  if (raw === null || raw === '') return undefined
+  if (raw === null || raw === '') {return undefined}
   const num = Number(raw)
-  if (!Number.isFinite(num)) return undefined
+  if (!Number.isFinite(num)) {return undefined}
   return num
 }
 
 function parseOptionalBoolean(raw: string | null): boolean | undefined {
-  if (raw === 'true') return true
-  if (raw === 'false') return false
+  if (raw === 'true') {return true}
+  if (raw === 'false') {return false}
   return undefined
 }
 
 // Defaults are intentionally not serialized so URLs stay readable and
 // resilient to default changes. Arrays become repeated keys, not CSV.
-export function serializeAuctionsListSearchParams(
-  value: AuctionsListFilters,
-): URLSearchParams {
+export function serializeAuctionsListSearchParams(value: AuctionsListFilters): URLSearchParams {
   const out = new URLSearchParams()
 
-  if (value.page !== DEFAULT_PAGE) out.set('page', String(value.page))
-  if (value.is_oldest !== DEFAULT_IS_OLDEST) out.set('is_oldest', String(value.is_oldest))
-  if (value.cargo_num) out.set('cargo_num', value.cargo_num)
-  if (value.load_city) out.set('load_city', value.load_city)
-  if (value.unload_city) out.set('unload_city', value.unload_city)
-  for (const t of value.auc_type) out.append('auc_type', t)
-  for (const s of value.status) out.append('status', s)
-  for (const s of value.statuses) out.append('statuses', String(s))
+  if (value.page !== DEFAULT_PAGE) {out.set('page', String(value.page))}
+  if (value.is_oldest !== DEFAULT_IS_OLDEST) {out.set('is_oldest', String(value.is_oldest))}
+  if (value.cargo_num) {out.set('cargo_num', value.cargo_num)}
+  if (value.load_city) {out.set('load_city', value.load_city)}
+  if (value.unload_city) {out.set('unload_city', value.unload_city)}
+  for (const t of value.auc_type) {out.append('auc_type', t)}
+  for (const s of value.status) {out.append('status', s)}
+  for (const s of value.statuses) {out.append('statuses', String(s))}
   if (typeof value.current_price_from === 'number') {
     out.set('current_price_from', String(value.current_price_from))
   }
   if (typeof value.current_price_to === 'number') {
     out.set('current_price_to', String(value.current_price_to))
   }
-  if (value.create_date_from) out.set('create_date_from', value.create_date_from)
-  if (value.create_date_to) out.set('create_date_to', value.create_date_to)
-  if (value.load_date_from) out.set('load_date_from', value.load_date_from)
-  if (value.load_date_to) out.set('load_date_to', value.load_date_to)
+  if (value.create_date_from) {out.set('create_date_from', value.create_date_from)}
+  if (value.create_date_to) {out.set('create_date_to', value.create_date_to)}
+  if (value.load_date_from) {out.set('load_date_from', value.load_date_from)}
+  if (value.load_date_to) {out.set('load_date_to', value.load_date_to)}
   if (typeof value.is_available === 'boolean') {
     out.set('is_available', String(value.is_available))
   }
@@ -183,21 +180,71 @@ export function isDefaultFilters(value: AuctionsListFilters): boolean {
 // active when present (true OR false), since defaults are `undefined`.
 export function countActiveFilters(value: AuctionsListFilters): number {
   let count = 0
-  if (value.page !== DEFAULT_PAGE) count += 1
-  if (value.is_oldest !== DEFAULT_IS_OLDEST) count += 1
-  if (value.cargo_num) count += 1
-  if (value.load_city) count += 1
-  if (value.unload_city) count += 1
-  if (value.auc_type.length > 0) count += 1
-  if (value.status.length > 0) count += 1
-  if (value.statuses.length > 0) count += 1
-  if (typeof value.current_price_from === 'number') count += 1
-  if (typeof value.current_price_to === 'number') count += 1
-  if (value.create_date_from) count += 1
-  if (value.create_date_to) count += 1
-  if (value.load_date_from) count += 1
-  if (value.load_date_to) count += 1
-  if (typeof value.is_available === 'boolean') count += 1
-  if (typeof value.is_bidder === 'boolean') count += 1
+  if (value.page !== DEFAULT_PAGE) {count += 1}
+  if (value.is_oldest !== DEFAULT_IS_OLDEST) {count += 1}
+  if (value.cargo_num) {count += 1}
+  if (value.load_city) {count += 1}
+  if (value.unload_city) {count += 1}
+  if (value.auc_type.length > 0) {count += 1}
+  if (value.status.length > 0) {count += 1}
+  if (value.statuses.length > 0) {count += 1}
+  if (typeof value.current_price_from === 'number') {count += 1}
+  if (typeof value.current_price_to === 'number') {count += 1}
+  if (value.create_date_from) {count += 1}
+  if (value.create_date_to) {count += 1}
+  if (value.load_date_from) {count += 1}
+  if (value.load_date_to) {count += 1}
+  if (typeof value.is_available === 'boolean') {count += 1}
+  if (typeof value.is_bidder === 'boolean') {count += 1}
   return count
+}
+
+export type AuctionsListSearch = Partial<AuctionsListFilters>
+
+export function parseAuctionsListSearch(raw: Record<string, unknown>): AuctionsListSearch {
+  return toAuctionsListSearch(auctionsListFiltersSchema.parse(normalizeRecordSearch(raw)))
+}
+
+export function toAuctionsListSearch(filters: AuctionsListFilters): AuctionsListSearch {
+  return pickActiveFilters(filters)
+}
+
+function pickActiveFilters(filters: AuctionsListFilters): AuctionsListSearch {
+  const out: AuctionsListSearch = {}
+  if (filters.page !== DEFAULT_PAGE) {out.page = filters.page}
+  if (filters.is_oldest !== DEFAULT_IS_OLDEST) {out.is_oldest = filters.is_oldest}
+  if (filters.cargo_num) {out.cargo_num = filters.cargo_num}
+  if (filters.load_city) {out.load_city = filters.load_city}
+  if (filters.unload_city) {out.unload_city = filters.unload_city}
+  if (filters.auc_type.length > 0) {out.auc_type = filters.auc_type}
+  if (filters.status.length > 0) {out.status = filters.status}
+  if (filters.statuses.length > 0) {out.statuses = filters.statuses}
+  if (typeof filters.current_price_from === 'number') {
+    out.current_price_from = filters.current_price_from
+  }
+  if (typeof filters.current_price_to === 'number') {
+    out.current_price_to = filters.current_price_to
+  }
+  if (filters.create_date_from) {out.create_date_from = filters.create_date_from}
+  if (filters.create_date_to) {out.create_date_to = filters.create_date_to}
+  if (filters.load_date_from) {out.load_date_from = filters.load_date_from}
+  if (filters.load_date_to) {out.load_date_to = filters.load_date_to}
+  if (typeof filters.is_available === 'boolean') {out.is_available = filters.is_available}
+  if (typeof filters.is_bidder === 'boolean') {out.is_bidder = filters.is_bidder}
+  return out
+}
+
+function normalizeRecordSearch(raw: Record<string, unknown>): Record<string, string[]> {
+  const out: Record<string, string[]> = {}
+  for (const [key, value] of Object.entries(raw)) {
+    if (typeof value === 'string') {
+      out[key] = [value]
+    } else if (Array.isArray(value)) {
+      const strings = value.filter((v): v is string => typeof v === 'string')
+      if (strings.length > 0) {out[key] = strings}
+    } else if (typeof value === 'number' || typeof value === 'boolean') {
+      out[key] = [String(value)]
+    }
+  }
+  return out
 }

@@ -15,20 +15,21 @@
 - MSW-handler'ы на все 4 эндпоинта: `POST /auctions/list` (SDD-011), `GET /auctions/{auctionUuid}` (SDD-012), `GET /auctions/{auctionUuid}/bets` (SDD-013), `POST /auctions/{auctionUuid}/bets` (SDD-014). Все ошибки идут с `content-type: application/problem+json`.
 - URL-контракт фильтров списка в `features/auction-filters` (SDD-015): parse/serialize/defaults с round-trip-инвариантом, 47 TDD-тестов. Vitest + Zod установлены, `pnpm test`/`pnpm test:run` добавлены.
 - Request builder `buildAuctionListRequest` в `features/auction-filters/lib/request-builder.ts` (SDD-016): транслирует типизированный объект фильтров в тело `AuctionListRequest`, пропуская default-значения, фильтруя UI-only enum (`auc_type: 'Unknown'`), не протекая в admin-only поля. 31 TDD-тест.
+- Auctions list query + page composition (SDD-017): TanStack Query hook `useAuctionsList` в `entities/auction/api/` с `select`-маппингом DTO → `AuctionsListViewData` (маппер `toAuctionListItemVM` в `entities/auction/lib/`); prefetch-on-hover через `queryClient.prefetchQuery` во владельце list-page; состояния skeleton/empty/error через ранние return'ы; пагинация через URL search params; типизированный `useSearch` через `validateSearch` на route + кастомные `parseSearch`/`stringifySearch` на router (повторяющиеся ключи для массивов, без default-значений). Page-structure: shell `AuctionsPage` (frame + header) + content `AuctionsList` (hooks + ранние return'ы + success-рендер), Public API слайса экспортирует только shell. Первый реальный потребитель `shared/api` адаптера.
 
 ## Замечания о текущем покрытии
 
-- UI пока placeholder-оболочка, не приложение аукционов. Инфраструктура зрелая.
-- `SDD-001..014` завершены. `SDD-015` (URL-контракт фильтров) и `SDD-016` (request builder) завершены как TDD-задачи на Vitest. `SDD-017+` — UI и флоу.
+- UI страницы списка теперь реальный (загрузка, skeleton, empty, error, пагинация, prefetch), но карточка пока placeholder — полную карточку даст SDD-019. Детальная страница и ставка всё ещё placeholder.
+- `SDD-001..014` завершены. `SDD-015` (URL-контракт фильтров), `SDD-016` (request builder), `SDD-017` (list query + composition) завершены. `SDD-018+` — фильтры UI, карточка, detail/bets/bet-форма.
 - `SDD-005`: TanStack Router в code-based режиме (`RouterProvider` + `QueryClientProvider` в `app.component.tsx`); QueryClient-синглтон в `app/lib/`; маршруты в `app/routes/`, страницы в `pages/<slice>/ui/`.
 - `SDD-007`: адаптер превращает `RequestResult` Hey API в `ApiError`/`ApiValidationError`; граница `generated` держится на структуре папок и Public API.
-- `SDD-008`: иерархические ключи делают bets потомком detail — план инвалидации читается как документация. steiger-правило `fsd/insignificant-slice` отключено до SDD-017 (первого потребителя).
+- `SDD-008`: иерархические ключи делают bets потомком detail — план инвалидации читается как документация. steiger-правило `fsd/insignificant-slice` остаётся отключенным: `entities/auction` и `features/auction-filters` имеют по одному потребителю (`pages/auctions-list`) до SDD-018/019.
 - `SDD-010`: один module-level `state.auctions` для всех handler'ов; мутация `writeBet` отвергает предыдущую активную ставку, пересчитывает места, обновляет trading-блок в list+detail DTO согласованно. 404 на неизвестном UUID, 422 на `price <= 0`.
 - `SDD-011..014`: каждый handler — тонкая HTTP-обёртка над store, владеет только HTTP-конвертом; path-паттерн `*/api/v1/auctions/...` с leading-wildcard работает и в browser-worker, и в Node `setupServer`. Односегментный placeholder `:auctionUuid` + метод-диспатч MSW держат handlers без конфликтов.
 - `SDD-014`: спецификация помечает 200-ответ set-bet как `unknown`; адаптер `placeBet` возвращает `void`, mock тем не менее отдаёт `BetItem` — forward-compatible.
 - `SDD-015`: контракт в `features/auction-filters` (новый feature-слайс). Реализация без runtime-Zod — это прямая JSON-подобная трансформация; Zod пригодится в SDD-024. URL не содержит admin-only полей (`customer`, `per_page`).
 - `SDD-016`: builder `buildAuctionListRequest` — чистая функция `AuctionsListFilters → AuctionListRequest`. Default-значения не отправляются (пустой фильтр → `{}`), `auc_type: 'Unknown'` отсекается (UI-only), `weight_*`/`volume_*` намеренно не маппятся (D-014). Canonical-имя `AuctionListRequest` добавлено в Public API `shared/api` (ранее был только alias `AuctionListFilters`).
-- Smoke-скрипты: list (7 сценариев / 33 assertion), detail (6 / 25), bets (9 / 34), set-bet (9 / ~55). Запускаются по требованию через `npx tsx scripts/msw-*-smoke.mjs`; в `pnpm check` не входят.
+- Smoke-скрипты: MSW-list (7 сценариев / 33 assertion), detail (6 / 25), bets (9 / 34), set-bet (9 / ~55) через `npx tsx scripts/msw-*-smoke.mjs`; UI-list (`scripts/list-page-smoke.mjs`, 4 проверки: h1, 10 карточек, hover-prefetch GET, пагинация) через `node scripts/list-page-smoke.mjs` при поднятом `pnpm dev`. В `pnpm check` не входят.
 
 ## Какие решения принял кандидат
 
@@ -45,6 +46,13 @@
 - **Двусторонний URL-контракт в SDD-015** (D-012): parse + serialize + defaults в одном модуле; default-значения не сериализуются.
 - **Display-лейблы для enum'ов** (D-013) в `entities/auction/lib` как `Record<Enum, string>`; первый потребитель — SDD-018.
 - **Mock-only расширение `main.auction_uuid`** (D-011) — закрывает контрактный разрыв (paths требуют `auctionUuid`, но DTO его не экспонируют); не протекает в production-типы.
+- **Page structure: shell + content.** `AuctionsPage` (frame + header, ноль пропсов, ноль hooks) оборачивает `AuctionsList` (все hooks, ранние return'ы для skeleton/error/empty, success-рендер). Public API слайса экспортирует только shell, content — внутренний.
+- **Export-naming без `Component`-суффикса.** Файлы остаются `*.component.tsx` (требование AGENTS.md), но идентификаторы экспорта короткие: `AuctionsList`, `RootLayout`, `Button`. Раньше был mix `AuctionsListComponent`/`Button` — привёл к единому стилю.
+- **VM-mapping через `select` в query-hook'е**, не в рендере. `useAuctionsList` имеет `select: toAuctionsListViewData`, который мапит `AuctionListResponse` → `{ items: AuctionListItemVM[], currentPage, lastPage, total }`. Маппинг бегает один раз на новый snapshot, не на каждый render.
+- **Типизированный URL search через `validateSearch`.** На route: `validateSearch: parseAuctionsListSearch` (возвращает `Partial<AuctionsListFilters>` — только non-default поля). На router: кастомные `parseSearch`/`stringifySearch` через `URLSearchParams` (повторяющиеся ключи для массивов, undefined/empty пропуски). `useSearch({ from: '/auctions' })` типизирован без `as`-cast'а. Page merge'ит partial с `DEFAULT_AUCTIONS_LIST_FILTERS` для downstream-потребителей.
+- **Presentational-компоненты получают generic intent-callback'и.** Карточка принимает `onIntent?: (auctionUuid) => void` (hover/focus-триггер), не `onPrefetch`. Карточка не знает, что page делает с этим сигналом; page решает (prefetch query).
+- **Route collapse.** `/auctions` схлопнут в один route (parent + child index были boilerplate). `/auctions/$auctionUuid` оставлен parent'ом с `AuctionLayout` — у него 3 child-route'а (index/bets/bet-form) делят path-параметр.
+- **Ловушка prop-drilling'а.** Промежуточная попытка вынести `AuctionList` отдельным компонентом с props `query/filters/onIntent/setPage` оказалась проп-дриллингом без реальной изоляции — инлайнила обратно, потом переразделила на shell/content где child самодостаточен (нулевые props у shell'а). Правило: split оправдан, когда у child'а своя ответственность и узкий интерфейс; если надо прокидывать 4+ связанных пропсов — не split.
 
 ## Какие AI-предложения были отклонены
 
@@ -75,14 +83,14 @@
 - React Hook Form и Zod придут с UI-формой ставки (SDD-024+).
 - shadcn-компоненты шипят с двумя экспортами; каждый `shadcn add` требует ручного разделения на `*.component.tsx` + `*.styles.ts`.
 - Playwright-smoke (`scripts/route-smoke.mjs`) требует запущенного dev-сервера, в CI не подключён.
-- Адаптер `shared/api` проверен только typecheck/build. MSW-handler'ы его НЕ покрывают — они идут через runtime-store напрямую. Первый реальный call адаптера случится в SDD-017 (UI → `fetchAuctionList` → SDK → MSW). Logic-тесты покрывают чистую логику, но не adapter-call.
-- Query-ключи определены, но пока не потребляются; `entities/auction` без входящих ссылок до SDD-017.
+- Адаптер `shared/api` получил первого реального потребителя в SDD-017 (`useAuctionsList` → `fetchAuctionList` → SDK → MSW), но end-to-end-покрытие автоматическими тестами пока только через UI-smoke; logic-тесты по-прежнему покрывают чистую логику, а не adapter-call.
+- Query-ключи определены и теперь потребляются: `auctionKeys.list` через `useAuctionsList`, `auctionKeys.detail` через hover-prefetch. `entities/auction` имеет первого потребителя (`pages/auctions-list`).
 - Smoke-скрипты закоммичены в `scripts/`, но не в `pnpm check`; browser-smoke требует dev-сервера.
 - Mock-only расширение `main.auction_uuid` (D-011) НЕ ДОЛЖНО протекать в production-типы.
 
 ## Что улучшилось бы при наличии ещё одного дня
 
-- Заполнить пустые `widgets/` и `features/` слои первой UI-фичей (SDD-017+).
+- Заполнить пустые `widgets/` и `features/` слои следующими UI-задачами (SDD-018+: фильтры, карточка, detail, bets, форма ставки).
 - Расширить автоматические тесты помимо чисто логических.
 - Уточнить визуальные состояния для мобильных и ошибочных сценариев.
 - Расширить mock-сценарии для большего числа edge-case и комбинаций скрытых данных.

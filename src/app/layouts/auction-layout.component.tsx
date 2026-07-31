@@ -1,5 +1,5 @@
 import { Outlet } from '@tanstack/react-router'
 
-export function AuctionLayoutComponent() {
+export function AuctionLayout() {
   return <Outlet />
 }

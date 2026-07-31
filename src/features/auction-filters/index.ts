@@ -12,7 +12,7 @@
  * The filter UI itself lands later and consumes these helpers without
  * duplicating the URL contract.
  */
-export type { AuctionsListFilters } from './lib/search-params'
+export type { AuctionsListFilters, AuctionsListSearch } from './lib/search-params'
 export {
   DEFAULT_AUCTIONS_LIST_FILTERS,
   DEFAULT_IS_OLDEST,
@@ -20,7 +20,9 @@ export {
   auctionsListFiltersSchema,
   countActiveFilters,
   isDefaultFilters,
+  parseAuctionsListSearch,
   parseAuctionsListSearchParams,
   serializeAuctionsListSearchParams,
+  toAuctionsListSearch,
 } from './lib/search-params'
 export { buildAuctionListRequest } from './lib/request-builder'

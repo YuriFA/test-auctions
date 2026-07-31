@@ -5,8 +5,8 @@ const browser = await chromium.launch()
 const page = await browser.newPage()
 
 const cases = [
-  { path: '/', expect: { url: '/auctions', h1: 'Auctions list' } },
-  { path: '/auctions', expect: { url: '/auctions', h1: 'Auctions list' } },
+  { path: '/', expect: { url: '/auctions', h1: 'Аукционы' } },
+  { path: '/auctions', expect: { url: '/auctions', h1: 'Аукционы' } },
   {
     path: '/auctions/abc-123',
     expect: { url: '/auctions/abc-123', h1: 'Auction detail', code: 'abc-123' },
@@ -46,7 +46,7 @@ for (const c of cases) {
   const okH1 = h1.includes(c.expect.h1)
   const okCode = !c.expect.code || code === c.expect.code
   const status = okUrl && okH1 && okCode ? 'OK  ' : 'FAIL'
-  if (status === 'FAIL') failed++
+  if (status === 'FAIL') {failed++}
   console.log(`${status} ${c.path.padEnd(28)} -> url=${url} h1="${h1}" code="${code}"`)
 }
 

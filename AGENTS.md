@@ -88,11 +88,24 @@ This file defines the project-level rules for any AI/LLM agent working in this r
 - Filters for the auctions list must use URL search params.
 - Search params must be validated with Zod and have safe fallback values.
 - Detail data should be prefetched from the list on intent or hover.
+- Type URL search via `validateSearch` on the route definition (TanStack Router infers the type for `useSearch({ from: ... })`). Never `as`-cast the result of `useSearch`.
+- Configure router-level `parseSearch`/`stringifySearch` when the URL format matters (repeated keys for arrays, default values stripped). TanStack Router's default serializer JSON-encodes arrays and keeps defaults — that breaks clean URLs.
+- The `validateSearch` function returns only non-default fields (a `Partial<T>`). Pages merge with defaults via `{ ...DEFAULTS, ...search }` to get the full typed shape for downstream consumers.
+- Collapse parent + child index routes into a single route when there's no shared layout content (`<Outlet />`-only parents are boilerplate). Keep the parent + children structure when multiple sibling routes share a path parameter or layout.
 
 ## UI And Component Rules
 
 - All React component files must use the `*.component.tsx` suffix.
 - Apply this rule to all React component files, including page, route, layout, and reusable component files.
+- Component export identifiers drop the `Component` suffix — file names are `*.component.tsx`, exports stay short (`AuctionsList`, `Button`, `RootLayout`), never `AuctionsListComponent`.
+- Page structure follows the **shell + content** pattern:
+  - Shell component (`*Page`, e.g., `AuctionsPage`) owns frame, header, layout chrome. Zero hooks, zero props.
+  - Content component (e.g., `AuctionsList`) owns all hooks (`useSearch`, `useQuery`, `useNavigate`, `useQueryClient`), derives state, and renders branches via early returns. Rendered content lives inside the shell's frame.
+  - The Public API of a page slice (`index.ts`) exports the shell (`AuctionsPage`). The content component is internal to the slice.
+- Do not split a component if it forces prop drilling. A child that needs 4+ coupled props (query state, filters, handlers) is not a real separation — keep it inline or make the child self-contained (own its hooks).
+- State branches (`isPending` / `isError` / empty) belong to the content component as early returns. The shell always renders the frame; the content decides what goes inside.
+- Map DTOs to view models in the query hook (`select` option of `useQuery`), not at render time. Render-time mapping runs every render and couples the view to raw DTO shapes.
+- Presentational components take generic intent callbacks (`onIntent`, `onSelect`), not business-specific names (`onPrefetch`, `onFilterActivate`). The parent decides what the signal means; the child just emits it.
 - The interface should be neat, adaptive, and convenient to review on desktop and mobile.
 - Respect DTO-driven restrictions in the UI, including:
   - `can_set_bet`
@@ -108,6 +121,25 @@ This file defines the project-level rules for any AI/LLM agent working in this r
 - Do not reference the current task, fix, callers, or issue numbers ("used by X", "added for the Y flow", "fixes #123"); those belong in commit messages and PR descriptions, not the code.
 - File-level JSDoc blocks are reserved for Public API modules (`index.ts`) where they document the segment's purpose and consumers. Implementation files do not need file-level headers.
 - Prefer tests over comments: an invariant expressed in a test is enforceable; in a comment it rots.
+- Comments that label a workaround ("mock-only", "defensive cast", "temporary", "FIXME") signal a missing type or abstraction. Solve with types, do not document the smell.
+- Step-style scaffolding comments inside `*.test.ts` and `scripts/*-smoke.mjs` (`// 1. ...`, `// 2. ...`, fixture labels) are test narration, not production comments — the rules above target implementation files.
+
+### Examples
+
+Bad — paraphrases the code:
+
+```ts
+// Keep the previous page visible while the next page loads so pagination
+// feels continuous instead of flashing skeleton on every page turn.
+placeholderData: keepPreviousData,
+```
+
+Good — explains a non-obvious contract constraint:
+
+```ts
+// API enum excludes `Unknown` (UI-only sentinel); filter before sending.
+const API_AUC_TYPES = ['Request', 'Up', 'Down', 'FixPrice'] as const
+```
 
 ## Testing Conventions
 
@@ -123,6 +155,7 @@ This file defines the project-level rules for any AI/LLM agent working in this r
   - request builder logic
   - view model mappers
   - bet validation schema
+- Before committing, re-read every comment added in this change. Delete any that paraphrase the code or reference the task; replace workaround flags with better types.
 - README must document:
   - how to run the project
   - what was verified

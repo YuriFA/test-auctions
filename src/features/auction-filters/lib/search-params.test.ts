@@ -49,53 +49,46 @@ describe('parseAuctionsListSearchParams', () => {
   })
 
   it('falls back to default is_oldest for unknown value', () => {
-    expect(
-      parseAuctionsListSearchParams(new URLSearchParams('is_oldest=yes')).is_oldest,
-    ).toBe(DEFAULT_AUCTIONS_LIST_FILTERS.is_oldest)
+    expect(parseAuctionsListSearchParams(new URLSearchParams('is_oldest=yes')).is_oldest).toBe(
+      DEFAULT_AUCTIONS_LIST_FILTERS.is_oldest,
+    )
   })
 
   it('parses cargo_num string', () => {
-    expect(
-      parseAuctionsListSearchParams(new URLSearchParams('cargo_num=MSK-001')).cargo_num,
-    ).toBe('MSK-001')
+    expect(parseAuctionsListSearchParams(new URLSearchParams('cargo_num=MSK-001')).cargo_num).toBe(
+      'MSK-001',
+    )
   })
 
   it('parses repeated auc_type keys as an array', () => {
     expect(
-      parseAuctionsListSearchParams(
-        new URLSearchParams('auc_type=Down&auc_type=Up'),
-      ).auc_type,
+      parseAuctionsListSearchParams(new URLSearchParams('auc_type=Down&auc_type=Up')).auc_type,
     ).toEqual(['Down', 'Up'])
   })
 
   it('drops unknown auc_type enum values', () => {
     expect(
-      parseAuctionsListSearchParams(
-        new URLSearchParams('auc_type=Down&auc_type=Garbage'),
-      ).auc_type,
+      parseAuctionsListSearchParams(new URLSearchParams('auc_type=Down&auc_type=Garbage')).auc_type,
     ).toEqual(['Down'])
   })
 
   it('parses repeated status keys as an array', () => {
     expect(
-      parseAuctionsListSearchParams(new URLSearchParams('status=Leading&status=Losing'))
-        .status,
+      parseAuctionsListSearchParams(new URLSearchParams('status=Leading&status=Losing')).status,
     ).toEqual(['Leading', 'Losing'])
   })
 
   it('drops unknown status enum values', () => {
     expect(
-      parseAuctionsListSearchParams(
-        new URLSearchParams('status=Leading&status=NotARealStatus'),
-      ).status,
+      parseAuctionsListSearchParams(new URLSearchParams('status=Leading&status=NotARealStatus'))
+        .status,
     ).toEqual(['Leading'])
   })
 
   it('parses numeric statuses as an array of integers', () => {
     expect(
-      parseAuctionsListSearchParams(
-        new URLSearchParams('statuses=1&statuses=2&statuses=3'),
-      ).statuses,
+      parseAuctionsListSearchParams(new URLSearchParams('statuses=1&statuses=2&statuses=3'))
+        .statuses,
     ).toEqual([1, 2, 3])
   })
 
@@ -153,24 +146,22 @@ describe('parseAuctionsListSearchParams', () => {
 
   it('passes through create_date_* as ISO strings', () => {
     expect(
-      parseAuctionsListSearchParams(
-        new URLSearchParams('create_date_from=2026-01-01T00:00:00Z'),
-      ).create_date_from,
+      parseAuctionsListSearchParams(new URLSearchParams('create_date_from=2026-01-01T00:00:00Z'))
+        .create_date_from,
     ).toBe('2026-01-01T00:00:00Z')
   })
 
   it('passes through load_date_* as ISO strings', () => {
     expect(
-      parseAuctionsListSearchParams(
-        new URLSearchParams('load_date_from=2026-06-01T08:00:00Z'),
-      ).load_date_from,
+      parseAuctionsListSearchParams(new URLSearchParams('load_date_from=2026-06-01T08:00:00Z'))
+        .load_date_from,
     ).toBe('2026-06-01T08:00:00Z')
   })
 
   it('ignores unknown query keys', () => {
-    expect(
-      parseAuctionsListSearchParams(new URLSearchParams('unknown_key=foo')),
-    ).toEqual(DEFAULT_AUCTIONS_LIST_FILTERS)
+    expect(parseAuctionsListSearchParams(new URLSearchParams('unknown_key=foo'))).toEqual(
+      DEFAULT_AUCTIONS_LIST_FILTERS,
+    )
   })
 })
 
@@ -189,16 +180,14 @@ describe('serializeAuctionsListSearchParams', () => {
   })
 
   it('omits is_oldest when equal to default', () => {
-    expect(
-      serializeAuctionsListSearchParams(DEFAULT_AUCTIONS_LIST_FILTERS).has('is_oldest'),
-    ).toBe(false)
+    expect(serializeAuctionsListSearchParams(DEFAULT_AUCTIONS_LIST_FILTERS).has('is_oldest')).toBe(
+      false,
+    )
   })
 
   it('serializes page when not equal to default', () => {
     expect(
-      serializeAuctionsListSearchParams({ ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 3 }).get(
-        'page',
-      ),
+      serializeAuctionsListSearchParams({ ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 3 }).get('page'),
     ).toBe('3')
   })
 
@@ -324,15 +313,11 @@ describe('isDefaultFilters', () => {
   })
 
   it('returns false when any array is non-empty', () => {
-    expect(
-      isDefaultFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, auc_type: ['Down'] }),
-    ).toBe(false)
+    expect(isDefaultFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, auc_type: ['Down'] })).toBe(false)
   })
 
   it('returns false when is_available is set (even to false)', () => {
-    expect(
-      isDefaultFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: false }),
-    ).toBe(false)
+    expect(isDefaultFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: false })).toBe(false)
   })
 })
 
@@ -356,11 +341,7 @@ describe('countActiveFilters', () => {
   })
 
   it('counts is_available as active when set to true OR false', () => {
-    expect(
-      countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: true }),
-    ).toBe(1)
-    expect(
-      countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: false }),
-    ).toBe(1)
+    expect(countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: true })).toBe(1)
+    expect(countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: false })).toBe(1)
   })
 })

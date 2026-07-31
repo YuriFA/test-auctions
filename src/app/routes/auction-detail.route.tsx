@@ -1,10 +1,10 @@
 import { createRoute } from '@tanstack/react-router'
 
-import { AuctionLayoutComponent } from '../layouts/auction-layout.component'
-import { auctionsRoute } from './auctions.route'
+import { AuctionLayout } from '../layouts/auction-layout.component'
+import { rootRoute } from './root.route'
 
 export const auctionDetailRoute = createRoute({
-  getParentRoute: () => auctionsRoute,
-  path: '$auctionUuid',
-  component: AuctionLayoutComponent,
+  getParentRoute: () => rootRoute,
+  path: 'auctions/$auctionUuid',
+  component: AuctionLayout,
 })

@@ -1,6 +1,6 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
 
-export function RootErrorComponent({ error }: ErrorComponentProps) {
+export function RootError({ error }: ErrorComponentProps) {
   return (
     <div className="mx-auto flex min-h-dvh max-w-xl flex-col items-start gap-3 px-4 py-12 sm:px-6">
       <p className="text-xs font-medium uppercase tracking-wide text-destructive">

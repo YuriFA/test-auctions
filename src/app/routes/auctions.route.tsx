@@ -1,10 +1,13 @@
+import { parseAuctionsListSearch } from '@features/auction-filters'
 import { createRoute } from '@tanstack/react-router'
 
-import { AuctionsLayoutComponent } from '../layouts/auctions-layout.component'
+import { AuctionsPage } from '@/pages/auctions-list'
+
 import { rootRoute } from './root.route'
 
 export const auctionsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'auctions',
-  component: AuctionsLayoutComponent,
+  component: AuctionsPage,
+  validateSearch: parseAuctionsListSearch,
 })

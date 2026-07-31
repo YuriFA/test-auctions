@@ -1,4 +1,9 @@
-import type { AuctionListRequest, AuctionListResponseBase, AuctionShowResponse } from './generated'
+import type {
+  AuctionListItem,
+  AuctionListRequest,
+  AuctionListResponseBase,
+  AuctionShowResponse,
+} from './generated'
 import { getAuction, listAuctions } from './generated'
 import { normalizeApiError } from './errors'
 
@@ -20,4 +25,11 @@ export async function fetchAuctionDetail(auctionUuid: string): Promise<AuctionDe
     throw normalizeApiError(result.response, result.error)
   }
   return result.data
+}
+
+// `auction_uuid` is injected by the mock layer; the production DTO doesn't
+// expose it yet. Read defensively so clients can route off the value today.
+export function extractAuctionUuid(item: AuctionListItem): string | undefined {
+  const main = item.main as { auction_uuid?: string } | undefined
+  return main?.auction_uuid
 }

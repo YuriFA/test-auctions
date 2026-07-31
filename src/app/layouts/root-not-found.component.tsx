@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 
-export function RootNotFoundComponent() {
+export function RootNotFound() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-xl flex-col items-start gap-3 px-4 py-12 sm:px-6">
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">404</p>
@@ -10,6 +10,7 @@ export function RootNotFoundComponent() {
       </p>
       <Link
         to="/auctions"
+        search={{}}
         className="text-sm font-medium text-primary underline-offset-4 hover:underline"
       >
         Go to auctions →

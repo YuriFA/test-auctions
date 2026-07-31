@@ -1,6 +1,6 @@
 import { Link, useParams } from '@tanstack/react-router'
 
-export function AuctionBetsComponent() {
+export function AuctionBets() {
   const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid/bets' })
 
   return (
