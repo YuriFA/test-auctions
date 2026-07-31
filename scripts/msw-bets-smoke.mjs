@@ -30,7 +30,7 @@ let failures = 0
 
 function assert(name, condition, detail = '') {
   const status = condition ? 'OK  ' : 'FAIL'
-  if (!condition) failures++
+  if (!condition) {failures++}
   console.log(`${status} ${name}${detail ? ` — ${detail}` : ''}`)
 }
 
@@ -111,11 +111,7 @@ server.listen({ onUnhandledRequest: 'error' })
     'rejected bet has cancel_reason',
     typeof rejected[0]?.cancel_reason === 'string' && rejected[0].cancel_reason.length > 0,
   )
-  assert(
-    'rejected bet has null place',
-    rejected[0]?.place === null,
-    `place=${rejected[0]?.place}`,
-  )
+  assert('rejected bet has null place', rejected[0]?.place === null, `place=${rejected[0]?.place}`)
 }
 
 // --- case 4: ?all=false behaves like default (excludes rejected) -----------
@@ -163,10 +159,7 @@ server.listen({ onUnhandledRequest: 'error' })
 {
   const { status, json } = await getBets(seedAuctionUuids.finishedConfirmed)
   assert('hidden-history status 200', status === 200)
-  assert(
-    'hidden-history still returns bets array',
-    Array.isArray(json?.bets),
-  )
+  assert('hidden-history still returns bets array', Array.isArray(json?.bets))
 }
 
 // --- case 8: 404 on unknown UUID with ProblemDetail body -------------------
@@ -180,10 +173,7 @@ server.listen({ onUnhandledRequest: 'error' })
     contentType === 'application/problem+json',
     `got ${contentType}`,
   )
-  assert(
-    'unknown body code is string',
-    typeof json?.code === 'string' && json.code.length > 0,
-  )
+  assert('unknown body code is string', typeof json?.code === 'string' && json.code.length > 0)
   assert('unknown body title is string', typeof json?.title === 'string')
   assert('unknown body message is string', typeof json?.message === 'string')
 }

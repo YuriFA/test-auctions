@@ -32,7 +32,7 @@ export const auctionsSetBetHandler = http.post(
     }
 
     const result = writeBet(uuid, price)
-    if (result.ok) return HttpResponse.json(result.bet as BetItem)
+    if (result.ok) {return HttpResponse.json(result.bet as BetItem)}
     return problemResponse(result.problem, result.status)
   },
 )
@@ -40,7 +40,7 @@ export const auctionsSetBetHandler = http.post(
 // Handler owns shape validation (JSON parse, type of price); store owns
 // business validation (price > 0) and side-effects.
 function extractPrice(body: unknown): number | null {
-  if (typeof body !== 'object' || body === null) return null
+  if (typeof body !== 'object' || body === null) {return null}
   const value = (body as { price?: unknown }).price
   return typeof value === 'number' && Number.isFinite(value) ? value : null
 }
@@ -69,11 +69,7 @@ function missingBodyProblem(): ValidationProblem {
 }
 
 function invalidPriceProblem(): ValidationProblem {
-  return validationProblem(
-    'price',
-    'Поле price обязательно и должно быть числом',
-    'invalid_type',
-  )
+  return validationProblem('price', 'Поле price обязательно и должно быть числом', 'invalid_type')
 }
 
 function validationProblem(field: string, message: string, code: string): ValidationProblem {

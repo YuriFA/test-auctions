@@ -30,7 +30,7 @@ let failures = 0
 
 function assert(name, condition, detail = '') {
   const status = condition ? 'OK  ' : 'FAIL'
-  if (!condition) failures++
+  if (!condition) {failures++}
   console.log(`${status} ${name}${detail ? ` — ${detail}` : ''}`)
 }
 
@@ -68,10 +68,7 @@ server.listen({ onUnhandledRequest: 'error' })
   assert('success has payment', typeof json?.payment === 'object' && json.payment !== null)
   assert('success has assembly', typeof json?.assembly === 'object' && json.assembly !== null)
   assert('success routes is array', Array.isArray(json?.routes))
-  assert(
-    'success admitted_organizations is array',
-    Array.isArray(json?.admitted_organizations),
-  )
+  assert('success admitted_organizations is array', Array.isArray(json?.admitted_organizations))
   assert(
     'success main.cargo_num is non-empty string',
     typeof json?.main?.cargo_num === 'string' && json.main.cargo_num.length > 0,
@@ -141,10 +138,7 @@ server.listen({ onUnhandledRequest: 'error' })
     contentType === 'application/problem+json',
     `got ${contentType}`,
   )
-  assert(
-    'unknown body code is string',
-    typeof json?.code === 'string' && json.code.length > 0,
-  )
+  assert('unknown body code is string', typeof json?.code === 'string' && json.code.length > 0)
   assert('unknown body title is string', typeof json?.title === 'string')
   assert('unknown body message is string', typeof json?.message === 'string')
 }
@@ -169,8 +163,7 @@ server.listen({ onUnhandledRequest: 'warn' })
         // Detail DTO shape leaked into /bets would mean the placeholder
         // over-matched across segments.
         overmatched =
-          (json?.main !== undefined && typeof json.main === 'object') ||
-          json?.trading !== undefined
+          (json?.main !== undefined && typeof json.main === 'object') || json?.trading !== undefined
       } catch {
         overmatched = false
       }
@@ -190,5 +183,7 @@ server.listen({ onUnhandledRequest: 'warn' })
 
 server.close()
 console.log('')
-console.log(failures === 0 ? 'msw-detail-smoke: ALL OK' : `msw-detail-smoke: ${failures} FAILURE(S)`)
+console.log(
+  failures === 0 ? 'msw-detail-smoke: ALL OK' : `msw-detail-smoke: ${failures} FAILURE(S)`,
+)
 process.exit(failures === 0 ? 0 : 1)

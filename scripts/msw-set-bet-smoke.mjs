@@ -36,7 +36,7 @@ let failures = 0
 
 function assert(name, condition, detail = '') {
   const status = condition ? 'OK  ' : 'FAIL'
-  if (!condition) failures++
+  if (!condition) {failures++}
   console.log(`${status} ${name}${detail ? ` — ${detail}` : ''}`)
 }
 
@@ -120,11 +120,7 @@ resetMockRuntime()
     typeof json?.price_no_vat === 'number' && json.price_no_vat < 44000,
   )
   assert('success body is_rejected === false', json?.is_rejected === false)
-  assert(
-    'success body has place number',
-    typeof json?.place === 'number',
-    `got ${json?.place}`,
-  )
+  assert('success body has place number', typeof json?.place === 'number', `got ${json?.place}`)
   assert('success body cancel_reason empty', json?.cancel_reason === '')
 }
 
@@ -158,14 +154,8 @@ resetMockRuntime()
     afterDetail?.trading?.status_mobile === 'Leading',
     `got ${afterDetail?.trading?.status_mobile}`,
   )
-  assert(
-    'detail is_bidder === true',
-    afterDetail?.trading?.is_bidder === true,
-  )
-  assert(
-    'detail your.bet === true',
-    afterDetail?.trading?.your?.bet === true,
-  )
+  assert('detail is_bidder === true', afterDetail?.trading?.is_bidder === true)
+  assert('detail your.bet === true', afterDetail?.trading?.your?.bet === true)
 
   const list = await getList()
   const listItem = list?.data?.find(
@@ -176,22 +166,12 @@ resetMockRuntime()
     listItem?.trading?.price?.current === 44000,
     `got ${listItem?.trading?.price?.current}`,
   )
-  assert(
-    'list item status_mobile === Leading',
-    listItem?.trading?.status_mobile === 'Leading',
-  )
+  assert('list item status_mobile === Leading', listItem?.trading?.status_mobile === 'Leading')
 
   const bets = await getBets(seedAuctionUuids.downLeading)
   const userBet = bets?.bets?.find((b) => b?.id === placed.json?.id)
-  assert(
-    'bets list contains the freshly-placed user bet',
-    userBet !== undefined,
-  )
-  assert(
-    'freshly-placed bet has place 1 (leading)',
-    userBet?.place === 1,
-    `got ${userBet?.place}`,
-  )
+  assert('bets list contains the freshly-placed user bet', userBet !== undefined)
+  assert('freshly-placed bet has place 1 (leading)', userBet?.place === 1, `got ${userBet?.place}`)
 }
 
 // --- case 3: placing again rejects the previous active user bet -----------
@@ -215,20 +195,9 @@ resetMockRuntime()
     'previous user bet cancel_reason set',
     typeof firstBet?.cancel_reason === 'string' && firstBet.cancel_reason.length > 0,
   )
-  assert(
-    'previous user bet place null',
-    firstBet?.place === null,
-    `got ${firstBet?.place}`,
-  )
-  assert(
-    'new user bet is_rejected === false',
-    secondBet?.is_rejected === false,
-  )
-  assert(
-    'new user bet place 1 (leading)',
-    secondBet?.place === 1,
-    `got ${secondBet?.place}`,
-  )
+  assert('previous user bet place null', firstBet?.place === null, `got ${firstBet?.place}`)
+  assert('new user bet is_rejected === false', secondBet?.is_rejected === false)
+  assert('new user bet place 1 (leading)', secondBet?.place === 1, `got ${secondBet?.place}`)
 
   const betsActive = await getBets(seedAuctionUuids.downLeading, false)
   const hasFirst = betsActive?.bets?.some((b) => b?.id === first.json?.id)
@@ -251,10 +220,7 @@ resetMockRuntime()
 {
   const missing = await postBet(seedAuctionUuids.downLeading, {})
   assertValidationShape('missing price', missing)
-  assert(
-    'missing price error field === price',
-    missing.json?.errors?.[0]?.field === 'price',
-  )
+  assert('missing price error field === price', missing.json?.errors?.[0]?.field === 'price')
 }
 
 // --- case 6: 422 on non-number price --------------------------------------
@@ -281,10 +247,7 @@ resetMockRuntime()
 {
   const malformed = await postBet(seedAuctionUuids.downLeading, '{not-json')
   assertValidationShape('malformed body', malformed)
-  assert(
-    'malformed body error field === body',
-    malformed.json?.errors?.[0]?.field === 'body',
-  )
+  assert('malformed body error field === body', malformed.json?.errors?.[0]?.field === 'body')
 }
 
 // --- case 9: 404 on unknown UUID ------------------------------------------
@@ -298,13 +261,12 @@ resetMockRuntime()
     'unknown content-type application/problem+json',
     res.contentType === 'application/problem+json',
   )
-  assert(
-    'unknown body code auction_not_found',
-    res.json?.code === 'auction_not_found',
-  )
+  assert('unknown body code auction_not_found', res.json?.code === 'auction_not_found')
 }
 
 server.close()
 console.log('')
-console.log(failures === 0 ? 'msw-set-bet-smoke: ALL OK' : `msw-set-bet-smoke: ${failures} FAILURE(S)`)
+console.log(
+  failures === 0 ? 'msw-set-bet-smoke: ALL OK' : `msw-set-bet-smoke: ${failures} FAILURE(S)`,
+)
 process.exit(failures === 0 ? 0 : 1)

@@ -2,5 +2,12 @@
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "ignorePatterns": [],
   "semi": false,
-  "singleQuote": true
+  "singleQuote": true,
+  "sortImports": true,
+  "sortTailwindcss": {
+    "stylesheet": "./src/index.css",
+    "functions": ["clsx", "cn"],
+    "preserveWhitespace": true
+  },
+  "sortScripts": true
 }

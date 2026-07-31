@@ -33,7 +33,7 @@ const result = await page.evaluate(async () => {
 let failed = 0
 function assert(name, cond, detail = '') {
   const status = cond ? 'OK  ' : 'FAIL'
-  if (!cond) failed++
+  if (!cond) {failed++}
   console.log(`${status} ${name}${detail ? ` — ${detail}` : ''}`)
 }
 

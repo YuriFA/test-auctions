@@ -25,7 +25,7 @@ let failures = 0
 
 function assert(name, condition, detail = '') {
   const status = condition ? 'OK  ' : 'FAIL'
-  if (!condition) failures++
+  if (!condition) {failures++}
   console.log(`${status} ${name}${detail ? ` — ${detail}` : ''}`)
 }
 
