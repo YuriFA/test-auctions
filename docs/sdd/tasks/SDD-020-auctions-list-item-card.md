@@ -1,4 +1,4 @@
-# SDD-019 Auctions List Item Card
+# SDD-020 Auctions List Item Card
 
 ## Статус
 
@@ -45,7 +45,7 @@
   - «Изменить ставку» — `trading.can_set_bet && your_bet`;
   - «Смотреть ставки» — `!trading.can_set_bet`;
   - `disabled` — статус аукциона не допускает действий (например, завершён/отменён).
-    Owner логики primary action — SDD-019; SDD-021 только определяет restriction-флаги, SDD-022/025 — потребляют.
+    Owner логики primary action — SDD-020; SDD-022 только определяет restriction-флаги, SDD-023/26 — потребляют.
 - Path-параметр для ссылок — `main.auction_uuid` (D-011), НЕ `order_uid`.
 - Карточка вызывает `onPrefetch(auctionUuid)` по hover/focus (intent); логика `queryClient.prefetchQuery` живёт в list-page (SDD-017).
 - Лейаут остаётся читаемым на mobile (`< sm`) и desktop.

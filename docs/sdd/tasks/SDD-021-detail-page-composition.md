@@ -1,4 +1,4 @@
-# SDD-020 Detail Page Composition
+# SDD-021 Detail Page Composition
 
 ## Статус
 
@@ -14,7 +14,7 @@
 - Отрендерить обязательные секции (`project_requirements.md` строки 89-101):
   - основные данные аукциона (номер, тип, статусы, даты);
   - организатор;
-  - контакты — только если `!hide_points_address_and_contacts` (SDD-021);
+  - контакты — только если `!hide_points_address_and_contacts` (SDD-022);
   - маршрут со всеми точками погрузки/выгрузки;
   - груз и требования к ТС;
   - условия оплаты;
@@ -31,10 +31,10 @@
 
 - Маршрут detail корректно грузится по `auctionUuid` (`main.auction_uuid`, D-011).
 - Рендерятся все секции из «Охват»; лейблы enum'ов — из `entities/auction/lib` (D-013).
-- Контакты организатора скрыты, когда `hide_points_address_and_contacts = true` (SDD-021).
+- Контакты организатора скрыты, когда `hide_points_address_and_contacts = true` (SDD-022).
 - Состояние своей ставки показывается отдельно от истории ставок.
 - Параметры торгов включают текущую цену, доступную цену (`trading.available`), `min`/`max`/`step` — каждое поле скрывается, если его нет в DTO.
-- Цена/ценообразование скрываются при `no_view_cargo_price = true` (SDD-021).
+- Цена/ценообразование скрываются при `no_view_cargo_price = true` (SDD-022).
 - Nullable-данные обрабатываются без поломки UI.
 - Лейаут читаем на mobile (`< sm`) и desktop.
 - React-компоненты именуются с суффиксом `*.component.tsx` (D-003, требование `project_requirements.md` строки 103/139).

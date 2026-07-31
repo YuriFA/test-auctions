@@ -1,4 +1,4 @@
-# SDD-026 Bet Mutation Integration
+# SDD-027 Bet Mutation Integration
 
 ## Статус
 
@@ -11,7 +11,7 @@
 ## Охват
 
 - Отправлять `POST /auctions/{auctionUuid}/bets`.
-- Подключить Zod-схему из SDD-024 к React Hook Form (`useForm` + `zodResolver`, `Controller` для контролируемых полей, рендер `errors`, состояние `isSubmitting`/`isValidating`).
+- Подключить Zod-схему из SDD-025 к React Hook Form (`useForm` + `zodResolver`, `Controller` для контролируемых полей, рендер `errors`, состояние `isSubmitting`/`isValidating`).
 - Показывать UI-подсказку с доступной ценой (`trading.available`) и шагом ставки (`trading.step`), если эти поля присутствуют в detail DTO (требование `project_requirements.md` строка 132); при отсутствии — подсказка не выводится.
 - Мапить серверные ошибки валидации (`422`) в UI формы.
 - Показывать success- и error-toast.
@@ -21,8 +21,8 @@
 
 - `SDD-008`
 - `SDD-014`
-- `SDD-024`
 - `SDD-025`
+- `SDD-026`
 
 ## Критерии приёмки
 
@@ -30,7 +30,7 @@
 - Рядом с полем ввода ставки видна подсказка с доступной ценой и шагом, если они есть в DTO.
 - Ошибки валидации `422` (`ValidationProblem` с `errors[]`) мапятся в поля формы.
 - Видна обратная связь успеха и неудачи (toast).
-- Форма доступна только при `trading.can_set_bet = true` (гейт ограничения — см. SDD-021/SDD-025).
+- Форма доступна только при `trading.can_set_bet = true` (гейт ограничения — см. SDD-022/SDD-026).
 - React-компоненты именуются с суффиксом `*.component.tsx` (D-003, требование `project_requirements.md` строки 103/139).
 
 ## Заметки и риски

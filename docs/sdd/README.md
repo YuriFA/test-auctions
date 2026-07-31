@@ -59,16 +59,17 @@
 16. `SDD-016` Request Builder
 17. `SDD-017` Auctions List Query
 18. `SDD-018` Auctions List Filters UI
-19. `SDD-019` Auctions List Item Card
-20. `SDD-020` Detail Page Composition
-21. `SDD-021` Restrictions Handling
-22. `SDD-022` Bets Nested Route
-23. `SDD-023` Bets ViewModel And UI
-24. `SDD-024` Bet Form Schema
-25. `SDD-025` Bet Form Route
-26. `SDD-026` Bet Mutation Integration
-27. `SDD-027` Runtime Consistency Verification
-28. `SDD-029` Final Documentation
+19. `SDD-019` Auctions List UI Redesign
+20. `SDD-020` Auctions List Item Card
+21. `SDD-021` Detail Page Composition
+22. `SDD-022` Restrictions Handling
+23. `SDD-023` Bets Nested Route
+24. `SDD-024` Bets ViewModel And UI
+25. `SDD-025` Bet Form Schema
+26. `SDD-026` Bet Form Route
+27. `SDD-027` Bet Mutation Integration
+28. `SDD-028` Runtime Consistency Verification
+29. `SDD-030` Final Documentation
 
 ## Порядок исполнения
 
@@ -93,4 +94,4 @@
 - Query-хуки не генерируются.
 - URL search params — источник истины для фильтров.
 - Точность контракта важнее удобства.
-- Logic-тесты (TDD) пишутся вперёд в задаче, которая создаёт тестируемый код (SDD-015, SDD-016, SDD-023, SDD-024), а не отдельным финальным шагом. Vitest ставится в SDD-015 как первая порождающая тесты задача.
+- Logic-тесты (TDD) пишутся вперёд в задаче, которая создаёт тестируемый код (SDD-015, SDD-016, SDD-024, SDD-025), а не отдельным финальным шагом. Vitest ставится в SDD-015 как первая порождающая тесты задача.

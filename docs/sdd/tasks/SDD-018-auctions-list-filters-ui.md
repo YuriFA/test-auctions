@@ -40,7 +40,7 @@
    - лейблы не collide'ят (разные enum'ы не дают одну строку).
 2. Запустить тесты, убедиться, что они красные по правильной причине.
 3. Реализовать минимальные мапперы как таблицы `Record<Enum, string>`, чтобы тесты позеленели.
-4. Использовать эти мапперы в UI-компонентах фильтров (и позже в SDD-019 в карточке).
+4. Использовать эти мапперы в UI-компонентах фильтров (и позже в SDD-020 в карточке).
 
 ## Критерии приёмки
 
@@ -64,7 +64,7 @@
 
 ## Заметки о реализации
 
-- Лейблы enum'ов живут в `entities/auction/lib/describe.ts` (отдельный коммит `feat: add auction enum labels and status codes`): `describeAuctionType`, `describeTradingStatus`, `describeAuctionStatus`, `describeAuctionStatusCode(code 1..7)`, плюс `AUCTION_STATUS_CODES` (7 кодов в порядке OpenAPI enum'а, без Canceled/Unknown). Fallback для неожиданных значений — `—`, без исключений. SDD-019 переиспользует те же функции в карточке.
+- Лейблы enum'ов живут в `entities/auction/lib/describe.ts` (отдельный коммит `feat: add auction enum labels and status codes`): `describeAuctionType`, `describeTradingStatus`, `describeAuctionStatus`, `describeAuctionStatusCode(code 1..7)`, плюс `AUCTION_STATUS_CODES` (7 кодов в порядке OpenAPI enum'а, без Canceled/Unknown). Fallback для неожиданных значений — `—`, без исключений. SDD-020 переиспользует те же функции в карточке.
 - Числовые коды `statuses[]=1..7` взяты напрямую из комментариев OpenAPI-спеки (`docs/openapi.auctions.v0.json`, `AuctionListRequest.statuses`): 1=Planning … 7=Stopped, позиционно. Canceled(8) и Unknown явно вне фильтра.
 - UI состоит из одного компонента `AuctionFilters` (`auction-filters.component.tsx`): кнопка «Фильтры (N)» + shadcn `Sheet` (side="right"), внутри которого рендерится `AuctionFiltersForm`. Один и тот же sheet используется на desktop и mobile — визуально не зависит от breakpoint. Состояние `open` — локальный `useState`, без zustand (один владелец, нет нужды в глобальном сторе).
 - Поиск по номеру заявки (`AuctionSearchInput`) живёт в header страницы, а не в sheet — это primary action, и прятать его за открытие фильтров было неудобно. Коммитит на blur/Enter, как и остальные текстовые поля.
@@ -80,4 +80,4 @@
 - Кнопка триггера фильтров и поле поиска выровнены по высоте `h-9` (через `className="h-9 ..."`). Базовая кнопка shadcn `size="sm"` даёт `h-6`, поэтому высота переопределена явно через `className`. Поиск использует shadcn `Input` с тем же `h-9` и `pl-9` под иконку-search.
 - Sticky-футер с кнопками «Сбросить» и «Применить» живёт внутри `<form>` как `<div className="sticky bottom-0 border-t bg-popover px-6 py-4">`. Скроллится только верхняя часть формы (`flex-1 overflow-y-auto`), футер всегда виден. Это позволяет кнопкам оставаться доступными даже в длинных формах на мобильных.
 - Smoke `scripts/filters-ui-smoke.mjs` подключён к `pnpm smoke`: ~15 checks — поиск в header + commit на blur, счётчик не растёт от поиска, кнопка «Фильтры» видна на всех viewport, inline-панели нет до открытия, sheet открывает 7 секций, checkbox (через `[data-slot="checkbox"]`, base-ui Button-based) не коммитит до Apply, Apply коммитит URL, закрывает sheet и обновляет счётчик до 1, закрытие по backdrop/X, mobile trigger (375px) открывает sheet.
-- `fsd/insignificant-slice` остался отключенным в `steiger.config.ts`: `entities/auction` и `features/auction-filters` имеют по одному потребителю до SDD-019.
+- `fsd/insignificant-slice` остался отключенным в `steiger.config.ts`: `entities/auction` и `features/auction-filters` имеют по одному потребителю до SDD-020.

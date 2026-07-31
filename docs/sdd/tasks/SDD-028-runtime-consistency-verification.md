@@ -1,4 +1,4 @@
-# SDD-027 Runtime Consistency Verification
+# SDD-028 Runtime Consistency Verification
 
 ## Статус
 
@@ -16,9 +16,9 @@
 ## Зависимости
 
 - `SDD-017`
-- `SDD-020`
-- `SDD-023`
-- `SDD-026`
+- `SDD-021`
+- `SDD-024`
+- `SDD-027`
 
 ## Критерии приёмки
 

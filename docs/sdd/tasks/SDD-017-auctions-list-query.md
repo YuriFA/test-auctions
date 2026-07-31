@@ -13,7 +13,7 @@
 - Реализовать list-query.
 - Подключить состояние пагинации.
 - Добавить состояния loading, empty и error.
-- Prefetch детальной страницы по hover/focus (intent) на карточке через `queryClient.prefetchQuery({ queryKey: auctionKeys.detail(uuid) })` (требование `project_requirements.md` строка 55). Карточка (SDD-019) пробрасывает `onPrefetch(auctionUuid)`, логика живёт в list-page.
+- Prefetch детальной страницы по hover/focus (intent) на карточке через `queryClient.prefetchQuery({ queryKey: auctionKeys.detail(uuid) })` (требование `project_requirements.md` строка 55). Карточка (SDD-020) пробрасывает `onPrefetch(auctionUuid)`, логика живёт в list-page.
 
 ## Зависимости
 
@@ -39,11 +39,11 @@
 
 - Query-hook `useAuctionsList(filters: AuctionListRequest)` живёт в `entities/auction/api/use-auctions-list.ts` и использует `keepPreviousData` как `placeholderData`, чтобы пагинация не мигала skeleton'ом между страницами.
 - Page composition в `pages/auctions-list/ui/auctions-list.component.tsx` читает loose `useSearch({ strict: false })`, прогоняет через SDD-015 contract (`parseAuctionsListSearchParams`) и SDD-016 (`buildAuctionListRequest`), затем вызывает `useAuctionsList`. URL остаётся источником истины для пагинации и фильтров.
-- Карточка (`auction-list-item-card.component.tsx`) — минимальный placeholder для SDD-017: link + `onMouseEnter`/`onFocus` триггер для prefetch. SDD-019 заменит её на полную карточку с обязательными полями.
+- Карточка (`auction-list-item-card.component.tsx`) — минимальный placeholder для SDD-017: link + `onMouseEnter`/`onFocus` триггер для prefetch. SDD-020 заменит её на полную карточку с обязательными полями.
 - Prefetch logic во владельце list-page (не в карточке): `useQueryClient().prefetchQuery({ queryKey: auctionKeys.detail(uuid), queryFn: () => fetchAuctionDetail(uuid), staleTime: 60s })`. staleTime даёт hover-prefetch короткое окно до stale, чтобы клик сразу брал кэш.
 - `extractAuctionUuid(item)` добавлен в `shared/api/auctions.ts` как defensively-reader mock-only поля `main.auction_uuid` (D-011). Cast живёт в `shared/api`, не протекает в `entities`/`features`/`pages`.
-- VM-mapper `toAuctionListItemVM` в `entities/auction/lib/list-item.ts` — минимальная surface (uuid + cargo_num + auc_type) на SDD-017; SDD-019 расширит до полного контракта карточки.
+- VM-mapper `toAuctionListItemVM` в `entities/auction/lib/list-item.ts` — минимальная surface (uuid + cargo_num + auc_type) на SDD-017; SDD-020 расширит до полного контракта карточки.
 - Состояния: skeleton (5 анимированных placeholder-блоков), empty (dashed border + подсказка), error (destructive border + кнопка «Повторить»). `isFetching` снижает opacity списка при дозагрузке следующей страницы.
 - Пагинация: кнопки «Назад»/«Вперёд» + индикатор «current / last». `lastPage <= 1` скрывает контрол. `setPage` обновляет URL через `navigate({ search: ... })`, что автоматически перезапускает query.
-- `fsd/insignificant-slice` остался отключенным в `steiger.config.ts` (comment обновлён): `entities/auction` и `features/auction-filters` имеют по одному потребителю до SDD-018/019.
+- `fsd/insignificant-slice` остался отключенным в `steiger.config.ts` (comment обновлён): `entities/auction` и `features/auction-filters` имеют по одному потребителю до SDD-018/20.
 - Smoke-скрипт `scripts/list-page-smoke.mjs` (не в `pnpm check`): 4 проверки — h1, наличие карточек, hover-prefetch GET на detail, наличие/отсутствие пагинации. Запуск: весь набор через `pnpm smoke` (сам поднимает dev); узкий прогон — `node scripts/list-page-smoke.mjs` при поднятом `pnpm dev`.
