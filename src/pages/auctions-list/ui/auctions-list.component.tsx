@@ -53,9 +53,13 @@ export function AuctionsList() {
 
   if (query.isPending) {
     return (
-      <div className="flex flex-col gap-3" aria-busy="true" aria-live="polite">
-        {Array.from({ length: 5 }).map((_, idx) => (
-          <Skeleton key={idx} className="h-20" />
+      <div
+        className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        {Array.from({ length: 8 }).map((_, idx) => (
+          <Skeleton key={idx} className="h-48" />
         ))}
       </div>
     )
@@ -93,7 +97,7 @@ export function AuctionsList() {
     <>
       <section
         className={cn(
-          'relative flex flex-col gap-3',
+          'relative grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4',
           query.isFetching && 'opacity-60 transition-opacity',
         )}
       >

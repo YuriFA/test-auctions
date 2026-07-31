@@ -82,7 +82,7 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
         <AuctionTrading item={item} />
       </div>
 
-      <div className="flex items-center justify-end gap-2 border-t pt-3">
+      <div className="mt-auto flex items-center justify-end gap-2 border-t pt-3">
         <AuctionAction action={action} auctionUuid={item.auctionUuid} />
       </div>
     </article>
