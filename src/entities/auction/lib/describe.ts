@@ -1,4 +1,11 @@
-import type { AuctionStatus, AuctionType, TradingStatus } from '@shared/api'
+import type {
+  AuctionStatus,
+  AuctionType,
+  BidMeasurementType,
+  OperationType,
+  PaymentDelayType,
+  TradingStatus,
+} from '@shared/api'
 
 export const AUCTION_TYPE_LABELS: Readonly<Record<AuctionType, string>> = {
   Request: 'Заявочный',
@@ -6,6 +13,24 @@ export const AUCTION_TYPE_LABELS: Readonly<Record<AuctionType, string>> = {
   Down: 'На понижение',
   FixPrice: 'Фиксированная цена',
   Unknown: 'Неизвестный тип',
+}
+
+export const OPERATION_TYPE_LABELS: Readonly<Record<OperationType, string>> = {
+  Loading: 'Погрузка',
+  Unloading: 'Выгрузка',
+  Unknown: 'Точка маршрута',
+}
+
+export const PAYMENT_DELAY_TYPE_LABELS: Readonly<Record<PaymentDelayType, string>> = {
+  CalendarDays: 'календарных дней',
+  WorkDays: 'рабочих дней',
+  Unknown: '—',
+}
+
+export const BID_MEASUREMENT_TYPE_LABELS: Readonly<Record<BidMeasurementType, string>> = {
+  PerRoute: 'За маршрут',
+  PerKm: 'За километр',
+  Unknown: '—',
 }
 
 export const TRADING_STATUS_LABELS: Readonly<Record<TradingStatus, string>> = {
@@ -65,4 +90,16 @@ export function describeAuctionStatusCode(code: number): string {
     return FALLBACK_LABEL
   }
   return AUCTION_STATUS_LABELS[AUCTION_STATUS_CODES[code - 1]] ?? FALLBACK_LABEL
+}
+
+export function describeOperationType(type: OperationType): string {
+  return OPERATION_TYPE_LABELS[type] ?? FALLBACK_LABEL
+}
+
+export function describePaymentDelayType(type: PaymentDelayType): string {
+  return PAYMENT_DELAY_TYPE_LABELS[type] ?? FALLBACK_LABEL
+}
+
+export function describeBidMeasurementType(type: BidMeasurementType): string {
+  return BID_MEASUREMENT_TYPE_LABELS[type] ?? FALLBACK_LABEL
 }
