@@ -1,9 +1,3 @@
-// Domain-specific ru-RU formatters for the auction list and detail UIs.
-//
-// All formatters collapse null/undefined/bad input into the em-dash "—"
-// fallback rather than throwing — the card treats them as "missing data" and
-// renders the dash in place. Callers don't need to pre-check.
-
 const FALLBACK = '—'
 
 const PRICE_NUMBER = new Intl.NumberFormat('ru-RU', {
@@ -53,9 +47,8 @@ export function formatDate(iso: string | undefined | null): string {
   return DATE_FORMATTER.format(parsed)
 }
 
-// price ÷ distance with safe handling. Distance ≤ 0 collapses to "—" because
-// the route may be unknown or the value simply not provided by the DTO yet —
-// rendering "0 ₽/км" would be misleading.
+// NOTE: distance ≤ 0 collapses to "—" — the route may be unknown or the value
+// not provided by the DTO yet; "0 ₽/км" would mislead.
 export function formatPricePerKm(
   price: number | null | undefined,
   distance: number | null | undefined,

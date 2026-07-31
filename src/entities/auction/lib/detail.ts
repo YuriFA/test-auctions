@@ -62,22 +62,18 @@ export type AuctionDetailCarRequirementsVM = {
 }
 
 export type AuctionDetailVM = {
-  // main
   cargoNum: string
   orderUid: string
   aucType: AuctionType | undefined
   aucTypeLabel: string
   createdAt: string | undefined
 
-  // organizer
   organizerName: string
   organizerInn: string
   organizerKpp: string
 
-  // contacts (organizer-level)
   contacts: AuctionDetailContactVM[]
 
-  // cargo
   cargoBodyType: string
   cargoDistance: number | null
   cargoTruckCount: number | null
@@ -85,7 +81,6 @@ export type AuctionDetailVM = {
   cargoTempTo: number | null
   carRequirements: AuctionDetailCarRequirementsVM | null
 
-  // trading — statuses & schedule
   auctionStatus: AuctionStatus | undefined
   auctionStatusLabel: string
   tradingStatus: TradingStatus | undefined
@@ -95,7 +90,6 @@ export type AuctionDetailVM = {
   bidMeasurementType: BidMeasurementType | undefined
   bidMeasurementTypeLabel: string
 
-  // trading — price params (each null when absent in DTO)
   priceStart: number | null
   priceCurrent: number | null
   priceCurrentNoVat: number | null
@@ -106,13 +100,11 @@ export type AuctionDetailVM = {
   priceStep: number | null
   pricePerKm: number | null
 
-  // your bet (separate from history)
   hasUserBet: boolean
   userLastBet: number | null
   userLastBetWithVat: number | null
   userWin: boolean
 
-  // payment
   paymentCondition: string
   paymentForm: string
   paymentDelay: number | null
@@ -121,15 +113,13 @@ export type AuctionDetailVM = {
   paymentCurrencyCode: string
   paymentPrepay: string
 
-  // assembly
   assemblyNum: string
   assemblyDate: string | undefined
 
-  // routes
   routes: AuctionDetailRoutePointVM[]
 
-  // Raw restriction flags — consumers derive interpretation via
-  // deriveAuctionRestrictions (SDD-022), never read these directly in UI.
+  // NOTE: raw restriction flags — UI consumers must read via
+  // deriveAuctionRestrictions, never directly from this VM.
   canSetBet: boolean
   hideBetsHistory: boolean
   hidePointsAddressAndContacts: boolean

@@ -169,9 +169,8 @@ interface DetailActionBarProps {
   restrictions: AuctionRestrictions
 }
 
-// Two distinct Link branches keep `to` a string literal — TanStack Router
-// infers params typing from the literal. The disabled branch renders a plain
-// Button. The bets-link is suppressed when the auction hides its history.
+// NOTE: two distinct Link branches keep `to` a string literal — TanStack
+// Router infers param types from the literal, so a computed value would lose it.
 function DetailActionBar({ action, auctionUuid, restrictions }: DetailActionBarProps) {
   if (action.kind === 'disabled') {
     return (
@@ -244,8 +243,8 @@ function ContactsCard({
   vm: AuctionDetailVM
   restrictions: AuctionRestrictions
 }) {
-  // hide_points_address_and_contacts also hides organizer-level contacts per
-  // SDD-022 matrix — derived once in the parent via deriveAuctionRestrictions.
+  // NOTE: hide_points_address_and_contacts also hides organizer-level contacts,
+  // not just point addresses — derive the meaning in one place.
   if (!restrictions.canViewContacts) {
     return null
   }
@@ -507,8 +506,6 @@ function YourBetCard({
   vm: AuctionDetailVM
   restrictions: AuctionRestrictions
 }) {
-  // The user's own bet is rendered separately from the bets history (SDD-023)
-  // — this card is the "current state" snapshot.
   if (!vm.hasUserBet) {
     return (
       <Card>

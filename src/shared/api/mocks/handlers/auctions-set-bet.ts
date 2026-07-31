@@ -3,7 +3,7 @@ import { HttpResponse, http } from 'msw'
 import type { BetItem, ProblemDetail, ValidationProblem } from '../../generated'
 import { writeBet } from '../runtime/store'
 
-// Same path as the GET bets handler (auctions-bets.ts); MSW dispatches by method.
+// NOTE: same path as the GET bets handler — MSW dispatches by method.
 const AUCTIONS_SET_BET_PATH = '*/api/v1/auctions/:auctionUuid/bets'
 
 export const auctionsSetBetHandler = http.post(
@@ -39,8 +39,8 @@ export const auctionsSetBetHandler = http.post(
   },
 )
 
-// Handler owns shape validation (JSON parse, type of price); store owns
-// business validation (price > 0) and side-effects.
+// NOTE: handler owns shape (JSON parse, price type); store owns business
+// validation (price > 0) and side-effects. Don't move either across the line.
 function extractPrice(body: unknown): number | null {
   if (typeof body !== 'object' || body === null) {
     return null

@@ -3,10 +3,9 @@ import { createRoot } from 'react-dom/client'
 
 import { App } from './app/app.component'
 
-// MSW is a dev-only mock layer. In production the dynamic import is
-// tree-shaken by Vite's `import.meta.env.PROD` branch, so `msw/browser` and
-// the worker runtime never ship in the bundle. Awaiting `worker.start()` here
-// guarantees no app fetch leaves the page before the worker is ready.
+// NOTE: must await worker.start() before createRoot — otherwise the first
+// app fetches race the MSW worker and leak to the network. Dynamic import is
+// tree-shaken in PROD so the worker runtime never ships in the bundle.
 async function enableMockWorker(): Promise<void> {
   if (import.meta.env.PROD) {
     return

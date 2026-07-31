@@ -7,9 +7,8 @@ interface Props {
   auctionUuid: string
 }
 
-// Two distinct Link branches keep `to` a string literal — TanStack Router
-// infers params typing from the literal, so a computed value would lose it.
-// The disabled branch renders a plain Button (no navigation).
+// NOTE: two distinct Link branches keep `to` a string literal — TanStack
+// Router infers param types from the literal, a computed value would lose it.
 export function AuctionAction({ action, auctionUuid }: Props) {
   if (action.kind === 'disabled') {
     return (

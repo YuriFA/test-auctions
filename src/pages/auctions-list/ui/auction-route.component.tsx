@@ -6,10 +6,6 @@ interface Props {
   direction?: string
 }
 
-// Route is the largest, most prominent element on the card — the carrier's
-// primary decision factor ("where does this cargo go"). Falls back to
-// "Маршрут не задан" when both endpoints are missing rather than rendering
-// an empty row.
 export function AuctionRoute({ loadCity, unloadCity, direction }: Props) {
   const hasCities = Boolean(loadCity) || Boolean(unloadCity)
   const label = direction?.trim() || (hasCities ? `${loadCity} → ${unloadCity}`.trim() : '')
@@ -23,10 +19,6 @@ export function AuctionRoute({ loadCity, unloadCity, direction }: Props) {
     )
   }
 
-  // If both cities are present we render them as two-pipe segments with an
-  // arrow icon between; otherwise we render the pre-formatted `direction`
-  // string as a single span (covers cases like "Склад №5 → Клиент" that the
-  // backend may already have formatted).
   if (loadCity && unloadCity) {
     return (
       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-base font-semibold text-foreground sm:text-lg">

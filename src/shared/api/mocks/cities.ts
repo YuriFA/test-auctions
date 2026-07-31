@@ -1,12 +1,3 @@
-/**
- * Mock-only re-export of the canonical cities dictionary.
- *
- * Implementation lives in `@shared/config/cities` so higher FSD layers can
- * consume it through the production Public API without reaching into the
- * mock package; this file keeps the historical `mockCities` /
- * `findMockCityByGcId` names available to MSW handlers and tests.
- */
-
 import { cities, findCityByGcId, findCityByName, type City } from '@shared/config'
 
 export type MockCity = City

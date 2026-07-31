@@ -6,11 +6,8 @@ import type {
 } from '../generated'
 import { mockCompetitors, mockCurrentUser } from './user'
 
-// Mock-only extension of AuctionListItemMain that exposes the routing UUID
-// as `auction_uuid`. The spec routes by `auctionUuid: format: uuid` in paths
-// but exposes no `auction_uuid` field in any DTO. Deliberate, documented
-// deviation from the generated DTO — MUST NOT leak into production
-// `shared/api` types.
+// FIXME: production DTO has no `auction_uuid` field — the mock layer injects
+// it for routing. Must not leak into `shared/api` types.
 export type MockAuctionListItemMain = AuctionListItemMain & {
   auction_uuid: string
 }
@@ -19,10 +16,6 @@ export type MockAuctionListItem = Omit<AuctionListItem, 'main'> & {
   main?: MockAuctionListItemMain
 }
 
-// Bundles the three DTO shapes that the runtime store must keep consistent:
-// list item, detail, bets history. `uuid` is the routing identifier (matches
-// the injected `main.auction_uuid`); intentionally distinct from
-// `main.order_uid` (underlying order's UUID).
 export interface SeedAuction {
   uuid: string
   list: MockAuctionListItem
@@ -30,8 +23,6 @@ export interface SeedAuction {
   bets: BetItem[]
 }
 
-// Routing UUIDs for seed auctions. Sequential last segment keeps them
-// human-distinguishable in tests.
 export const seedAuctionUuids = {
   downLeading: '00000000-0000-4000-8000-000000000001',
   upLosing: '00000000-0000-4000-8000-000000000002',
@@ -45,13 +36,9 @@ export const seedAuctionUuids = {
   canceledEmpty: '00000000-0000-4000-8000-000000000010',
 } as const
 
-/**
- * Stable UUIDs for the underlying orders, surfaced in the spec as
- * `main.order_uid`. Kept separate from `seedAuctionUuids` so the routing
- * identity (`auctionUuid`) and the order identity (`order_uid`) stay
- * independent, as they would in a real system where an auction is a trading
- * procedure layered on top of an order.
- */
+// NOTE: routing identity (auctionUuid) and order identity (order_uid) are
+// deliberately separate — an auction is a trading procedure layered on an
+// order; the mock dataset must keep both stable across mutations.
 const seedOrderUids = {
   downLeading: '3a05d045-0e67-4f85-b20a-de81d18bba7a',
   upLosing: '3a05d046-0e67-4f85-b20a-de81d18bba7a',
@@ -127,21 +114,10 @@ function makeUserBet(
   }
 }
 
-/**
- * Seed auctions. Each entry covers at least one of the matrices below:
- *
- *   - status (Planning, Auction, DeterminateWinner, WaitDeal, InProgress,
- *     Finished, Stopped, Canceled, Unknown)
- *   - auction type (Request, Up, Down, FixPrice, Unknown)
- *   - trading status (NotParticipating, Leading, Losing, Winner, Confirmed,
- *     Unknown)
- *   - restriction flags (`hide_bets_history`, `hide_points_address_and_contacts`,
- *     `no_view_cargo_price`, `can_set_bet`)
- *   - empty / null edge cases (no bets, null current price, user not bidding)
- *
- * Intentionally small but exercises every enum branch at least once, so UI
- * work never assumes only happy paths.
- */
+// NOTE: each seed entry pins at least one enum branch (AuctionStatus,
+// AuctionType, TradingStatus), one restriction flag, or one null/empty edge
+// case — keep coverage complete when adding entries so UI work never assumes
+// only happy paths.
 export const seedAuctions: SeedAuction[] = [
   {
     uuid: seedAuctionUuids.downLeading,

@@ -57,10 +57,9 @@ export const AUCTION_STATUS_LABELS: Readonly<Record<AuctionStatus, string>> = {
   Unknown: 'Неизвестный статус',
 }
 
-// 1..7 — front-end codes from the OpenAPI spec comments
-// (`docs/openapi.auctions.v0.json`, AuctionListRequest.statuses). They map
-// positionally onto the AuctionStatus enum EXCLUDING Canceled(8)/Unknown,
-// which are not URL-filterable.
+// NOTE: 1..7 are the URL filter codes from the spec comments. They map
+// positionally onto AuctionStatus EXCLUDING Canceled(8)/Unknown, which are
+// not URL-filterable.
 export const AUCTION_STATUS_CODES = [
   'Planning',
   'Auction',

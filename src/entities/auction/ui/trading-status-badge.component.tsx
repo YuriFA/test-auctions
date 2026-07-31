@@ -8,10 +8,9 @@ interface Props {
   label?: string
 }
 
-// `NotParticipating` and `Unknown` are technically valid TradingStatus values
-// but carry no decision-relevant signal for the carrier at list-view time —
-// hide the badge rather than show a gray pill that competes for attention with
-// actionable statuses (Leading/Losing/Winner).
+// NOTE: NotParticipating and Unknown are valid TradingStatus values but carry
+// no decision-relevant signal — hide them rather than show a gray pill that
+// competes for actionable statuses (Leading/Losing/Winner).
 const HIDDEN: ReadonlyArray<TradingStatus> = ['NotParticipating', 'Unknown']
 
 export function TradingStatusBadge({ status, label }: Props) {

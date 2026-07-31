@@ -19,7 +19,9 @@ import { mockCurrentUser } from '../user'
 
 const VAT_RATE = 0.2
 
-/** Statuses accepted by the `statuses[]` numeric filter, in numeric order. */
+// NOTE: positional map for the `statuses[]` numeric filter — the spec lists
+// 1..7 by comment position in `AuctionListRequest.statuses`. Canceled(8) and
+// Unknown are excluded because they are not URL-filterable.
 const AUCTION_STATUS_BY_NUMBER: AuctionStatus[] = [
   'Planning',
   'Auction',
@@ -45,14 +47,9 @@ function createInitialState(): MockRuntimeState {
   return { auctions, nextBetId: maxBetId + 1 }
 }
 
-/** Reset the runtime back to the seed snapshot. */
 export function resetMockRuntime(): void {
   state = createInitialState()
 }
-
-// -------------------------------------------------------------------------------------------------
-// Reads
-// -------------------------------------------------------------------------------------------------
 
 export function readAuctionDetail(uuid: string): AuctionShowResponse | undefined {
   const auction = findAuction(uuid)
@@ -84,23 +81,15 @@ export function readAuctionList(filters: AuctionListRequest = {}): AuctionListRe
   }
 }
 
-// -------------------------------------------------------------------------------------------------
-// Mutations
-// -------------------------------------------------------------------------------------------------
-
 export type PlaceBetResult =
   | { ok: true; bet: BetItem }
   | { ok: false; status: 404; problem: ProblemDetail }
   | { ok: false; status: 422; problem: ValidationProblem }
 
-/**
- * Apply a user bet. Rejects the user's previously active bet, inserts the
- * new bet, recomputes places, and refreshes the trading block in both
- * detail and list DTOs so list/detail/bets reads stay consistent.
- *
- * Never throws — returns a discriminated union so MSW handlers map the
- * failure case directly onto the matching HTTP response.
- */
+// NOTE: never throws — returns a discriminated union so MSW handlers map the
+// failure case onto the matching HTTP response without re-validating. Keeps
+// list/detail/bets reads consistent by recomputing places and refreshing the
+// trading block in both DTOs after a successful mutation.
 export function writeBet(uuid: string, price: number): PlaceBetResult {
   if (!Number.isFinite(price) || price <= 0) {
     return {
@@ -171,10 +160,6 @@ function makeUserBetRecord(priceWithVat: number): BetItem {
   }
 }
 
-// -------------------------------------------------------------------------------------------------
-// Internals: lookups
-// -------------------------------------------------------------------------------------------------
-
 function findAuction(uuid: string): SeedAuction | undefined {
   return state.auctions.find((auction) => auction.uuid === uuid)
 }
@@ -184,10 +169,6 @@ function findUserActiveBet(auction: SeedAuction): BetItem | undefined {
     .filter((bet) => !bet.is_rejected && bet.organization_id === mockCurrentUser.organization_id)
     .sort((a, b) => (b.id ?? 0) - (a.id ?? 0))[0]
 }
-
-// -------------------------------------------------------------------------------------------------
-// Internals: ranking + trading side-effects
-// -------------------------------------------------------------------------------------------------
 
 function recomputePlaces(auction: SeedAuction): void {
   const direction = auctionDirection(auction)
@@ -206,7 +187,7 @@ function recomputePlaces(auction: SeedAuction): void {
 function compareForRank(a: BetItem, b: BetItem, direction: AuctionType | undefined): number {
   const priceA = a.price_with_vat ?? 0
   const priceB = b.price_with_vat ?? 0
-  // Down auctions: lowest bet wins. Up: highest. Other types fall to lowest.
+  // NOTE: Down/Request/fixPrice auctions — lowest bet wins; Up — highest.
   const diff = direction === 'Up' ? priceB - priceA : priceA - priceB
   if (diff !== 0) {
     return diff
@@ -325,10 +306,6 @@ function updateListTrading(
   listTrading.red_bet_no_vat = worseThanPrevious
 }
 
-/**
- * Next acceptable price one step away from `current` in the auction
- * direction. Returns `null` when either input is missing.
- */
 function nextAvailablePrice(
   current: number | null | undefined,
   step: number | null | undefined,
@@ -341,9 +318,8 @@ function nextAvailablePrice(
   return Math.max(0, Math.round(raw * 100) / 100)
 }
 
-// Narrower trading status set exposed by the list DTO. The detail DTO's
-// TradingStatus adds OnPending, ChoosingWinner, Accepted which the list DTO
-// does not surface; we collapse them onto the nearest list equivalent.
+// NOTE: list DTO exposes a narrower TradingStatus set than detail.
+// OnPending/ChoosingWinner collapse to `Losing`, Accepted to `Confirmed`.
 type ListTradingStatus =
   | 'NotParticipating'
   | 'Leading'
@@ -375,10 +351,6 @@ function isAuctionFinished(auction: SeedAuction): boolean {
 function auctionDirection(auction: SeedAuction): AuctionType | undefined {
   return auction.detail.main?.auc_type ?? auction.list.main?.auc_type
 }
-
-// -------------------------------------------------------------------------------------------------
-// Internals: filters / sort / pagination
-// -------------------------------------------------------------------------------------------------
 
 function matchesFilters(auction: SeedAuction, filters: AuctionListRequest): boolean {
   const list = auction.list
@@ -555,8 +527,8 @@ function buildMeta(
   pagedCount: number,
 ): AuctionListMeta {
   const lastPage = perPage === 0 ? 1 : Math.ceil(total / perPage)
-  // Empty slice (filtered out OR page > lastPage) must read from=0, to=0 —
-  // matches Laravel paginator and the integer (non-nullable) contract.
+  // NOTE: empty slice must read from=0, to=0 to match the Laravel paginator
+  // and the non-nullable integer contract on `from` / `to`.
   const from = pagedCount === 0 ? 0 : (page - 1) * perPage + 1
   const to = pagedCount === 0 ? 0 : Math.min(page * perPage, total)
   return {
@@ -568,10 +540,6 @@ function buildMeta(
     total,
   }
 }
-
-// -------------------------------------------------------------------------------------------------
-// Internals: helpers
-// -------------------------------------------------------------------------------------------------
 
 function roundPrice(value: number): number {
   return Math.round(value * 100) / 100

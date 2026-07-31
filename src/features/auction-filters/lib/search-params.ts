@@ -2,8 +2,8 @@ import { z } from 'zod'
 
 const AUCTION_TYPES = ['Request', 'Up', 'Down', 'FixPrice', 'Unknown'] as const
 
-// List DTO never surfaces OnPending/ChoosingWinner/Accepted — exclude them
-// from the URL filter set so unknown values drop on parse.
+// NOTE: list DTO never surfaces OnPending/ChoosingWinner/Accepted — exclude
+// them from the URL filter set so unknown values drop on parse.
 const MOBILE_STATUSES = [
   'NotParticipating',
   'Leading',
@@ -55,9 +55,6 @@ export type AuctionsListFilters = {
   is_bidder?: boolean
 }
 
-// Normalize URLSearchParams into a plain object where every value is a
-// string[] (even single-value keys). Lets the Zod schema treat every field
-// uniformly regardless of whether URL has ?page=3 or ?auc_type=Down&auc_type=Up.
 function toPlainObject(raw: URLSearchParams): Record<string, string[]> {
   const out: Record<string, string[]> = {}
   for (const key of raw.keys()) {
@@ -68,9 +65,6 @@ function toPlainObject(raw: URLSearchParams): Record<string, string[]> {
 
 const first = <T>(arr: T[] | undefined): T | undefined => arr?.[0]
 
-// Each field uses a permissive transform so the schema never throws; bad
-// input collapses to the default for that field. Unknown keys are stripped
-// by z.object's default behavior.
 const stringArray = z.array(z.string()).optional()
 
 export const auctionsListFiltersSchema: z.ZodType<AuctionsListFilters> = z.object({
@@ -155,8 +149,8 @@ function parseOptionalBoolean(raw: string | null): boolean | undefined {
   return undefined
 }
 
-// Defaults are intentionally not serialized so URLs stay readable and
-// resilient to default changes. Arrays become repeated keys, not CSV.
+// NOTE: defaults are not serialized so URLs stay readable and resilient to
+// default changes; arrays become repeated keys, never CSV.
 export function serializeAuctionsListSearchParams(value: AuctionsListFilters): URLSearchParams {
   const out = new URLSearchParams()
 
@@ -216,10 +210,9 @@ export function isDefaultFilters(value: AuctionsListFilters): boolean {
   return countActiveFilters(value) === 0
 }
 
-// `cargo_num` is intentionally excluded: the search input is a separate
-// primary action in the page header and shouldn't bump the filter counter.
-// Arrays count as one field regardless of length; an optional counts as
-// active when present (true OR false), since defaults are `undefined`.
+// NOTE: `cargo_num` is excluded — it's a separate header search input, not a
+// filter. Optionals count as active whenever present (true OR false), since
+// defaults are `undefined`; arrays count as one field regardless of length.
 export function countActiveFilters(value: AuctionsListFilters): number {
   let count = 0
   if (value.page !== DEFAULT_PAGE) {

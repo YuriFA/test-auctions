@@ -27,8 +27,8 @@ export async function fetchAuctionDetail(auctionUuid: string): Promise<AuctionDe
   return result.data
 }
 
-// `auction_uuid` is injected by the mock layer; the production DTO doesn't
-// expose it yet. Read defensively so clients can route off the value today.
+// FIXME: production DTO has no `auction_uuid` field; the mock layer injects it.
+// Read defensively so routing works today, drop the cast once the spec exposes it.
 export function extractAuctionUuid(item: AuctionListItem): string | undefined {
   const main = item.main as { auction_uuid?: string } | undefined
   return main?.auction_uuid

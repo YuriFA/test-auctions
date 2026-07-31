@@ -5,10 +5,6 @@ interface Props {
   item: Pick<AuctionListItemVM, 'currentPrice' | 'pricePerKm' | 'hasUserBet' | 'userLastBet'>
 }
 
-// Trading block: current price is the second-most-prominent element after the
-// route. Layout: large price on the left, meta column (price/km + own bid) on
-// the right. Hidden entirely when there is no current price AND no user bid —
-// a card with no tradeable signal shouldn't pretend to have one.
 export function AuctionTrading({ item }: Props) {
   const hasPrice = item.currentPrice != null
   const hasUserBet = item.hasUserBet && item.userLastBet != null

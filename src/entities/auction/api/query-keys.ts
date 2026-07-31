@@ -1,5 +1,5 @@
-// Hierarchical keys: each level is a prefix of its children, so invalidating
-// a parent refreshes every nested query. Layout:
+// NOTE: hierarchical keys — each level is a prefix of its children, so
+// invalidating a parent refreshes every nested query.
 //   ['auctions']
 //   ['auctions', 'list', filters]
 //   ['auctions', 'detail', auctionUuid]
@@ -14,9 +14,8 @@ export const auctionKeys = {
     [...auctionKeys.detail(auctionUuid), 'bets', options] as const,
 } as const
 
-// Targets that must refetch after a successful bet mutation. bets is a child
-// of detail so invalidating detail(uuid) already covers it via prefix
-// matching, but listing each target explicitly reads as documentation and
-// survives future key restructuring.
+// NOTE: listing each target explicitly survives future key restructuring —
+// invalidating detail(uuid) already covers bets via prefix matching, but the
+// explicit list documents intent and stays correct if the hierarchy changes.
 export const betMutationInvalidationTargets = (auctionUuid: string) =>
   [auctionKeys.lists(), auctionKeys.detail(auctionUuid), auctionKeys.bets(auctionUuid)] as const

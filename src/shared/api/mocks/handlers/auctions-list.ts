@@ -3,10 +3,9 @@ import { HttpResponse, http } from 'msw'
 import type { AuctionListRequest, ValidationProblem } from '../../generated'
 import { readAuctionList } from '../runtime/store'
 
-// `*` prefix matches any origin so the same handler works under the browser
-// worker (SDK posts against current host) and Node setupServer (native fetch
-// carries a synthetic http://localhost origin). Relative path matched in
-// browser but not Node.
+// NOTE: `*` prefix matches any origin so the same handler works in the browser
+// worker (SDK posts against current host) and under Node setupServer (native
+// fetch carries a synthetic http://localhost origin).
 const AUCTIONS_LIST_PATH = '*/api/v1/auctions/list'
 
 export const auctionsListHandler = http.post(

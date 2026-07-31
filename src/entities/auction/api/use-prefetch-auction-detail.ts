@@ -4,10 +4,9 @@ import { useCallback } from 'react'
 
 import { auctionKeys } from './query-keys'
 
-// Hover/focus prefetch must not cause an immediate refetch on click — otherwise
-// the freshly cached entry becomes stale the moment the user opens the detail
-// page. The 60 s window keeps the prefetched entry fresh long enough for the
-// click-through without holding stale data indefinitely.
+// NOTE: staleTime must outlast a typical hover→click gap — otherwise the
+// prefetched entry becomes stale the moment the user opens the detail page
+// and TanStack refetches immediately, defeating the prefetch.
 const PREFETCH_STALE_TIME_MS = 60_000
 
 export function usePrefetchAuctionDetail() {

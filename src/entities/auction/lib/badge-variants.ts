@@ -1,15 +1,5 @@
-// Maps domain enums to shadcn Badge variant names.
-//
-// The Badge cva in `src/shared/ui/badge.component.tsx` is the single source
-// of variant styling — these tables only pick which variant applies to which
-// enum value. Centralisation guarantees that two UIs rendering the same
-// TradingStatus (e.g. list card and detail page) agree on the colour.
-
 import type { AuctionStatus, AuctionType, TradingStatus } from '@shared/api'
 
-// Variants the auction UI may request. The Badge cva implements every name
-// listed here (existing: default/secondary/outline/destructive; added by
-// SDD-019: info/success/warning).
 export type AuctionBadgeVariant =
   | 'default'
   | 'secondary'

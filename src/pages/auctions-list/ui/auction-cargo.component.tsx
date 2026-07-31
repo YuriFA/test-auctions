@@ -8,9 +8,6 @@ interface Props {
   bodyType: string
 }
 
-// Compact cargo row: each attribute is a tiny icon + value pill. Hides
-// attributes that are missing from the DTO rather than rendering "—" markers
-// (the cargo row is a quick-scan element; em-dashes would dilute signal).
 export function AuctionCargo({ name, weight, volume, bodyType }: Props) {
   const hasAny = Boolean(name) || weight != null || volume != null || Boolean(bodyType)
   if (!hasAny) {

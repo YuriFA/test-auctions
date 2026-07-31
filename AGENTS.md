@@ -117,18 +117,23 @@ This file defines the project-level rules for any AI/LLM agent working in this r
 
 ## Code Comment Rules
 
-- Default to writing no comments.
-- Add a comment only when the WHY is non-obvious: a hidden constraint, a subtle invariant, a workaround for a specific bug, or behavior that would surprise a reader.
-- Do not explain WHAT the code does — well-named identifiers already do that.
-- Do not reference the current task, fix, callers, or issue numbers ("used by X", "added for the Y flow", "fixes #123"); those belong in commit messages and PR descriptions, not the code.
-- File-level JSDoc blocks are reserved for Public API modules (`index.ts`) where they document the segment's purpose and consumers. Implementation files do not need file-level headers.
+- **Comments are forbidden by default.** Code must be self-explanatory through naming, types, and structure.
+- A comment is permitted only when it carries information a reader cannot recover from the code itself: a hidden contract constraint, a non-obvious invariant, a workaround for a specific bug, an edge case that would surprise a reader, or a critical warning about production behaviour.
+- **Every permitted comment must start with a conventional marker** chosen by meaning:
+  - `NOTE:` — non-obvious invariant, contract constraint, or behaviour the reader must know to avoid breaking something.
+  - `FIXME:` — known defect, broken code path, or a workaround that masks a real bug; must be fixed.
+  - `TODO:` — acknowledged incomplete work with a clear next step; not a defect, just unfinished.
+  - `XXX:` — warning about dangerous or hazardous code that needs careful handling.
+- No marker prefix → no comment. Section dividers (`// --- Reads ---`), section labels inside types (`// main`, `// organizer`), file-level prose, and WHAT-paraphrasing blocks are all forbidden — structure the code instead.
+- **Never reference tasks, tickets, PRs, issues, SDD numbers, callers, or fixes** in code. Phrases like `// SDD-022`, `// used by X`, `// added for the Y flow`, `// fixes #123` belong in commit messages and PR descriptions, never in source.
+- Comments that label a smell (`mock-only`, `defensive cast`, `temporary`) signal a missing type or abstraction. Solve with types; do not document the smell. If the smell is unavoidable, use the matching marker (`FIXME:` for workarounds, `XXX:` for hazards).
 - Prefer tests over comments: an invariant expressed in a test is enforceable; in a comment it rots.
-- Comments that label a workaround ("mock-only", "defensive cast", "temporary", "FIXME") signal a missing type or abstraction. Solve with types, do not document the smell.
-- Step-style scaffolding comments inside `*.test.ts` and `scripts/*-smoke.mjs` (`// 1. ...`, `// 2. ...`, fixture labels) are test narration, not production comments — the rules above target implementation files.
+- Tooling directives (`// oxlint-disable ...`, `// @ts-expect-error`, `eslint-disable-*`, `biome-ignore`) are NOT comments — they are instructions to linters and compilers and are always allowed.
+- Step-style scaffolding inside `*.test.ts` and `scripts/*-smoke.mjs` (`// 1. ...`, fixture labels) is test narration, not production code; the rules above target implementation files.
 
 ### Examples
 
-Bad — paraphrases the code:
+Bad — paraphrases the code (forbidden):
 
 ```ts
 // Keep the previous page visible while the next page loads so pagination
@@ -136,11 +141,25 @@ Bad — paraphrases the code:
 placeholderData: keepPreviousData,
 ```
 
-Good — explains a non-obvious contract constraint:
+Bad — references the task (forbidden):
 
 ```ts
-// API enum excludes `Unknown` (UI-only sentinel); filter before sending.
+// SDD-022 owns this; replace direct reads with deriveAuctionRestrictions later.
+const canPlaceBet = source.canSetBet
+```
+
+Good — `NOTE:` marker, non-obvious contract constraint:
+
+```ts
+// NOTE: API enum excludes `Unknown` (UI-only sentinel); filter before sending.
 const API_AUC_TYPES = ['Request', 'Up', 'Down', 'FixPrice'] as const
+```
+
+Good — `FIXME:` marker, known workaround:
+
+```ts
+// FIXME: mock layer injects `auction_uuid`; production DTO has no such field yet.
+const uuid = main.auction_uuid ?? orderUid
 ```
 
 ## Testing Conventions

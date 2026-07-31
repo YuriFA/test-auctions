@@ -19,9 +19,6 @@ interface Props {
     Partial<Pick<AuctionListItemVM, 'aucTypeLabel' | 'auctionStatusLabel'>>
 }
 
-// Header row: clickable cargo number on the left (primary navigation target)
-// + three semantic badges (type / auction status / trading status). Trading
-// status is hidden when NotParticipating/Unknown — see TradingStatusBadge.
 export function AuctionCardHeader({ item }: Props) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">

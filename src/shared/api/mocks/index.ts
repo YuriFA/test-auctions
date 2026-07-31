@@ -1,17 +1,6 @@
-/**
- * Public API of the mock domain dataset.
- *
- * IMPORTANT: this module is dev/test infrastructure only. It is intentionally
- * NOT re-exported from `src/shared/api/index.ts`, so higher FSD layers
- * (`pages`, `widgets`, `features`, `entities`) cannot accidentally import mock
- * data. Only the MSW worker bootstrap, MSW handlers, and unit tests
- * should reach for these symbols via `@shared/api/mocks`.
- *
- * Reach-through contract: every shape exposed here is typed against the
- * generated OpenAPI DTOs from `../generated`, so the dataset stays accurate
- * against the contract while remaining decoupled from the production
- * `shared/api` adapter helpers.
- */
+// NOTE: dev/test infrastructure only. This module MUST NOT be re-exported from
+// `src/shared/api/index.ts` — higher FSD layers must not reach mock data.
+// Only MSW handlers, the MSW bootstrap, and unit tests import from here.
 
 export type { MockCity } from './cities'
 export { findMockCityByGcId, findMockCityByName, mockCities } from './cities'
@@ -24,16 +13,10 @@ export { seedAuctionUuids, seedAuctions } from './auctions'
 
 import { seedAuctions, type SeedAuction } from './auctions'
 
-/**
- * Convenience lookup: seed auction by its UUID. The runtime store and MSW
- * detail/bets handlers will call this to resolve a path parameter to a record.
- */
 export function findSeedAuctionByUuid(uuid: string): SeedAuction | undefined {
   return seedAuctions.find((auction) => auction.uuid === uuid)
 }
 
-// Single in-memory MSW runtime store. Handlers and tests reach the runtime
-// through this Public API; production code must not.
 export {
   readAuctionBets,
   readAuctionDetail,
@@ -43,9 +26,7 @@ export {
 } from './runtime/store'
 export type { PlaceBetResult } from './runtime/store'
 
-// MSW handlers. The array is the single shared source of truth for
-// the browser worker (`./browser.ts`) and the Node test server. The browser
-// worker itself is intentionally NOT re-exported here — `msw/browser` is a
-// side-effectful import that only the dev-mode `src/main.tsx` bootstrap should
-// reach via dynamic `import("@shared/api/mocks/browser")`.
+// NOTE: the worker itself (`./browser.ts`) is intentionally not re-exported
+// here — `msw/browser` is a side-effectful import that only `src/main.tsx`
+// reaches via dynamic `import('@shared/api/mocks/browser')`.
 export { mockHandlers } from './handlers'

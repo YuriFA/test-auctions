@@ -55,7 +55,6 @@ export function AuctionFiltersForm({ onApplied }: Props) {
   const { initialFilters, commitFilters } = useAuctionsListFiltersCommit()
   const form = useForm<AuctionsListFilters>({
     defaultValues: initialFilters,
-    // Re-sync from URL when search changes (e.g. user typed in the header search).
     values: initialFilters,
   })
 

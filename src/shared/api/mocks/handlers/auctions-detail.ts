@@ -3,8 +3,8 @@ import { HttpResponse, http } from 'msw'
 import type { ProblemDetail } from '../../generated'
 import { readAuctionDetail } from '../runtime/store'
 
-// Single-segment placeholder guarantees `/auctions/{uuid}/bets` does not
-// match here. See auctions-list.ts for the leading-wildcard rationale.
+// NOTE: single-segment `:auctionUuid` placeholder keeps `/auctions/:uuid/bets`
+// from matching here — the bets handler owns the two-segment path.
 const AUCTIONS_DETAIL_PATH = '*/api/v1/auctions/:auctionUuid'
 
 export const auctionsDetailHandler = http.get(AUCTIONS_DETAIL_PATH, ({ params }): Response => {

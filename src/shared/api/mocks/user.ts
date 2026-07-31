@@ -1,12 +1,7 @@
-/**
- * The fixed identity of the "current user" inside the mock runtime.
- *
- * Every auctionDTO carries `trading.your` flags and every bet record has an
- * `organization_id` / `subscriber_id` owner. The mock dataset marks bets and
- * trading state as belonging to the current user by matching these IDs, which
- * keeps `is_bidder`, `your.bet`, `place`, and `is_win` consistent across the
- * list, detail, and bets endpoints.
- */
+// NOTE: the current user's IDs are the join key that keeps `is_bidder`,
+// `your.bet`, `place`, and `is_win` consistent across list, detail, and bets
+// endpoints — every bet record and every `trading.your` block is owned by
+// matching `subscriber_id` / `organization_id`.
 export interface MockCurrentUser {
   subscriber_id: number
   organization_id: number
@@ -25,10 +20,6 @@ export const mockCurrentUser: MockCurrentUser = {
   contact_phone: '+7 900 000-00-01',
 }
 
-/**
- * Competing carriers used to populate bets from other participants. Real INNs
- * and stable IDs keep the bets endpoint consistent across mutations.
- */
 export interface MockCompetitor {
   subscriber_id: number
   organization_id: number
