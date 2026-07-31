@@ -8,7 +8,10 @@ export {
 export type {
   AuctionListItem,
   AuctionListRequest,
+  AuctionStatus,
+  AuctionType,
   ProblemDetail,
+  TradingStatus,
   ValidationError,
   ValidationProblem,
 } from './generated'
