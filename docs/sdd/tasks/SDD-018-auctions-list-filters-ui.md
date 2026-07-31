@@ -2,7 +2,7 @@
 
 ## Статус
 
-Не начато.
+Завершено.
 
 ## Цель
 
@@ -23,7 +23,7 @@
 - Подписка контролов на текущие значения из типизированного объекта SDD-015 (односторонняя: URL → UI).
 - На изменение значения контрола вызывать `serializeAuctionsListSearchParams(next)` и `navigate()` — никаких ручных `URLSearchParams`-конкатенаций в UI.
 - Интегрировать словарь городов (`mockCities` из SDD-009).
-- Состояние мобильного drawer'а фильтров хранится в `useFiltersUIStore` на Zustand (D-004). Само состояние фильтров — в URL (SDD-015), не в сторе; в сторе только UI-флаг «drawer открыт/закрыт».
+- Состояние открыт/закрыто sheet'а фильтров — локальный `useState` в компоненте-владельце (D-004: локальный UI-state не требует Zustand). Само состояние фильтров — в URL (SDD-015).
 - TDD: построить типизированный словарь лейблов enum'ов (`auc_type`, `status`, `body_type` и т. п.) в `entities/auction/lib` и покрыть его маппер тестами вперёд.
 
 ## Зависимости
@@ -49,7 +49,7 @@
 - Городские фильтры используют `mockCities` (SDD-009).
 - Лейблы enum'ов берутся из `entities/auction/lib` и покрыты `pnpm test`.
 - `countActiveFilters` / `isDefaultFilters` используются для бейджа и кнопки «сбросить».
-- Фильтры читаемы на mobile (`< sm`) и desktop; на mobile сворачиваются в drawer, состояние которого живёт в `useFiltersUIStore` (Zustand, D-004).
+- Фильтры открываются в side-sheet (shadcn `Sheet` поверх `@base-ui/react/dialog`) по клику на trigger-кнопку с бейджем `countActiveFilters`; один и тот же sheet работает на mobile и desktop. Состояние `open` — локальный `useState` в компоненте-владельце (D-004: локальный UI-state не требует Zustand).
 - React-компоненты именуются с суффиксом `*.component.tsx` (D-003, требование `project_requirements.md` строки 103/139).
 
 ## Non-goals
@@ -61,3 +61,18 @@
 
 - Не допускать, чтобы скрытое локальное состояние стало настоящим источником истины: URL (через SDD-015) — единственный источник, UI — только зеркало.
 - Словарь лейблов — первый житель `entities/auction/lib`; это создаёт сегмент `lib` внутри слайса, что соответствует FSD-конвенции «purpose-named segments» (steiger допускает).
+
+## Заметки о реализации
+
+- Лейблы enum'ов живут в `entities/auction/lib/describe.ts` (отдельный коммит `feat: add auction enum labels and status codes`): `describeAuctionType`, `describeTradingStatus`, `describeAuctionStatus`, `describeAuctionStatusCode(code 1..7)`, плюс `AUCTION_STATUS_CODES` (7 кодов в порядке OpenAPI enum'а, без Canceled/Unknown). Fallback для неожиданных значений — `—`, без исключений. SDD-019 переиспользует те же функции в карточке.
+- Числовые коды `statuses[]=1..7` взяты напрямую из комментариев OpenAPI-спеки (`docs/openapi.auctions.v0.json`, `AuctionListRequest.statuses`): 1=Planning … 7=Stopped, позиционно. Canceled(8) и Unknown явно вне фильтра.
+- UI состоит из одного компонента `AuctionFilters` (`auction-filters.component.tsx`): кнопка «Фильтры (N)» + shadcn `Sheet` (side="right"), внутри которого рендерится `AuctionFiltersForm`. Один и тот же sheet используется на desktop и mobile — визуально не зависит от breakpoint. Состояние `open` — локальный `useState`, без zustand (один владелец, нет нужды в глобальном сторе).
+- Поиск по номеру заявки (`AuctionSearchInput`) живёт в header страницы, а не в sheet — это primary action, и прятать его за открытие фильтров было неудобно. Коммитит на blur/Enter, как и остальные текстовые поля.
+- Форма `auction-filters-form.component.tsx` рендерит 7 секций через `<fieldset>`/`<legend>`: Тип аукциона (4 checkbox), Статус аукциона (7 числовых кодов), Мой статус (6 TradingStatus), Маршрут (2 city select), Дата погрузки (2 date input), Текущая цена (2 number input), Дополнительно (is_available, is_bidder). Чекбоксы — вертикальный список `checkbox + label` без карточной обёртки (унified с полем «Дополнительно»). Weight/volume НЕ отображаются (D-014).
+- Форма хранит локальный `draft` (`useState` + `useEffect`-sync с `initialFilters`, который memoизирован, чтобы избежать бесконечного цикла setState). На change обновляется только draft; URL остаётся нетронутым до явного Apply. Кнопка «Применить» коммитит весь draft через `navigate({ search: toAuctionsListSearch({ ...draft, page: 1 }) })` и зовёт `onApplied` (sheet закрывается). Кнопка «Сбросить» сбрасывает draft к `DEFAULT_AUCTIONS_LIST_FILTERS` без navigate. Любой cancel-путь (backdrop, X, Esc) теряет незакоммиченные изменения — это намеренно, draft живёт в форме, а не в URL.
+- shadcn `Sheet` (`src/shared/ui/sheet.component.tsx`) построен поверх `@base-ui/react/dialog` с side-вариантами (`top`/`right`/`bottom`/`left`) и кнопкой закрытия (`XIcon` из lucide). Закрывается по клику на backdrop, по кнопке X и по Esc — все три поведения проверены smoke-скриптом.
+- shadcn `Button` (`src/shared/ui/button.component.tsx`) — обновлён через `pnpm dlx shadcn add`; стили (cva) живут отдельно в `button.styles.ts`, чтобы не нарушать fast-refresh (oxlint rule `react/only-export-components`).
+- Словарь городов поднят из `mocks/cities.ts` в `@shared/config/cities.ts` (production Public API); mocks-файл стал тонким реэкспортом, чтобы не нарушать правило SDD-009:34 «вышележащие слои не импортируют `@shared/api/mocks` напрямую».
+- Зависимость `zustand` удалена — единственным потребителем был `useFiltersUIStore`, который после перехода на локальный state в `AuctionFilters` больше не нужен.
+- Smoke `scripts/filters-ui-smoke.mjs` подключён к `pnpm smoke`: 13 checks — поиск в header + commit на blur, кнопка «Фильтры» видна на всех viewport, inline-панели нет до открытия, sheet открывает 7 секций, checkbox не коммитит до Apply, Apply коммитит URL и закрывает sheet, закрытие по backdrop/X, mobile trigger (375px) открывает sheet.
+- `fsd/insignificant-slice` остался отключенным в `steiger.config.ts`: `entities/auction` и `features/auction-filters` имеют по одному потребителю до SDD-019.
