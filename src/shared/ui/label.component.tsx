@@ -1,5 +1,3 @@
-'use client'
-
 import { cn } from '@shared/lib/cn'
 import * as React from 'react'
 
