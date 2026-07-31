@@ -1,9 +1,5 @@
 import type { AuctionListItemVM } from '@entities/auction'
-import {
-  AuctionStatusBadge,
-  AuctionTypeBadge,
-  TradingStatusBadge,
-} from '@entities/auction'
+import { AuctionStatusBadge, AuctionTypeBadge, TradingStatusBadge } from '@entities/auction'
 import { Link } from '@tanstack/react-router'
 
 interface Props {
@@ -26,7 +22,7 @@ export function AuctionCardHeader({ item }: Props) {
         to="/auctions/$auctionUuid"
         params={{ auctionUuid: item.auctionUuid }}
         aria-label={`Открыть аукцион ${item.cargoNum || 'без номера'}`}
-        className="text-sm font-medium text-foreground hover:underline underline-offset-4"
+        className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
       >
         {item.cargoNum ? `№ ${item.cargoNum}` : 'Аукцион без номера'}
       </Link>

@@ -12,9 +12,7 @@ export interface AuctionRestrictions {
   canViewCargoPrice: boolean
 }
 
-export function deriveAuctionRestrictions(
-  source: AuctionRestrictionSource,
-): AuctionRestrictions {
+export function deriveAuctionRestrictions(source: AuctionRestrictionSource): AuctionRestrictions {
   return {
     canPlaceBet: source.canSetBet,
     canViewBetsHistory: !source.hideBetsHistory,

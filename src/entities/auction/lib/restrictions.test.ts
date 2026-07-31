@@ -20,15 +20,12 @@ describe('deriveAuctionRestrictions', () => {
   })
 
   it('maps canSetBet=false to canPlaceBet=false', () => {
-    expect(
-      deriveAuctionRestrictions({ ...ALL_OPEN, canSetBet: false }).canPlaceBet,
-    ).toBe(false)
+    expect(deriveAuctionRestrictions({ ...ALL_OPEN, canSetBet: false }).canPlaceBet).toBe(false)
   })
 
   it('maps hideBetsHistory=true to canViewBetsHistory=false', () => {
     expect(
-      deriveAuctionRestrictions({ ...ALL_OPEN, hideBetsHistory: true })
-        .canViewBetsHistory,
+      deriveAuctionRestrictions({ ...ALL_OPEN, hideBetsHistory: true }).canViewBetsHistory,
     ).toBe(false)
   })
 
@@ -41,8 +38,7 @@ describe('deriveAuctionRestrictions', () => {
 
   it('maps noViewCargoPrice=true to canViewCargoPrice=false', () => {
     expect(
-      deriveAuctionRestrictions({ ...ALL_OPEN, noViewCargoPrice: true })
-        .canViewCargoPrice,
+      deriveAuctionRestrictions({ ...ALL_OPEN, noViewCargoPrice: true }).canViewCargoPrice,
     ).toBe(false)
   })
 

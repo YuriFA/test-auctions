@@ -234,7 +234,9 @@ function hasContactInfo(contact: AuctionDetailContactVM): boolean {
   return Boolean(contact.name || contact.phone || contact.workPhone || contact.email)
 }
 
-function toRoutePointVM(point: NonNullable<AuctionDetail['routes']>[number]): AuctionDetailRoutePointVM {
+function toRoutePointVM(
+  point: NonNullable<AuctionDetail['routes']>[number],
+): AuctionDetailRoutePointVM {
   const location = point.location
   const cargo = point.cargo
   const contact = point.contact

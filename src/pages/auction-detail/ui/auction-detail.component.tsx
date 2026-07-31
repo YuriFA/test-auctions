@@ -32,7 +32,7 @@ export function AuctionDetail() {
 
   if (query.isPending) {
     return (
-      <PageContainer className="gap-4 max-w-5xl">
+      <PageContainer className="max-w-5xl gap-4">
         <Skeleton className="h-8 w-40" />
         <Skeleton className="h-24" />
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -47,7 +47,7 @@ export function AuctionDetail() {
 
   if (query.isError) {
     return (
-      <PageContainer className="gap-4 max-w-5xl">
+      <PageContainer className="max-w-5xl gap-4">
         <BackLink />
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Аукцион недоступен</h1>
         <Alert variant="destructive">
@@ -66,14 +66,12 @@ export function AuctionDetail() {
   const vm = query.data
   if (!vm) {
     return (
-      <PageContainer className="gap-4 max-w-5xl">
+      <PageContainer className="max-w-5xl gap-4">
         <BackLink />
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Аукцион не найден</h1>
         <Alert>
           <AlertTitle>Аукцион недоступен</AlertTitle>
-          <AlertDescription>
-            Возможно, ссылка устарела или аукцион был удалён.
-          </AlertDescription>
+          <AlertDescription>Возможно, ссылка устарела или аукцион был удалён.</AlertDescription>
         </Alert>
       </PageContainer>
     )
@@ -109,7 +107,7 @@ function AuctionDetailContent({ vm, auctionUuid }: ContentProps) {
   )
 
   return (
-    <PageContainer className="flex flex-col gap-4 max-w-5xl">
+    <PageContainer className="flex max-w-5xl flex-col gap-4">
       <BackLink />
 
       <header className="flex flex-col gap-3">
@@ -185,16 +183,27 @@ function DetailActionBar({ action, auctionUuid, restrictions }: DetailActionBarP
   return (
     <div className="flex flex-wrap items-center gap-2">
       {action.route === 'bet' ? (
-        <Button nativeButton={false} render={<Link to="/auctions/$auctionUuid/bet" params={{ auctionUuid }} />}>
+        <Button
+          nativeButton={false}
+          render={<Link to="/auctions/$auctionUuid/bet" params={{ auctionUuid }} />}
+        >
           {action.label}
         </Button>
       ) : (
-        <Button variant="outline" nativeButton={false} render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}>
+        <Button
+          variant="outline"
+          nativeButton={false}
+          render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}
+        >
           {action.label}
         </Button>
       )}
       {restrictions.canViewBetsHistory && (
-        <Button variant="ghost" nativeButton={false} render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}>
+        <Button
+          variant="ghost"
+          nativeButton={false}
+          render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}
+        >
           История ставок
         </Button>
       )}
@@ -325,8 +334,8 @@ function RoutesCard({
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
                   {point.startDate && (
                     <span className="flex items-center gap-1">
-                      <CalendarClock className="size-3" aria-hidden />
-                      с {formatDate(point.startDate)}
+                      <CalendarClock className="size-3" aria-hidden />с{' '}
+                      {formatDate(point.startDate)}
                     </span>
                   )}
                   {point.endDate && <span>до {formatDate(point.endDate)}</span>}
@@ -335,7 +344,9 @@ function RoutesCard({
               {point.contractor && (
                 <div className="text-xs text-muted-foreground">
                   {point.contractor}
-                  {point.contractorInn && <span className="ml-2 font-mono">ИНН {point.contractorInn}</span>}
+                  {point.contractorInn && (
+                    <span className="ml-2 font-mono">ИНН {point.contractorInn}</span>
+                  )}
                 </div>
               )}
               {point.cargo && (
@@ -378,8 +389,12 @@ function CargoCard({ vm }: { vm: AuctionDetailVM }) {
       <CardContent className="text-sm">
         <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
           <DefRow label="Тип кузова" value={vm.cargoBodyType} />
-          {vm.cargoDistance != null && <DefRow label="Расстояние" value={`${vm.cargoDistance} км`} />}
-          {vm.cargoTruckCount != null && <DefRow label="Машин" value={String(vm.cargoTruckCount)} />}
+          {vm.cargoDistance != null && (
+            <DefRow label="Расстояние" value={`${vm.cargoDistance} км`} />
+          )}
+          {vm.cargoTruckCount != null && (
+            <DefRow label="Машин" value={String(vm.cargoTruckCount)} />
+          )}
           {vm.cargoTempFrom != null && vm.cargoTempTo != null && (
             <DefRow label="Температура" value={`${vm.cargoTempFrom}…${vm.cargoTempTo} °C`} />
           )}
@@ -429,9 +444,7 @@ function PaymentCard({ vm }: { vm: AuctionDetailVM }) {
             />
           )}
           {vm.paymentPrepay && <DefRow label="Предоплата" value={vm.paymentPrepay} />}
-          {vm.paymentCurrencyCode && (
-            <DefRow label="Валюта (ISO)" value={vm.paymentCurrencyCode} />
-          )}
+          {vm.paymentCurrencyCode && <DefRow label="Валюта (ISO)" value={vm.paymentCurrencyCode} />}
         </dl>
       </CardContent>
     </Card>
@@ -457,9 +470,7 @@ function TradingCard({
       </CardHeader>
       <CardContent className="text-sm">
         {!restrictions.canViewCargoPrice ? (
-          <p className="text-muted-foreground">
-            Цены скрыты организатором торгов.
-          </p>
+          <p className="text-muted-foreground">Цены скрыты организатором торгов.</p>
         ) : (
           <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
             <PriceRow label="Текущая" value={vm.priceCurrent} sub={vm.priceCurrentNoVat} />
@@ -468,9 +479,7 @@ function TradingCard({
             {vm.priceMin != null && <PriceRow label="Мин." value={vm.priceMin} />}
             {vm.priceMax != null && <PriceRow label="Макс." value={vm.priceMax} />}
             {vm.priceStep != null && <PriceRow label="Шаг" value={vm.priceStep} />}
-            {vm.pricePerKm != null && (
-              <DefRow label="Цена за км" value={`${vm.pricePerKm} ₽/км`} />
-            )}
+            {vm.pricePerKm != null && <DefRow label="Цена за км" value={`${vm.pricePerKm} ₽/км`} />}
           </dl>
         )}
       </CardContent>

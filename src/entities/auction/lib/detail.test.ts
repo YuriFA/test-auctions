@@ -169,9 +169,7 @@ describe('toAuctionDetailVM', () => {
   })
 
   it('defaults all restriction flags to false when trading is undefined', () => {
-    const vm = toAuctionDetailVM(
-      makeDetail({ trading: undefined } as unknown as AuctionDetail),
-    )
+    const vm = toAuctionDetailVM(makeDetail({ trading: undefined } as unknown as AuctionDetail))
     expect(vm.canSetBet).toBe(false)
     expect(vm.hideBetsHistory).toBe(false)
     expect(vm.noViewCargoPrice).toBe(false)

@@ -59,7 +59,7 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
     <article
       onMouseEnter={handleIntent}
       onFocus={handleIntent}
-      className="group/card relative flex flex-col gap-3 rounded-lg bg-card p-4 text-xs/relaxed text-card-foreground ring-1 ring-foreground/10 transition-colors hover:bg-muted/30 focus-within:ring-2 focus-within:ring-ring/30"
+      className="group/card relative flex flex-col gap-3 rounded-lg bg-card p-4 text-xs/relaxed text-card-foreground ring-1 ring-foreground/10 transition-colors focus-within:ring-2 focus-within:ring-ring/30 hover:bg-muted/30"
     >
       <AuctionCardHeader item={item} />
 

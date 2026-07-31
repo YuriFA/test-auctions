@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  formatDate,
-  formatPrice,
-  formatPricePerKm,
-  formatVolume,
-  formatWeight,
-} from './format'
+import { formatDate, formatPrice, formatPricePerKm, formatVolume, formatWeight } from './format'
 
 describe('formatPrice', () => {
   it('formats a plain integer with ru-RU grouping and the ₽ symbol', () => {
