@@ -1,9 +1,10 @@
 import type { AuctionListItemVM } from '@entities/auction'
+import {
+  AuctionStatusBadge,
+  AuctionTypeBadge,
+  TradingStatusBadge,
+} from '@entities/auction'
 import { Link } from '@tanstack/react-router'
-
-import { AuctionStatusBadge } from './auction-status-badge.component'
-import { AuctionTypeBadge } from './auction-type-badge.component'
-import { TradingStatusBadge } from './trading-status-badge.component'
 
 interface Props {
   item: Pick<

@@ -37,3 +37,6 @@ export {
   tradingStatusBadgeVariant,
 } from './lib/badge-variants'
 export type { AuctionBadgeVariant } from './lib/badge-variants'
+export { AuctionStatusBadge } from './ui/auction-status-badge.component'
+export { AuctionTypeBadge } from './ui/auction-type-badge.component'
+export { TradingStatusBadge } from './ui/trading-status-badge.component'
