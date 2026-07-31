@@ -10,6 +10,8 @@ export type {
   AuctionListRequest,
   AuctionStatus,
   AuctionType,
+  BetItem,
+  BetListResponse,
   BidMeasurementType,
   Contact,
   OperationType,

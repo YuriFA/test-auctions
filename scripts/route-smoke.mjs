@@ -7,6 +7,8 @@ const page = await browser.newPage()
 // Seed UUIDs from src/shared/api/mocks/auctions.ts. The detail page renders
 // the cargo_num in the h1, so we assert against that rather than the raw UUID.
 const DOWN_LEADING_UUID = '00000000-0000-4000-8000-000000000001'
+// finishedConfirmed seed pins trading.hide_bets_history = true.
+const FINISHED_HIDDEN_BETS_UUID = '00000000-0000-4000-8000-000000000006'
 
 const cases = [
   { path: '/', expect: { url: '/auctions', h1: 'Аукционы' } },
@@ -18,13 +20,24 @@ const cases = [
   // Unknown UUID surfaces the in-page error card with an h1 and an alert.
   {
     path: '/auctions/abc-123',
-    expect: { url: '/auctions/abc-123', h1: 'Аукцион недоступен', alert: 'Не удалось загрузить аукцион' },
-  },
-  {
-    path: '/auctions/abc-123/bets',
     expect: {
-      url: '/auctions/abc-123/bets',
-      h1: 'Bets history',
+      url: '/auctions/abc-123',
+      h1: 'Аукцион недоступен',
+      alert: 'Не удалось загрузить аукцион',
+    },
+  },
+  // Bets page renders the list when hide_bets_history=false.
+  {
+    path: `/auctions/${DOWN_LEADING_UUID}/bets`,
+    expect: { url: `/auctions/${DOWN_LEADING_UUID}/bets`, h1: 'История ставок' },
+  },
+  // Bets page shows the restricted card when hide_bets_history=true; bets endpoint not requested.
+  {
+    path: `/auctions/${FINISHED_HIDDEN_BETS_UUID}/bets`,
+    expect: {
+      url: `/auctions/${FINISHED_HIDDEN_BETS_UUID}/bets`,
+      h1: 'История ставок',
+      alert: 'История скрыта',
     },
   },
   {
@@ -45,7 +58,11 @@ for (const c of cases) {
   let section = ''
   if (c.expect.section) {
     // Card titles render as <div data-slot="card-title">; look anywhere in body.
-    const matches = await page.getByText(c.expect.section, { exact: false }).first().textContent().catch(() => '')
+    const matches = await page
+      .getByText(c.expect.section, { exact: false })
+      .first()
+      .textContent()
+      .catch(() => '')
     section = (matches ?? '').trim()
   }
   let alert = ''
@@ -74,4 +91,3 @@ for (const c of cases) {
 
 await browser.close()
 process.exit(failed === 0 ? 0 : 1)
-

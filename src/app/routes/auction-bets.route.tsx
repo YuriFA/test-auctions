@@ -1,4 +1,4 @@
-import { AuctionBets } from '@pages/auction-bets'
+import { AuctionBetsPage } from '@pages/auction-bets'
 import { createRoute } from '@tanstack/react-router'
 
 import { auctionDetailRoute } from './auction-detail.route'
@@ -6,5 +6,5 @@ import { auctionDetailRoute } from './auction-detail.route'
 export const auctionBetsRoute = createRoute({
   getParentRoute: () => auctionDetailRoute,
   path: 'bets',
-  component: AuctionBets,
+  component: AuctionBetsPage,
 })
