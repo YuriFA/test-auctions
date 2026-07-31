@@ -2,7 +2,6 @@ import type { AuctionListRequest } from '@shared/api'
 
 import { DEFAULT_AUCTIONS_LIST_FILTERS, type AuctionsListFilters } from './search-params'
 
-// API enum excludes `Unknown` (UI-only sentinel); filter before sending.
 const API_AUC_TYPES = ['Request', 'Up', 'Down', 'FixPrice'] as const
 
 export function buildAuctionListRequest(parsed: AuctionsListFilters): AuctionListRequest {

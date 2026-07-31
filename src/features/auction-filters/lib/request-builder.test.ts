@@ -5,10 +5,6 @@ import { buildAuctionListRequest } from './request-builder'
 import type { AuctionsListFilters } from './search-params'
 import { DEFAULT_AUCTIONS_LIST_FILTERS } from './search-params'
 
-// Builder is a pure function: defaults collapse to {}, non-default values
-// map to the matching AuctionListRequest field with the right type. No
-// UI-specific names leak through, and `auc_type: 'Unknown'` (valid in the
-// URL filter set but absent from the API enum) is filtered out.
 describe('buildAuctionListRequest', () => {
   it('returns an empty object for default filters', () => {
     expect(buildAuctionListRequest(DEFAULT_AUCTIONS_LIST_FILTERS)).toEqual({})

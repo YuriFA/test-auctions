@@ -1,9 +1,3 @@
-/**
- * Public API of the `auction-filters` feature slice.
- *
- * URL search params contract (SDD-015) and request builder (SDD-016) live in
- * `lib/`. Filter UI (SDD-018) lives in `ui/`.
- */
 export type { AuctionsListFilters, AuctionsListSearch } from './lib/search-params'
 export {
   DEFAULT_AUCTIONS_LIST_FILTERS,

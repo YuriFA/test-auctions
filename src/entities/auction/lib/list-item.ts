@@ -3,38 +3,26 @@ import { extractAuctionUuid } from '@shared/api'
 
 import { describeAuctionStatus, describeAuctionType, describeTradingStatus } from './describe'
 
-// ViewModel for the auctions list card. The raw DTO is deeply nested and
-// mostly optional; the VM centralises null-handling and enum-to-label
-// resolution so the card stays a pure render. SDD-019 owns this shape —
-// downstream list pages should not reach into the raw DTO.
-//
-// Note on `step`: the list DTO's trading.price only exposes
-// {start,current,current_no_vat}. The step is a detail-page field; the card
-// therefore omits it (documented in AI_USAGE.md).
 export type AuctionListItemVM = {
   auctionUuid: string
 
-  // main
   cargoNum: string
   orderUid: string
   aucType: AuctionType | undefined
   aucTypeLabel: string
   pricePerKm: number | null
 
-  // route
   loadCity: string
   unloadCity: string
   loadDate: string | undefined
   unloadDate: string | undefined
   direction: string
 
-  // cargo
   cargoName: string
   cargoWeight: number | null
   cargoVolume: number | null
   cargoBodyType: string
 
-  // trading
   auctionStatus: AuctionStatus | undefined
   auctionStatusLabel: string
   tradingStatusLabel: string

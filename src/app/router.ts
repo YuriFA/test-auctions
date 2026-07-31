@@ -7,9 +7,6 @@ export interface RouterAppContext {
   queryClient: typeof queryClient
 }
 
-// URL search format: repeated keys for arrays (e.g. `auc_type=Down&auc_type=Up`),
-// no JSON-encoded values, undefined/null/empty arrays skipped. Matches the
-// SDD-015 contract used by `features/auction-filters`.
 function parseSearch(searchStr: string): Record<string, unknown> {
   const params = new URLSearchParams(searchStr)
   const out: Record<string, unknown> = {}
