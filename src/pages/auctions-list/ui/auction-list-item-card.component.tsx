@@ -59,7 +59,7 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
     <article
       onMouseEnter={handleIntent}
       onFocus={handleIntent}
-      className="group/card relative flex flex-col gap-3 rounded-lg bg-card p-4 text-xs/relaxed text-card-foreground ring-1 ring-foreground/10 transition-colors focus-within:ring-2 focus-within:ring-ring/30 hover:bg-muted/30"
+      className="group/card relative flex flex-col gap-3 rounded-lg bg-card p-4 text-xs/relaxed text-card-foreground ring-1 ring-foreground/10 transition-colors focus-within:ring-2 focus-within:ring-ring/30 [&:hover:not(:has(.auction-card-action:hover))]:bg-muted/30 [&:hover:not(:has(.auction-card-action:hover))]:ring-2"
     >
       <AuctionCardHeader item={item} />
 
@@ -82,7 +82,7 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
         <AuctionTrading item={item} />
       </div>
 
-      <div className="mt-auto flex items-center justify-end gap-2 border-t pt-3">
+      <div className="auction-card-action mt-auto flex items-center justify-end gap-2 border-t pt-3">
         <AuctionAction action={action} auctionUuid={item.auctionUuid} />
       </div>
     </article>

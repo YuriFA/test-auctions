@@ -52,6 +52,27 @@ if (await firstCard.count()) {
   failures.push('no card to hover')
 }
 
+// 3b. Clicking the card body (not the action button) navigates to detail —
+// stretched-link ::after overlay covers the whole article.
+const firstArticle = page.locator('article').first()
+if (await firstArticle.count()) {
+  await firstArticle.click({ position: { x: 30, y: 30 } })
+  const navigated = await page
+    .waitForURL(/\/auctions\/[0-9a-f-]+$/, { timeout: 2000 })
+    .then(() => true)
+    .catch(() => false)
+  const url = page.url().replace(BASE, '')
+  check(
+    'card body click navigates to detail',
+    navigated && /\/auctions\/[0-9a-f-]+$/.test(url),
+    url,
+  )
+  await page.goto(`${BASE}/auctions`, { waitUntil: 'networkidle' })
+} else {
+  console.log('FAIL no article to click')
+  failures.push('no article to click')
+}
+
 // 4. Pagination: click "Вперёд" if available; URL should include page=2.
 requests.length = 0
 const nextButton = page.getByRole('button', { name: 'Вперёд' })

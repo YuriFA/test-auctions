@@ -7,12 +7,10 @@ interface Props {
   auctionUuid: string
 }
 
-// NOTE: two distinct Link branches keep `to` a string literal — TanStack
-// Router infers param types from the literal, a computed value would lose it.
 export function AuctionAction({ action, auctionUuid }: Props) {
   if (action.kind === 'disabled') {
     return (
-      <Button variant="outline" size="sm" disabled>
+      <Button variant="outline" size="sm" className="relative" disabled>
         {action.label}
       </Button>
     )
@@ -22,6 +20,7 @@ export function AuctionAction({ action, auctionUuid }: Props) {
     return (
       <Button
         size="sm"
+        className="relative"
         nativeButton={false}
         render={<Link to="/auctions/$auctionUuid/bet" params={{ auctionUuid }} />}
       >
@@ -34,6 +33,7 @@ export function AuctionAction({ action, auctionUuid }: Props) {
     <Button
       variant="outline"
       size="sm"
+      className="relative"
       nativeButton={false}
       render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}
     >

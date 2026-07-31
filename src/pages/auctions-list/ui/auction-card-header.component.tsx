@@ -22,7 +22,7 @@ export function AuctionCardHeader({ item }: Props) {
         to="/auctions/$auctionUuid"
         params={{ auctionUuid: item.auctionUuid }}
         aria-label={`Открыть аукцион ${item.cargoNum || 'без номера'}`}
-        className="text-sm font-medium text-foreground underline-offset-4 hover:underline"
+        className="text-sm font-medium text-foreground underline-offset-4 after:absolute after:inset-0"
       >
         {item.cargoNum ? `№ ${item.cargoNum}` : 'Аукцион без номера'}
       </Link>
