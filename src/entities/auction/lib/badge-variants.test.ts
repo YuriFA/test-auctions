@@ -13,9 +13,9 @@ import {
 describe('auctionTypeBadgeVariant', () => {
   it.each<[AuctionType, string]>([
     ['Request', 'secondary'],
-    ['Up', 'info'],
-    ['Down', 'warning'],
-    ['FixPrice', 'success'],
+    ['Up', 'success'],
+    ['Down', 'destructive'],
+    ['FixPrice', 'info'],
     ['Unknown', 'secondary'],
   ])('maps %s to %s variant', (value, expected) => {
     expect(auctionTypeBadgeVariant(value)).toBe(expected)

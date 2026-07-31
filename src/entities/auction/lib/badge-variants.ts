@@ -23,9 +23,9 @@ const FALLBACK_VARIANT: AuctionBadgeVariant = 'secondary'
 
 export const AUCTION_TYPE_BADGE_VARIANTS: Readonly<Record<AuctionType, AuctionBadgeVariant>> = {
   Request: 'secondary',
-  Up: 'info',
-  Down: 'warning',
-  FixPrice: 'success',
+  Up: 'success',
+  Down: 'destructive',
+  FixPrice: 'info',
   Unknown: 'secondary',
 }
 
