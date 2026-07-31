@@ -19,8 +19,8 @@
 
 ## Замечания о текущем покрытии
 
-- UI страницы списка теперь реальный (загрузка, skeleton, empty, error, пагинация, prefetch), но карточка пока placeholder — полную карточку даст SDD-019. Детальная страница и ставка всё ещё placeholder.
-- `SDD-001..014` завершены. `SDD-015` (URL-контракт фильтров), `SDD-016` (request builder), `SDD-017` (list query + composition) завершены. `SDD-018+` — фильтры UI, карточка, detail/bets/bet-форма.
+- UI страницы списка теперь реальный end-to-end: фильтры (SDD-018) и карточка (SDD-019). Детальная страница и ставка всё ещё placeholder.
+- `SDD-001..014` завершены. `SDD-015` (URL-контракт фильтров), `SDD-016` (request builder), `SDD-017` (list query + composition), `SDD-018` (фильтры UI), `SDD-019` (карточка списка) завершены. `SDD-020+` — detail/bets/bet-форма/мутации.
 - `SDD-005`: TanStack Router в code-based режиме (`RouterProvider` + `QueryClientProvider` в `app.component.tsx`); QueryClient-синглтон в `app/lib/`; маршруты в `app/routes/`, страницы в `pages/<slice>/ui/`.
 - `SDD-007`: адаптер превращает `RequestResult` Hey API в `ApiError`/`ApiValidationError`; граница `generated` держится на структуре папок и Public API.
 - `SDD-008`: иерархические ключи делают bets потомком detail — план инвалидации читается как документация. steiger-правило `fsd/insignificant-slice` остаётся отключенным: `entities/auction` и `features/auction-filters` имеют по одному потребителю (`pages/auctions-list`) до SDD-018/019.
@@ -51,6 +51,10 @@
 - **VM-mapping через `select` в query-hook'е**, не в рендере. `useAuctionsList` имеет `select: toAuctionsListViewData`, который мапит `AuctionListResponse` → `{ items: AuctionListItemVM[], currentPage, lastPage, total }`. Маппинг бегает один раз на новый snapshot, не на каждый render.
 - **Типизированный URL search через `validateSearch`.** На route: `validateSearch: parseAuctionsListSearch` (возвращает `Partial<AuctionsListFilters>` — только non-default поля). На router: кастомные `parseSearch`/`stringifySearch` через `URLSearchParams` (повторяющиеся ключи для массивов, undefined/empty пропуски). `useSearch({ from: '/auctions' })` типизирован без `as`-cast'а. Page merge'ит partial с `DEFAULT_AUCTIONS_LIST_FILTERS` для downstream-потребителей.
 - **Presentational-компоненты получают generic intent-callback'и.** Карточка принимает `onIntent?: (auctionUuid) => void` (hover/focus-триггер), не `onPrefetch`. Карточка не знает, что page делает с этим сигналом; page решает (prefetch query).
+- **SDD-019: VM-mapper централизует nullable-обработку и enum→label.** `toAuctionListItemVM` построен так, чтобы карточка оставалась чистым рендером: каждое nullable-поле DTO схлопывается в `string | null` с явным fallback `''`/`null`, а enum'ы превращаются в русские лейблы через `describe*`. Карточка не импорит `AuctionStatus`/`describeAuctionStatus` и не знает о структуре DTO. 8 TDD-тестов покрывают happy-path, missing-uuid, missing-direction с fallback на города, null-price и missing-trading.
+- **SDD-019: логика primary action живёт в чистой функции.** `deriveAuctionCardPrimaryAction` возвращает discriminated union одного из 4 состояний (`place-bet`/`change-bet`/`view-bets`/`disabled`). Терминальные статусы (`Finished`/`Stopped`/`Canceled`) форсят disabled с status-specific лейблом, перебивая `can_set_bet`. 8 TDD-тестов покрывают приоритет и все ветки. Карточка только рендерит результат; SDD-021/022/025 потребляют route без правок логики.
+- **SDD-019: stretched-link вместо вложенных `<a>`.** Карточка — это `<article>` с одной stretched `<Link>` поверх всего контента (кликабельно всё) и второй `<Link>` для CTA с `z-10`, чтобы он перебивал stretched-overlay. HTML остаётся валидным (нет вложенных `<a>`), а CTA ведёт на корректный подсегмент (`/bet` или `/bets`) — два разных Link-рендера держат `to` строковым литералом для типизированного `params` TanStack Router.
+- **SDD-019: `step` не попал в карточку.** List-DTO `trading.price` содержит только `{start, current, current_no_vat}`; `step` есть только в detail. Карточка не делает вид, что знает шаг, и не дёргает detail-эндпоинт — поле опущено и задокументировано здесь. Если будущая ревизия API добавит `step` в list-DTO, VM-маппер расширяется одним полем без правок UI.
 - **Route collapse.** `/auctions` схлопнут в один route (parent + child index были boilerplate). `/auctions/$auctionUuid` оставлен parent'ом с `AuctionLayout` — у него 3 child-route'а (index/bets/bet-form) делят path-параметр.
 - **Ловушка prop-drilling'а.** Промежуточная попытка вынести `AuctionList` отдельным компонентом с props `query/filters/onIntent/setPage` оказалась проп-дриллингом без реальной изоляции — инлайнила обратно, потом переразделила на shell/content где child самодостаточен (нулевые props у shell'а). Правило: split оправдан, когда у child'а своя ответственность и узкий интерфейс; если надо прокидывать 4+ связанных пропсов — не split.
 
@@ -90,7 +94,7 @@
 
 ## Что улучшилось бы при наличии ещё одного дня
 
-- Заполнить пустые `widgets/` и `features/` слои следующими UI-задачами (SDD-018+: фильтры, карточка, detail, bets, форма ставки).
+- Заполнить пустые `widgets/` и `features/` слои следующими UI-задачами (SDD-020+: detail, bets, форма ставки, мутации).
 - Расширить автоматические тесты помимо чисто логических.
 - Уточнить визуальные состояния для мобильных и ошибочных сценариев.
 - Расширить mock-сценарии для большего числа edge-case и комбинаций скрытых данных.

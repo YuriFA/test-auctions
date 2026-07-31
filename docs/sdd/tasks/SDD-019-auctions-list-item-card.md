@@ -2,7 +2,14 @@
 
 ## Статус
 
-Не начато.
+Готово. Расширен `AuctionListItemVM` (все поля из «Охват»), добавлен чистый
+`deriveAuctionCardPrimaryAction` с 4 состояниями (TDD, 8 тестов), карточка
+переписана с mobile/desktop-лейаутом и stretched-link-навигацией. Smoke
+подтверждает рендер 17 карточек и hover-prefetch.
+
+Отклонение от «Охват»: «шаг ставки» в карточку не вынесен — list-DTO
+`trading.price` содержит только `{start, current, current_no_vat}`; `step`
+присутствует только в detail. Это зафиксировано в `AI_USAGE.md`.
 
 ## Цель
 

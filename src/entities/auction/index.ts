@@ -3,6 +3,13 @@ export { useAuctionsList } from './api/use-auctions-list'
 export type { AuctionsListViewData } from './api/use-auctions-list'
 export type { AuctionListItemVM } from './lib/list-item'
 export { toAuctionListItemVM } from './lib/list-item'
+export type {
+  AuctionCardPrimaryAction,
+  AuctionCardPrimaryActionKind,
+  AuctionCardPrimaryActionRoute,
+  AuctionCardPrimaryActionSource,
+} from './lib/primary-action'
+export { deriveAuctionCardPrimaryAction } from './lib/primary-action'
 export {
   AUCTION_STATUS_CODES,
   AUCTION_STATUS_LABELS,
