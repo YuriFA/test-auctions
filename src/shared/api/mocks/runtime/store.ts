@@ -616,17 +616,52 @@ function matchesFilters(auction: SeedAuction, filters: AuctionListRequest): bool
   }
 
   if (filters.create_date_from) {
-    if ((list.main?.created_at ?? '') < filters.create_date_from) {
+    const createdAt = list.main?.created_at
+    if (!createdAt || parseISOTimestamp(createdAt) < parseISOTimestamp(filters.create_date_from)) {
       return false
     }
   }
   if (filters.create_date_to) {
-    if ((list.main?.created_at ?? '') > filters.create_date_to) {
+    const createdAt = list.main?.created_at
+    if (!createdAt || parseISOTimestamp(createdAt) > parseISOTimestamp(filters.create_date_to)) {
+      return false
+    }
+  }
+
+  if (filters.load_date_from) {
+    const loadDate = list.route?.load?.date
+    if (!loadDate || parseISOTimestamp(loadDate) < parseISOTimestamp(filters.load_date_from)) {
+      return false
+    }
+  }
+  if (filters.load_date_to) {
+    const loadDate = list.route?.load?.date
+    if (!loadDate || parseISOTimestamp(loadDate) > parseISOTimestamp(filters.load_date_to)) {
+      return false
+    }
+  }
+
+  if (filters.unload_date_from) {
+    const unloadDate = list.route?.unload?.date
+    if (
+      !unloadDate ||
+      parseISOTimestamp(unloadDate) < parseISOTimestamp(filters.unload_date_from)
+    ) {
+      return false
+    }
+  }
+  if (filters.unload_date_to) {
+    const unloadDate = list.route?.unload?.date
+    if (!unloadDate || parseISOTimestamp(unloadDate) > parseISOTimestamp(filters.unload_date_to)) {
       return false
     }
   }
 
   return true
+}
+
+function parseISOTimestamp(iso: string): number {
+  return new Date(iso).getTime()
 }
 
 function applySort(auctions: SeedAuction[], filters: AuctionListRequest): SeedAuction[] {

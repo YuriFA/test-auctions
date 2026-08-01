@@ -1,6 +1,7 @@
 import { setupServer } from 'msw/node'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 
+import { resetMockRuntime } from '../runtime/store'
 import { mockHandlers } from './index'
 
 const TOTAL_AUCTIONS = 34 // 10 seeds + 24 fillers
@@ -9,8 +10,17 @@ const DEFAULT_PER_PAGE = 12
 const server = setupServer(...mockHandlers)
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
 afterAll(() => server.close())
+beforeEach(() => resetMockRuntime())
 
 const BASE = 'http://localhost'
+
+interface ListItem {
+  main?: { order_uid?: string; auc_type?: string; created_at?: string }
+  route?: {
+    load?: { date?: string; city?: string }
+    unload?: { date?: string; city?: string }
+  }
+}
 
 async function postList(body?: unknown) {
   const init =
@@ -28,7 +38,7 @@ async function postList(body?: unknown) {
     status: res.status,
     contentType: res.headers.get('content-type'),
     json: json as {
-      data?: Array<{ main?: { order_uid?: string; auc_type?: string } }>
+      data?: ListItem[]
       meta?: {
         total?: number
         per_page?: number
@@ -124,5 +134,52 @@ describe('POST /auctions/list — MSW handler', () => {
     const newestFirst = newest.json?.data?.[0]?.main?.order_uid
     const oldestFirst = oldest.json?.data?.[0]?.main?.order_uid
     expect(newestFirst).not.toBe(oldestFirst)
+  })
+
+  it('load_date_from excludes auctions whose load date is before the threshold', async () => {
+    // downLeading load date: 2026-08-12T09:00:00+03:00
+    // finishedConfirmed load date: 2026-07-05T06:00:00+04:00 (earlier)
+    // Setting from = 2026-08-01T00:00:00+00:00 should exclude finishedConfirmed
+    const { status, json } = await postList({ load_date_from: '2026-08-01T00:00:00+00:00' })
+    expect(status).toBe(200)
+    const orderUids = (json?.data ?? []).map((item) => item.main?.order_uid)
+    expect(orderUids).not.toContain('3a05d04a-0e67-4f85-b20a-de81d18bba7a') // finishedConfirmed
+    expect(orderUids).toContain('3a05d045-0e67-4f85-b20a-de81d18bba7a') // downLeading (Aug 12)
+  })
+
+  it('load_date_to excludes auctions whose load date is after the threshold', async () => {
+    // finishedConfirmed load date: 2026-07-05T06:00:00+04:00 (earlier)
+    // downLeading load date: 2026-08-12T09:00:00+03:00 (later, should be excluded)
+    const { status, json } = await postList({ load_date_to: '2026-07-31T23:59:59+00:00' })
+    expect(status).toBe(200)
+    const orderUids = (json?.data ?? []).map((item) => item.main?.order_uid)
+    expect(orderUids).not.toContain('3a05d045-0e67-4f85-b20a-de81d18bba7a') // downLeading (Aug 12)
+    expect(orderUids).toContain('3a05d04a-0e67-4f85-b20a-de81d18bba7a') // finishedConfirmed (Jul 5)
+  })
+
+  it('load_date_from + load_date_to together narrow correctly', async () => {
+    // Only auctions loading between Aug 10 and Aug 14 UTC
+    const { status, json } = await postList({
+      load_date_from: '2026-08-10T00:00:00+00:00',
+      load_date_to: '2026-08-14T23:59:59+00:00',
+    })
+    expect(status).toBe(200)
+    const orderUids = (json?.data ?? []).map((item) => item.main?.order_uid)
+    expect(orderUids).toContain('3a05d045-0e67-4f85-b20a-de81d18bba7a') // downLeading Aug 12
+    expect(orderUids).not.toContain('3a05d046-0e67-4f85-b20a-de81d18bba7a') // upLosing Aug 15
+    expect(orderUids).not.toContain('3a05d04a-0e67-4f85-b20a-de81d18bba7a') // finishedConfirmed Jul 5
+  })
+
+  it('returned load dates satisfy the requested load_date_from constraint', async () => {
+    const threshold = '2026-08-01T00:00:00+00:00'
+    const thresholdMs = new Date(threshold).getTime()
+    const { status, json } = await postList({ load_date_from: threshold })
+    expect(status).toBe(200)
+    for (const item of json?.data ?? []) {
+      const loadDate = item.route?.load?.date
+      if (loadDate) {
+        expect(new Date(loadDate).getTime()).toBeGreaterThanOrEqual(thresholdMs)
+      }
+    }
   })
 })
