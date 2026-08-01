@@ -7,9 +7,9 @@ const FINISHED_HIDDEN_BETS_REF = '3a05d04a-0e67-4f85-b20a-de81d18bba7a'
 // requestWinner seed pins trading.can_set_bet = false (auction is finished).
 const REQUEST_WINNER_REF = '3a05d048-0e67-4f85-b20a-de81d18bba7a'
 
-// NOTE: the auction-detail and bet-form pages render a STATIC page-title h1
-// ("Аукцион" / "Ставка по аукциону") regardless of state — error and
-// restriction messaging lives in an Alert (role="alert"), not the h1.
+// NOTE: route loader throws on unknown auction ref → TanStack Router renders
+// the root errorComponent (RootError), replacing the page shell, so the
+// static h1 is absent and the error surfaces only in the Alert (role="alert").
 // `expect(locator).toContainText()` auto-waits, so no manual networkidle
 // dance is needed.
 
@@ -32,8 +32,7 @@ test.describe('routes', () => {
   test('unknown auction UUID shows the error alert', async ({ page }) => {
     await page.goto('/auctions/abc-123')
     await expect(page).toHaveURL('/auctions/abc-123')
-    await expect(page.locator('h1')).toHaveText('Аукцион')
-    await expect(page.locator('[role="alert"]')).toContainText('Не удалось загрузить аукцион')
+    await expect(page.locator('[role="alert"]')).toContainText('Произошла ошибка')
   })
 
   test('bets history renders the list when not hidden', async ({ page }) => {
@@ -66,12 +65,11 @@ test.describe('routes', () => {
   test('unknown UUID on the bet route shows the error alert', async ({ page }) => {
     await page.goto('/auctions/abc-123/bet')
     await expect(page).toHaveURL('/auctions/abc-123/bet')
-    await expect(page.locator('h1')).toHaveText('Ставка по аукциону')
-    await expect(page.locator('[role="alert"]')).toContainText('Аукцион недоступен')
+    await expect(page.locator('[role="alert"]')).toContainText('Произошла ошибка')
   })
 
   test('unknown route shows the global not-found page', async ({ page }) => {
     await page.goto('/totally/unknown')
-    await expect(page.locator('h1')).toHaveText('Page not found')
+    await expect(page.locator('h1')).toHaveText('Страница не найдена')
   })
 })
