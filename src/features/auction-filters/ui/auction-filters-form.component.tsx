@@ -21,16 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@shared/ui'
-import { useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
-import {
-  DEFAULT_AUCTIONS_LIST_FILTERS,
-  isDefaultFilters,
-  type AuctionsListFilters,
-} from '../lib/search-params'
+import { DEFAULT_AUCTIONS_LIST_FILTERS, type AuctionsListFilters } from '../lib/search-params'
 import { useAuctionsListFiltersCommit } from '../lib/use-auctions-list-filters-commit'
 import { CheckboxList } from './checkbox-list.component'
+import { ResetButton } from './reset-button.component'
 
 const AUC_TYPE_OPTIONS: ReadonlyArray<{ value: AuctionType; label: string }> = [
   { value: 'Request', label: describeAuctionType('Request') },
@@ -59,27 +55,17 @@ export function AuctionFiltersForm({ onApplied }: Props) {
     values: initialFilters,
   })
 
-  const onSubmit = useCallback(
-    (next: AuctionsListFilters) => {
-      commitFilters(next)
-      onApplied()
-    },
-    [commitFilters, onApplied],
-  )
+  const handleSubmit = form.handleSubmit((values: AuctionsListFilters) => {
+    commitFilters(values)
+    onApplied()
+  })
 
-  const reset = useCallback(() => {
+  const reset = () => {
     form.reset({ ...DEFAULT_AUCTIONS_LIST_FILTERS })
-  }, [form])
-
-  const values = form.watch()
-  const isDefault = isDefaultFilters(values)
+  }
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="flex min-h-0 flex-1 flex-col"
-      autoComplete="off"
-    >
+    <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col" autoComplete="off">
       <div className="flex-1 overflow-y-auto p-4">
         <FieldGroup>
           <FieldSet>
@@ -281,9 +267,7 @@ export function AuctionFiltersForm({ onApplied }: Props) {
       </div>
 
       <div className="sticky bottom-0 flex items-center justify-between gap-2 border-t border-border bg-popover p-4">
-        <Button type="button" variant="ghost" onClick={reset} disabled={isDefault}>
-          Сбросить
-        </Button>
+        <ResetButton control={form.control} defaultValues={initialFilters} onReset={reset} />
         <Button type="submit">Применить</Button>
       </div>
     </form>
