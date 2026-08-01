@@ -71,7 +71,9 @@ export function readAuctionDetail(uuid: string): AuctionShowResponse | undefined
 }
 
 export function resolveAuctionUuidFromRef(ref: string): string | undefined {
-  return state.auctions.find((auction) => auction.uuid === ref || auction.list.main?.order_uid === ref)?.uuid
+  return state.auctions.find(
+    (auction) => auction.uuid === ref || auction.list.main?.order_uid === ref,
+  )?.uuid
 }
 
 export function readAuctionBets(
@@ -264,6 +266,8 @@ function updateDetailTrading(
     price.current_no_vat = leading.price_no_vat ?? price.current_no_vat ?? null
     price.available = nextAvailablePrice(price.current, price.step, direction)
     price.available_no_vat = nextAvailablePrice(price.current_no_vat, price.step_no_vat, direction)
+    const pricePerKm = computePricePerKm(price.current_no_vat, auction.detail.cargo?.distance)
+    price.price_per_km = pricePerKm ?? undefined
     trading.price = price
   }
 
@@ -305,6 +309,14 @@ function updateListTrading(
     price.current = leading.price_with_vat ?? price.current ?? undefined
     price.current_no_vat = leading.price_no_vat ?? price.current_no_vat ?? undefined
     listTrading.price = price
+
+    const listMain = (auction.list as MockAuctionListItem).main
+    if (listMain) {
+      listMain.price_per_km = computePricePerKm(
+        price.current_no_vat,
+        auction.detail.cargo?.distance,
+      )
+    }
   }
 
   const your = listTrading.your ?? {}
@@ -334,6 +346,17 @@ function nextAvailablePrice(
   }
   const raw = direction === 'Up' ? current + step : current - step
   return Math.max(0, Math.round(raw * 100) / 100)
+}
+
+function computePricePerKm(
+  priceNoVat: number | null | undefined,
+  distance: number | null | undefined,
+): number | null {
+  if (priceNoVat == null || distance == null || distance <= 0) {
+    return null
+  }
+
+  return Math.round((priceNoVat / distance) * 100) / 100
 }
 
 // NOTE: list DTO exposes a narrower TradingStatus set than detail.
@@ -533,8 +556,7 @@ function applyPagination(
   filters: AuctionListRequest,
 ): { page: number; perPage: number; paged: SeedAuction[] } {
   const page = filters.page && filters.page > 0 ? filters.page : 1
-  const perPage =
-    filters.per_page && filters.per_page > 0 ? filters.per_page : DEFAULT_PER_PAGE
+  const perPage = filters.per_page && filters.per_page > 0 ? filters.per_page : DEFAULT_PER_PAGE
   const start = (page - 1) * perPage
   return { page, perPage, paged: auctions.slice(start, start + perPage) }
 }

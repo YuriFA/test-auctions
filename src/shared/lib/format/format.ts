@@ -8,6 +8,10 @@ const PLAIN_NUMBER = new Intl.NumberFormat('ru-RU', {
   maximumFractionDigits: 0,
 })
 
+const PLAIN_DECIMAL_NUMBER = new Intl.NumberFormat('ru-RU', {
+  maximumFractionDigits: 2,
+})
+
 const DATE_FORMATTER = new Intl.DateTimeFormat('ru-RU', {
   day: '2-digit',
   month: 'short',
@@ -61,15 +65,9 @@ export function formatDate(iso: string | undefined | null): string {
   return DATE_FORMATTER.format(parsed)
 }
 
-// NOTE: distance ≤ 0 collapses to "—" — the route may be unknown or the value
-// not provided by the DTO yet; "0 ₽/км" would mislead.
-export function formatPricePerKm(
-  price: number | null | undefined,
-  distance: number | null | undefined,
-): string {
-  if (price == null || distance == null || distance <= 0) {
+export function formatPricePerKm(value: number | null | undefined): string {
+  if (value == null) {
     return FALLBACK
   }
-  const perKm = Math.floor(price / distance)
-  return `${PLAIN_NUMBER.format(perKm)} ₽/км`
+  return `${PLAIN_DECIMAL_NUMBER.format(value)} ₽/км`
 }

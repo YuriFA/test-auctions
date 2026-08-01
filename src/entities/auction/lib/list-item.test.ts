@@ -83,6 +83,22 @@ describe('toAuctionListItemVM', () => {
     })
   })
 
+  it('keeps raw price_per_km from the list DTO without deriving it from current price', () => {
+    const vm = toAuctionListItemVM(
+      makeItem({
+        main: { price_per_km: 12.34 },
+        trading: {
+          status: 'Auction',
+          can_set_bet: true,
+          price: { current: 98765 },
+        },
+      }),
+    )
+
+    expect(vm?.pricePerKm).toBe(12.34)
+    expect(vm?.currentPrice).toBe(98765)
+  })
+
   it('preferves load/unload ISO date strings verbatim', () => {
     const vm = toAuctionListItemVM(makeItem())
     expect(vm?.loadDate).toBe('2026-08-12T09:00:00+03:00')

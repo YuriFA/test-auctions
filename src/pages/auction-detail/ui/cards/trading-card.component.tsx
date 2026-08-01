@@ -1,5 +1,5 @@
 import type { AuctionDetailVM, AuctionRestrictions } from '@entities/auction'
-import { formatPrice, formatDate } from '@shared/lib'
+import { formatDate, formatPricePerKm } from '@shared/lib'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@shared/ui'
 
 import { DefinitionRow } from '../definition-row.component'
@@ -33,7 +33,7 @@ export function TradingCard({ vm, restrictions }: TradingCardProps) {
             {vm.priceMax != null && <PriceRow label="Макс." value={vm.priceMax} />}
             {vm.priceStep != null && <PriceRow label="Шаг" value={vm.priceStep} />}
             {vm.pricePerKm != null && (
-              <DefinitionRow label="Цена за км" value={`${formatPrice(vm.pricePerKm)}/км`} />
+              <DefinitionRow label="Цена за км" value={formatPricePerKm(vm.pricePerKm)} />
             )}
           </dl>
         )}

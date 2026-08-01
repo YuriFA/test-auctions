@@ -8,7 +8,8 @@ interface Props {
 
 export function AuctionRoute({ loadCity, unloadCity, direction }: Props) {
   const hasCities = Boolean(loadCity) || Boolean(unloadCity)
-  const label = direction?.trim() || (hasCities ? `${loadCity} → ${unloadCity}`.trim() : '')
+  const cityPairLabel = hasCities ? `${loadCity} → ${unloadCity}`.trim() : ''
+  const label = direction?.trim() || cityPairLabel
 
   if (!label) {
     return (
@@ -19,7 +20,7 @@ export function AuctionRoute({ loadCity, unloadCity, direction }: Props) {
     )
   }
 
-  if (loadCity && unloadCity) {
+  if (loadCity && unloadCity && (!direction?.trim() || direction.trim() === cityPairLabel)) {
     return (
       <p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-base font-semibold text-foreground sm:text-lg">
         <span className="flex items-center gap-1.5">

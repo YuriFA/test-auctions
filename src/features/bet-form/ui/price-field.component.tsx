@@ -1,7 +1,6 @@
 import { formatPrice, parseOptionalNumber } from '@shared/lib'
 import { Button, ButtonGroup, Input, Label } from '@shared/ui'
 import { Minus, Plus } from 'lucide-react'
-import { useId } from 'react'
 import { useController, useFormContext } from 'react-hook-form'
 
 import { nextStepPrice, prevStepPrice } from '../lib/bet-form-schema'
@@ -16,7 +15,7 @@ export interface PriceFieldProps {
 export function PriceField({ constraints, available, disabled }: PriceFieldProps) {
   const { control, setValue } = useFormContext<{ price: string }>()
   const { field, fieldState } = useController({ control, name: 'price' })
-  const priceInputId = useId()
+  const priceInputId = 'bet-price'
 
   const hasStep = (constraints.step ?? 0) > 0
   const numericValue = parseOptionalNumber(field.value)

@@ -9,6 +9,14 @@ test.describe('auctions list page', () => {
     await expect(page.locator(`a[href="/auctions/${DOWN_LEADING_REF}"]`).first()).toBeVisible()
   })
 
+  test('shows the raw list price-per-km value on the card', async ({ page }) => {
+    await page.goto('/')
+
+    const card = page.locator('article').filter({ hasText: 'MSK-001' }).first()
+    await expect(card).toContainText(/45[\s\u00A0]?000\s₽/)
+    await expect(card).toContainText(/28,5\s₽\/км/)
+  })
+
   test('hovering a card triggers a detail prefetch GET', async ({ page }) => {
     await page.goto('/')
 
@@ -27,7 +35,10 @@ test.describe('auctions list page', () => {
 
     // Stretched-link ::after overlay covers the whole <article>; click the
     // top-left so the action button is not the target.
-    await page.locator('article').first().click({ position: { x: 30, y: 30 } })
+    await page
+      .locator('article')
+      .first()
+      .click({ position: { x: 30, y: 30 } })
     await expect(page).toHaveURL(/\/auctions\/[0-9a-f-]+$/)
   })
 

@@ -25,7 +25,7 @@ export function AuctionFilters() {
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger
         render={
-          <Button type="button" variant="outline">
+          <Button type="button" variant="outline" aria-label="Фильтры">
             <SlidersHorizontalIcon data-icon="inline-start" />
             <span className="hidden sm:inline">Фильтры</span>
             {activeCount > 0 && (

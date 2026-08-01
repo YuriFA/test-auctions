@@ -10,7 +10,7 @@ export function AuctionTrading({ item }: Props) {
     return null
   }
 
-  const hasPricePerKm = item.pricePerKm != null && item.pricePerKm > 0
+  const hasPricePerKm = item.pricePerKm != null
 
   return (
     <div className="flex flex-col">
@@ -21,7 +21,7 @@ export function AuctionTrading({ item }: Props) {
         <span>{formatPrice(item.currentPrice)}</span>
         {hasPricePerKm && (
           <span className="text-xs font-normal text-muted-foreground">
-            · {formatPricePerKm(item.currentPrice, item.pricePerKm)}
+            · {formatPricePerKm(item.pricePerKm)}
           </span>
         )}
       </dd>

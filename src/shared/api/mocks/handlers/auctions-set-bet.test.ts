@@ -30,13 +30,16 @@ interface DetailBody {
   trading?: {
     status_mobile?: string
     is_bidder?: boolean
-    price?: { current?: number }
+    price?: { current?: number; price_per_km?: number }
     your?: { bet?: boolean }
   }
 }
 
 interface ListBody {
-  data?: Array<{ main?: { order_uid?: string }; trading?: { status_mobile?: string; price?: { current?: number } } }>
+  data?: Array<{
+    main?: { order_uid?: string; price_per_km?: number | null }
+    trading?: { status_mobile?: string; price?: { current?: number } }
+  }>
 }
 
 interface BetsListBody {
@@ -117,12 +120,14 @@ describe('POST /auctions/:uuid/bets — MSW handler', () => {
   it('propagates the new state to list, detail, and bets endpoints', async () => {
     const beforeDetail = await getDetail(seedAuctionUuids.downLeading)
     expect(beforeDetail?.trading?.price?.current).toBe(45000)
+    expect(beforeDetail?.trading?.price?.price_per_km).toBe(54.88)
 
     const placed = await postBet(seedAuctionUuids.downLeading, { price: 44000 })
     expect(placed.status).toBe(200)
 
     const afterDetail = await getDetail(seedAuctionUuids.downLeading)
     expect(afterDetail?.trading?.price?.current).toBe(44000)
+    expect(afterDetail?.trading?.price?.price_per_km).toBe(44.72)
     expect(afterDetail?.trading?.status_mobile).toBe('Leading')
     expect(afterDetail?.trading?.is_bidder).toBe(true)
     expect(afterDetail?.trading?.your?.bet).toBe(true)
@@ -132,6 +137,7 @@ describe('POST /auctions/:uuid/bets — MSW handler', () => {
       (item) => item?.main?.order_uid === '3a05d045-0e67-4f85-b20a-de81d18bba7a',
     )
     expect(listItem?.trading?.price?.current).toBe(44000)
+    expect(listItem?.main?.price_per_km).toBe(44.72)
     expect(listItem?.trading?.status_mobile).toBe('Leading')
 
     const bets = await getBets(seedAuctionUuids.downLeading)

@@ -74,31 +74,30 @@ describe('formatDate', () => {
 })
 
 describe('formatPricePerKm', () => {
-  it('derives price-per-km and formats with the ₽/км suffix', () => {
-    // 72000 / 1200 = 60
-    const out = formatPricePerKm(72000, 1200)
+  it('formats a raw integer value with the ₽/км suffix', () => {
+    const out = formatPricePerKm(60)
     expect(out).toMatch(/^60[\s ]₽\/км$/)
   })
 
-  it('rounds fractional results to whole units', () => {
-    // 72000 / 1200 = 60; 72500 / 1200 ≈ 60.42 → "60"
-    const out = formatPricePerKm(72500, 1200)
-    expect(out).toMatch(/^60[\s ]₽\/км$/)
+  it('preserves fractional precision from the DTO', () => {
+    const out = formatPricePerKm(28.5)
+    expect(out).toMatch(/^28,5[\s ]₽\/км$/)
   })
 
-  it('returns em-dash fallback when distance is zero', () => {
-    expect(formatPricePerKm(72000, 0)).toBe('—')
+  it('keeps two decimal places when present in the DTO', () => {
+    const out = formatPricePerKm(54.88)
+    expect(out).toMatch(/^54,88[\s ]₽\/км$/)
   })
 
-  it('returns em-dash fallback when distance is negative', () => {
-    expect(formatPricePerKm(72000, -10)).toBe('—')
+  it('renders zero when the DTO explicitly carries zero', () => {
+    expect(formatPricePerKm(0)).toBe('0 ₽/км')
   })
 
-  it('returns em-dash fallback when price is null', () => {
-    expect(formatPricePerKm(null, 1200)).toBe('—')
+  it('returns em-dash fallback when value is null', () => {
+    expect(formatPricePerKm(null)).toBe('—')
   })
 
-  it('returns em-dash fallback when distance is null', () => {
-    expect(formatPricePerKm(72000, null)).toBe('—')
+  it('returns em-dash fallback when value is undefined', () => {
+    expect(formatPricePerKm(undefined)).toBe('—')
   })
 })
