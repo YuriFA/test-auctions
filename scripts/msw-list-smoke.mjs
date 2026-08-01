@@ -6,7 +6,8 @@
  * script is intentionally not part of `pnpm check`; it runs on demand.
  *
  * Coverage:
- *   - default body returns all 10 seed auctions with coherent meta,
+ *   - default body returns the first page (DEFAULT_PER_PAGE=12) of the
+ *     combined seed + filler dataset (10 seeds + 24 fillers = 34 total),
  *   - `per_page` + `page` paginates and updates `from`/`to`/`last_page`,
  *   - a typed filter (`auc_type: ['Down']`) narrows the set,
  *   - a free-text filter (`cargo_num`) returns the expected single record,
@@ -22,6 +23,8 @@ const server = setupServer(...mockHandlers)
 server.listen({ onUnhandledRequest: 'error' })
 
 const BASE = 'http://localhost' // any host; MSW matches the path
+const TOTAL_AUCTIONS = 34 // 10 seeds + 24 fillers — keep in sync with store.ts
+const DEFAULT_PER_PAGE = 12 // keep in sync with store.ts DEFAULT_PER_PAGE
 let failures = 0
 
 function assert(name, condition, detail = '') {
@@ -54,28 +57,37 @@ async function postList(body) {
   return { status: res.status, contentType: res.headers.get('content-type'), json }
 }
 
-// --- case 1: default body, all seed auctions ---------------------------------
+// --- case 1: default body, first page of combined dataset --------------------
 
 {
   const { status, json } = await postList()
   assert('default status 200', status === 200, `got ${status}`)
-  assert('default meta.total === 10', json?.meta?.total === 10, `got ${json?.meta?.total}`)
   assert(
-    'default data length === 10',
-    Array.isArray(json?.data) && json.data.length === 10,
+    `default meta.total === ${TOTAL_AUCTIONS}`,
+    json?.meta?.total === TOTAL_AUCTIONS,
+    `got ${json?.meta?.total}`,
+  )
+  assert(
+    `default data length === ${DEFAULT_PER_PAGE}`,
+    Array.isArray(json?.data) && json.data.length === DEFAULT_PER_PAGE,
     `got ${json?.data?.length}`,
   )
   assert('default meta.current_page === 1', json?.meta?.current_page === 1)
   assert('default meta.from === 1', json?.meta?.from === 1)
-  assert('default meta.to === 10', json?.meta?.to === 10)
-  assert('default meta.last_page === 1', json?.meta?.last_page === 1)
+  assert(`default meta.to === ${DEFAULT_PER_PAGE}`, json?.meta?.to === DEFAULT_PER_PAGE)
+  assert(
+    `default meta.last_page === ${Math.ceil(TOTAL_AUCTIONS / DEFAULT_PER_PAGE)}`,
+    json?.meta?.last_page === Math.ceil(TOTAL_AUCTIONS / DEFAULT_PER_PAGE),
+    `got ${json?.meta?.last_page}`,
+  )
   const hasAuctionUuid = json?.data?.every((item) => typeof item?.main?.auction_uuid === 'string')
   assert('every list item has main.auction_uuid', hasAuctionUuid === true)
-  const seedUuids = Object.values(seedAuctionUuids)
-  const returnedUuids = (json?.data ?? []).map((item) => item?.main?.auction_uuid).sort()
+  const returnedUuids = (json?.data ?? []).map((item) => item?.main?.auction_uuid)
+  const uniqueUuids = new Set(returnedUuids)
   assert(
-    'returned UUIDs match seed set',
-    JSON.stringify(returnedUuids) === JSON.stringify([...seedUuids].sort()),
+    'default page UUIDs are unique',
+    uniqueUuids.size === returnedUuids.length,
+    `duplicates=${returnedUuids.length - uniqueUuids.size}`,
   )
 }
 
@@ -85,13 +97,13 @@ async function postList(body) {
   const { status, json } = await postList({ per_page: 3, page: 2 })
   assert('paginate status 200', status === 200)
   assert('paginate data length === 3', json?.data?.length === 3, `got ${json?.data?.length}`)
-  assert('paginate meta.total === 10', json?.meta?.total === 10)
+  assert(`paginate meta.total === ${TOTAL_AUCTIONS}`, json?.meta?.total === TOTAL_AUCTIONS)
   assert('paginate meta.current_page === 2', json?.meta?.current_page === 2)
   assert('paginate meta.from === 4', json?.meta?.from === 4)
   assert('paginate meta.to === 6', json?.meta?.to === 6)
   assert(
-    'paginate meta.last_page === 4',
-    json?.meta?.last_page === 4,
+    `paginate meta.last_page === ${Math.ceil(TOTAL_AUCTIONS / 3)}`,
+    json?.meta?.last_page === Math.ceil(TOTAL_AUCTIONS / 3),
     `got ${json?.meta?.last_page}`,
   )
   assert('paginate meta.per_page === 3', json?.meta?.per_page === 3)
@@ -100,12 +112,13 @@ async function postList(body) {
 // --- case 3: empty page beyond range -----------------------------------------
 
 {
-  const { status, json } = await postList({ per_page: 3, page: 5 })
+  // page=50 is comfortably beyond last_page for any realistic dataset size.
+  const { status, json } = await postList({ per_page: 3, page: 50 })
   assert('empty page status 200', status === 200)
   assert('empty page data length === 0', json?.data?.length === 0)
   assert('empty page meta.from === 0', json?.meta?.from === 0, `got ${json?.meta?.from}`)
   assert('empty page meta.to === 0', json?.meta?.to === 0)
-  assert('empty page meta.total still === 10', json?.meta?.total === 10)
+  assert(`empty page meta.total still === ${TOTAL_AUCTIONS}`, json?.meta?.total === TOTAL_AUCTIONS)
 }
 
 // --- case 4: auc_type filter -------------------------------------------------

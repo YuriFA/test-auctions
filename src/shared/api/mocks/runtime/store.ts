@@ -15,7 +15,18 @@ import type {
 } from '../../generated'
 import type { MockAuctionListItem, SeedAuction } from '../auctions'
 import { seedAuctions } from '../auctions'
+import { generateFillerAuctions } from '../auctions-filler'
 import { mockCurrentUser } from '../user'
+
+// NOTE: matches the backend's default page size (Laravel paginator) so the
+// list UI sees multiple pages on the dev dataset without the frontend sending
+// `per_page` — `per_page` is an admin-only field the transport-facing list
+// request must never emit (see request-builder leakage guards).
+const DEFAULT_PER_PAGE = 12
+
+// NOTE: how many derived filler auctions to seed alongside the curated seed
+// set. 24 fillers + 10 seeds = 34 entries → 3 pages at DEFAULT_PER_PAGE=12.
+const FILLER_AUCTION_COUNT = 24
 
 const VAT_RATE = 0.2
 
@@ -40,7 +51,10 @@ interface MockRuntimeState {
 let state: MockRuntimeState = createInitialState()
 
 function createInitialState(): MockRuntimeState {
-  const auctions = structuredClone(seedAuctions) as SeedAuction[]
+  const auctions = structuredClone([
+    ...seedAuctions,
+    ...generateFillerAuctions(FILLER_AUCTION_COUNT),
+  ]) as SeedAuction[]
   const maxBetId = auctions.reduce((max, auction) => {
     return auction.bets.reduce((inner, bet) => Math.max(inner, bet.id ?? 0), max)
   }, 0)
@@ -515,7 +529,8 @@ function applyPagination(
   filters: AuctionListRequest,
 ): { page: number; perPage: number; paged: SeedAuction[] } {
   const page = filters.page && filters.page > 0 ? filters.page : 1
-  const perPage = filters.per_page && filters.per_page > 0 ? filters.per_page : auctions.length
+  const perPage =
+    filters.per_page && filters.per_page > 0 ? filters.per_page : DEFAULT_PER_PAGE
   const start = (page - 1) * perPage
   return { page, perPage, paged: auctions.slice(start, start + perPage) }
 }

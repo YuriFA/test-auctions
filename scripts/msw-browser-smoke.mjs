@@ -6,6 +6,8 @@
 import { chromium } from 'playwright'
 
 const BASE = process.env.SMOKE_BASE ?? 'http://localhost:5179'
+// Keep in sync with src/shared/api/mocks/runtime/store.ts (10 seeds + 24 fillers).
+const TOTAL_AUCTIONS = 34
 const browser = await chromium.launch()
 const page = await browser.newPage()
 
@@ -46,8 +48,8 @@ assert(
   `got ${result.json?.data?.length}`,
 )
 assert(
-  'browser fetch meta.total === 10',
-  result.json?.meta?.total === 10,
+  `browser fetch meta.total === ${TOTAL_AUCTIONS}`,
+  result.json?.meta?.total === TOTAL_AUCTIONS,
   `got ${result.json?.meta?.total}`,
 )
 assert('browser fetch meta.per_page === 2', result.json?.meta?.per_page === 2)
