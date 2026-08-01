@@ -2,49 +2,29 @@ import type { AuctionListItemVM } from '@entities/auction'
 import { formatPrice, formatPricePerKm } from '@entities/auction'
 
 interface Props {
-  item: Pick<AuctionListItemVM, 'currentPrice' | 'pricePerKm' | 'hasUserBet' | 'userLastBet'>
+  item: Pick<AuctionListItemVM, 'currentPrice' | 'pricePerKm'>
 }
 
 export function AuctionTrading({ item }: Props) {
-  const hasPrice = item.currentPrice != null
-  const hasUserBet = item.hasUserBet && item.userLastBet != null
-  if (!hasPrice && !hasUserBet) {
+  if (item.currentPrice == null) {
     return null
   }
 
+  const hasPricePerKm = item.pricePerKm != null && item.pricePerKm > 0
+
   return (
-    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1">
-      {hasPrice && (
-        <div className="flex flex-col">
-          <dt className="text-[0.625rem] tracking-wide text-muted-foreground uppercase">
-            Текущая цена
-          </dt>
-          <dd className="text-base font-semibold text-foreground sm:text-lg">
-            {formatPrice(item.currentPrice)}
-          </dd>
-        </div>
-      )}
-      <dl className="flex flex-col gap-0.5 text-xs text-muted-foreground">
-        <div className="flex gap-1">
-          <dt>Цена/км:</dt>
-          <dd className="font-medium text-foreground">
-            {item.pricePerKm != null && item.pricePerKm > 0
-              ? formatPricePerKm(item.currentPrice, item.pricePerKm)
-              : '-'}
-          </dd>
-        </div>
-        {hasUserBet && (
-          <div className="flex gap-1 py-1">
-            <dt>Моя ставка:</dt>
-            <dd className="font-medium text-foreground">{formatPrice(item.userLastBet)}</dd>
-          </div>
+    <div className="flex flex-col">
+      <dt className="text-[0.625rem] tracking-wide text-muted-foreground uppercase">
+        Текущая цена
+      </dt>
+      <dd className="flex flex-wrap items-baseline gap-x-2 text-base font-semibold text-foreground sm:text-lg">
+        <span>{formatPrice(item.currentPrice)}</span>
+        {hasPricePerKm && (
+          <span className="text-xs font-normal text-muted-foreground">
+            · {formatPricePerKm(item.currentPrice, item.pricePerKm)}
+          </span>
         )}
-        {!hasUserBet && (
-          <div className="py-1">
-            <dt className="italic">Нет моей ставки</dt>
-          </div>
-        )}
-      </dl>
+      </dd>
     </div>
   )
 }

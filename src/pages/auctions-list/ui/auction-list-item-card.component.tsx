@@ -8,6 +8,7 @@ import { AuctionCardHeader } from './auction-card-header.component'
 import { AuctionCargo } from './auction-cargo.component'
 import { AuctionRoute } from './auction-route.component'
 import { AuctionTrading } from './auction-trading.component'
+import { AuctionUserBetBadge } from './auction-user-bet-badge.component'
 
 interface Props {
   item: AuctionListItemVM
@@ -82,7 +83,8 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
         <AuctionTrading item={item} />
       </div>
 
-      <div className="auction-card-action mt-auto flex items-center justify-end gap-2 border-t pt-3">
+      <div className="auction-card-action mt-auto flex items-center justify-between gap-2 border-t pt-3">
+        <AuctionUserBetBadge item={item} />
         <AuctionAction action={action} auctionUuid={item.auctionUuid} />
       </div>
     </article>
