@@ -1,14 +1,14 @@
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@shared/ui'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { SearchIcon } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { DEFAULT_AUCTIONS_LIST_FILTERS, toAuctionsListSearch } from '../lib/search-params'
 
 export function AuctionSearchInput() {
   const navigate = useNavigate({ from: '/' })
   const search = useSearch({ from: '/' })
-  const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
+  const filters = { ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }
 
   const [local, setLocal] = useState(filters.cargo_num)
   useEffect(() => {

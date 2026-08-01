@@ -1,6 +1,5 @@
 import { fetchAuctionDetail } from '@shared/api'
 import { useQueryClient } from '@tanstack/react-query'
-import { useCallback } from 'react'
 
 import { auctionKeys } from './query-keys'
 
@@ -11,14 +10,11 @@ const PREFETCH_STALE_TIME_MS = 60_000
 
 export function usePrefetchAuctionDetail() {
   const queryClient = useQueryClient()
-  return useCallback(
-    (auctionUuid: string) => {
-      void queryClient.prefetchQuery({
-        queryKey: auctionKeys.detail(auctionUuid),
-        queryFn: () => fetchAuctionDetail(auctionUuid),
-        staleTime: PREFETCH_STALE_TIME_MS,
-      })
-    },
-    [queryClient],
-  )
+  return (auctionUuid: string) => {
+    void queryClient.prefetchQuery({
+      queryKey: auctionKeys.detail(auctionUuid),
+      queryFn: () => fetchAuctionDetail(auctionUuid),
+      staleTime: PREFETCH_STALE_TIME_MS,
+    })
+  }
 }

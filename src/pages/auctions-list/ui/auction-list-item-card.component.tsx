@@ -2,7 +2,6 @@ import type { AuctionCardPrimaryAction, AuctionListItemVM } from '@entities/auct
 import { deriveAuctionCardPrimaryAction } from '@entities/auction'
 import { formatDate } from '@shared/lib/format'
 import { Calendar, Clock } from 'lucide-react'
-import { useMemo } from 'react'
 
 import { AuctionAction } from './auction-action.component'
 import { AuctionCardHeader } from './auction-card-header.component'
@@ -47,15 +46,11 @@ function DatesRow({
 
 export function AuctionListItemCard({ item, onIntent }: Props) {
   const handleIntent = () => onIntent?.(item.auctionUuid)
-  const action: AuctionCardPrimaryAction = useMemo(
-    () =>
-      deriveAuctionCardPrimaryAction({
-        auctionStatus: item.auctionStatus,
-        canSetBet: item.canSetBet,
-        hasUserBet: item.hasUserBet,
-      }),
-    [item.auctionStatus, item.canSetBet, item.hasUserBet],
-  )
+  const action: AuctionCardPrimaryAction = deriveAuctionCardPrimaryAction({
+    auctionStatus: item.auctionStatus,
+    canSetBet: item.canSetBet,
+    hasUserBet: item.hasUserBet,
+  })
 
   return (
     <article

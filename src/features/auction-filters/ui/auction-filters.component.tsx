@@ -10,7 +10,7 @@ import {
 } from '@shared/ui'
 import { useSearch } from '@tanstack/react-router'
 import { SlidersHorizontalIcon } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { DEFAULT_AUCTIONS_LIST_FILTERS, countActiveFilters } from '../lib/search-params'
 import { AuctionFiltersForm } from './auction-filters-form.component'
@@ -18,7 +18,7 @@ import { AuctionFiltersForm } from './auction-filters-form.component'
 export function AuctionFilters() {
   const [open, setOpen] = useState(false)
   const search = useSearch({ from: '/' })
-  const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
+  const filters = { ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }
   const activeCount = countActiveFilters(filters)
 
   return (

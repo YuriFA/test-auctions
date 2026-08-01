@@ -20,7 +20,7 @@ import {
   Skeleton,
 } from '@shared/ui'
 import { Link, useSearch } from '@tanstack/react-router'
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 
 import { buildPageList } from '../lib/build-page-list'
 import { AuctionListItemCard } from './auction-list-item-card.component'
@@ -33,12 +33,9 @@ export function AuctionsList() {
   const request = useMemo(() => buildAuctionListRequest(filters), [filters])
   const query = useAuctionsList(request)
 
-  const handleIntent = useCallback(
-    (auctionUuid: string) => {
-      prefetchAuctionDetail(auctionUuid)
-    },
-    [prefetchAuctionDetail],
-  )
+  const handleIntent = (auctionUuid: string) => {
+    prefetchAuctionDetail(auctionUuid)
+  }
 
   if (query.isPending) {
     return (
@@ -58,9 +55,7 @@ export function AuctionsList() {
     return (
       <ErrorAlert
         title="Не удалось загрузить аукционы"
-        description={
-          query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'
-        }
+        description={query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'}
         onRetry={() => query.refetch()}
       />
     )
@@ -132,9 +127,7 @@ export function AuctionsList() {
           <PaginationItem>
             <PaginationNext
               text="Вперёд"
-              render={
-                <Link to="/" search={searchForPage(Math.min(lastPage, currentPage + 1))} />
-              }
+              render={<Link to="/" search={searchForPage(Math.min(lastPage, currentPage + 1))} />}
               aria-disabled={query.isFetching || currentPage >= lastPage}
               className={cn(
                 (query.isFetching || currentPage >= lastPage) && 'pointer-events-none opacity-50',

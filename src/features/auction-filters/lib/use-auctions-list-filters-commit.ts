@@ -1,5 +1,4 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { useCallback } from 'react'
 
 import {
   DEFAULT_AUCTIONS_LIST_FILTERS,
@@ -16,15 +15,12 @@ export function useAuctionsListFiltersCommit() {
     ...search,
   }
 
-  const commitFilters = useCallback(
-    (next: AuctionsListFilters) => {
-      navigate({
-        to: '/',
-        search: toAuctionsListSearch({ ...next, page: 1 }),
-      })
-    },
-    [navigate],
-  )
+  const commitFilters = (next: AuctionsListFilters) => {
+    navigate({
+      to: '/',
+      search: toAuctionsListSearch({ ...next, page: 1 }),
+    })
+  }
 
   return { initialFilters, commitFilters }
 }

@@ -7,7 +7,6 @@ import {
   deriveAuctionRestrictions,
 } from '@entities/auction'
 import { formatDate } from '@shared/lib'
-import { useMemo } from 'react'
 
 import { CargoCard } from './cards/cargo-card.component'
 import { ContactsCard } from './cards/contacts-card.component'
@@ -24,25 +23,17 @@ export interface AuctionDetailContentProps {
 }
 
 export function AuctionDetailContent({ vm, auctionUuid }: AuctionDetailContentProps) {
-  const restrictions = useMemo(
-    () =>
-      deriveAuctionRestrictions({
-        canSetBet: vm.canSetBet,
-        hideBetsHistory: vm.hideBetsHistory,
-        hidePointsAddressAndContacts: vm.hidePointsAddressAndContacts,
-        noViewCargoPrice: vm.noViewCargoPrice,
-      }),
-    [vm.canSetBet, vm.hideBetsHistory, vm.hidePointsAddressAndContacts, vm.noViewCargoPrice],
-  )
-  const action = useMemo(
-    () =>
-      deriveAuctionCardPrimaryAction({
-        auctionStatus: vm.auctionStatus,
-        canSetBet: restrictions.canPlaceBet,
-        hasUserBet: vm.hasUserBet,
-      }),
-    [vm.auctionStatus, restrictions.canPlaceBet, vm.hasUserBet],
-  )
+  const restrictions = deriveAuctionRestrictions({
+    canSetBet: vm.canSetBet,
+    hideBetsHistory: vm.hideBetsHistory,
+    hidePointsAddressAndContacts: vm.hidePointsAddressAndContacts,
+    noViewCargoPrice: vm.noViewCargoPrice,
+  })
+  const action = deriveAuctionCardPrimaryAction({
+    auctionStatus: vm.auctionStatus,
+    canSetBet: restrictions.canPlaceBet,
+    hasUserBet: vm.hasUserBet,
+  })
 
   return (
     <>
