@@ -46,12 +46,13 @@ function makeCompetitorBet(
   priceWithVat: number,
   place: number,
   createdAt: string,
+  auctionId: number,
 ): BetItem {
   const c = competitor(competitorIdx)
   const vatRate = 0.2
   return {
     id: betId,
-    auction_id: 1000 + betId,
+    auction_id: auctionId,
     created_at: createdAt,
     subscriber_id: c.subscriber_id,
     contact_name: c.contact_name,
@@ -75,12 +76,13 @@ function makeUserBet(
   priceWithVat: number,
   place: number,
   createdAt: string,
+  auctionId: number,
   overrides: Partial<BetItem> = {},
 ): BetItem {
   const vatRate = 0.2
   return {
     id: betId,
-    auction_id: 1000 + betId,
+    auction_id: auctionId,
     created_at: createdAt,
     subscriber_id: mockCurrentUser.subscriber_id,
     contact_name: mockCurrentUser.contact_name,
@@ -380,10 +382,10 @@ export const seedAuctions: SeedAuction[] = [
       hide_bets_history: false,
     },
     bets: [
-      makeCompetitorBet(0, 11, 47000, 2, '2026-07-26T11:00:00+03:00'),
-      makeCompetitorBet(1, 12, 46000, 3, '2026-07-27T11:30:00+03:00'),
-      makeCompetitorBet(2, 13, 45500, 4, '2026-07-28T12:00:00+03:00'),
-      makeUserBet(14, 45000, 1, '2026-07-29T10:00:00+03:00'),
+      makeCompetitorBet(0, 11, 47000, 2, '2026-07-26T11:00:00+03:00', 1),
+      makeCompetitorBet(1, 12, 46000, 3, '2026-07-27T11:30:00+03:00', 1),
+      makeCompetitorBet(2, 13, 45500, 4, '2026-07-28T12:00:00+03:00', 1),
+      makeUserBet(14, 45000, 1, '2026-07-29T10:00:00+03:00', 1),
     ],
   },
 
@@ -662,11 +664,11 @@ export const seedAuctions: SeedAuction[] = [
       hide_bets_history: false,
     },
     bets: [
-      makeUserBet(21, 50000, 4, '2026-07-27T10:00:00+03:00'),
-      makeCompetitorBet(0, 22, 51000, 3, '2026-07-27T11:00:00+03:00'),
-      makeUserBet(23, 51500, 3, '2026-07-28T09:30:00+03:00', { is_counter: true }),
-      makeCompetitorBet(3, 24, 52000, 1, '2026-07-28T10:00:00+03:00'),
-      makeCompetitorBet(1, 25, 52000, 2, '2026-07-28T10:30:00+03:00'),
+      makeUserBet(21, 50000, 4, '2026-07-27T10:00:00+03:00', 2),
+      makeCompetitorBet(0, 22, 51000, 3, '2026-07-27T11:00:00+03:00', 2),
+      makeUserBet(23, 51500, 3, '2026-07-28T09:30:00+03:00', 2, { is_counter: true }),
+      makeCompetitorBet(3, 24, 52000, 1, '2026-07-28T10:00:00+03:00', 2),
+      makeCompetitorBet(1, 25, 52000, 2, '2026-07-28T10:30:00+03:00', 2),
     ],
   },
 
@@ -960,9 +962,9 @@ export const seedAuctions: SeedAuction[] = [
       hide_bets_history: false,
     },
     bets: [
-      makeCompetitorBet(2, 31, 39500, 1, '2026-07-29T10:00:00+05:00'),
-      makeCompetitorBet(3, 32, 38500, 2, '2026-07-30T11:00:00+05:00'),
-      makeCompetitorBet(0, 33, 38000, 3, '2026-07-31T12:00:00+05:00'),
+      makeCompetitorBet(2, 31, 39500, 1, '2026-07-29T10:00:00+05:00', 3),
+      makeCompetitorBet(3, 32, 38500, 2, '2026-07-30T11:00:00+05:00', 3),
+      makeCompetitorBet(0, 33, 38000, 3, '2026-07-31T12:00:00+05:00', 3),
     ],
   },
 
@@ -1241,10 +1243,10 @@ export const seedAuctions: SeedAuction[] = [
       hide_bets_history: false,
     },
     bets: [
-      makeCompetitorBet(0, 41, 43000, 2, '2026-07-20T10:00:00+07:00'),
-      makeCompetitorBet(1, 42, 42000, 3, '2026-07-21T10:00:00+07:00'),
-      makeCompetitorBet(2, 43, 41500, 4, '2026-07-22T10:00:00+07:00'),
-      makeUserBet(44, 41000, 1, '2026-07-23T11:00:00+07:00', { is_win: true }),
+      makeCompetitorBet(0, 41, 43000, 2, '2026-07-20T10:00:00+07:00', 4),
+      makeCompetitorBet(1, 42, 42000, 3, '2026-07-21T10:00:00+07:00', 4),
+      makeCompetitorBet(2, 43, 41500, 4, '2026-07-22T10:00:00+07:00', 4),
+      makeUserBet(44, 41000, 1, '2026-07-23T11:00:00+07:00', 4, { is_win: true }),
     ],
   },
 
@@ -1769,9 +1771,9 @@ export const seedAuctions: SeedAuction[] = [
       hide_bets_history: true,
     },
     bets: [
-      makeCompetitorBet(2, 61, 41000, 2, '2026-06-16T10:00:00+04:00'),
-      makeCompetitorBet(0, 62, 40000, 3, '2026-06-17T11:00:00+04:00'),
-      makeUserBet(63, 39000, 1, '2026-06-18T12:00:00+04:00', { is_win: true }),
+      makeCompetitorBet(2, 61, 41000, 2, '2026-06-16T10:00:00+04:00', 6),
+      makeCompetitorBet(0, 62, 40000, 3, '2026-06-17T11:00:00+04:00', 6),
+      makeUserBet(63, 39000, 1, '2026-06-18T12:00:00+04:00', 6, { is_win: true }),
     ],
   },
 
@@ -2027,8 +2029,8 @@ export const seedAuctions: SeedAuction[] = [
       hide_bets_history: false,
     },
     bets: [
-      makeCompetitorBet(1, 71, 47500, 1, '2026-07-28T11:00:00+03:00'),
-      makeCompetitorBet(3, 72, 47000, 2, '2026-07-29T12:00:00+03:00'),
+      makeCompetitorBet(1, 71, 47500, 1, '2026-07-28T11:00:00+03:00', 7),
+      makeCompetitorBet(3, 72, 47000, 2, '2026-07-29T12:00:00+03:00', 7),
     ],
   },
 
@@ -2553,8 +2555,8 @@ export const seedAuctions: SeedAuction[] = [
       hide_bets_history: false,
     },
     bets: [
-      makeCompetitorBet(2, 91, 43000, 1, '2026-06-29T10:00:00+03:00'),
-      makeUserBet(92, 42500, 2, '2026-06-30T10:00:00+03:00', {
+      makeCompetitorBet(2, 91, 43000, 1, '2026-06-29T10:00:00+03:00', 9),
+      makeUserBet(92, 42500, 2, '2026-06-30T10:00:00+03:00', 9, {
         is_rejected: true,
         cancel_reason: 'Перебито ставкой конкурента',
         place: null,

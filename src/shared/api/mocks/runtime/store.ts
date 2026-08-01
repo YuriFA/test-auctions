@@ -106,6 +106,17 @@ export type PlaceBetResult =
   | { ok: false; status: 404; problem: ProblemDetail }
   | { ok: false; status: 422; problem: ValidationProblem }
 
+// NOTE: auction statuses that do not allow new bets regardless of can_set_bet.
+const TERMINAL_STATUSES: AuctionStatus[] = [
+  'Planning',
+  'DeterminateWinner',
+  'WaitDeal',
+  'InProgress',
+  'Finished',
+  'Stopped',
+  'Canceled',
+]
+
 // NOTE: never throws — returns a discriminated union so MSW handlers map the
 // failure case onto the matching HTTP response without re-validating. Keeps
 // list/detail/bets reads consistent by recomputing places and refreshing the
@@ -138,10 +149,89 @@ export function writeBet(uuid: string, price: number): PlaceBetResult {
     }
   }
 
+  const trading = auction.detail.trading
+  const auctionStatus = trading?.status
+
+  if (auctionStatus && TERMINAL_STATUSES.includes(auctionStatus)) {
+    return {
+      ok: false,
+      status: 422,
+      problem: validationProblem([
+        {
+          field: 'price',
+          message: `Ставки не принимаются: аукцион в статусе ${auctionStatus}`,
+          code: 'auction_not_biddable',
+        },
+      ]),
+    }
+  }
+
+  if (trading?.can_set_bet === false) {
+    return {
+      ok: false,
+      status: 422,
+      problem: validationProblem([
+        {
+          field: 'price',
+          message: 'Ставка запрещена для данного аукциона',
+          code: 'bet_not_allowed',
+        },
+      ]),
+    }
+  }
+
+  const priceConstraints = trading?.price
+  if (priceConstraints) {
+    const { min, max, step, available } = priceConstraints
+    if (min != null && price < min) {
+      return {
+        ok: false,
+        status: 422,
+        problem: validationProblem([
+          {
+            field: 'price',
+            message: `Ставка ниже минимально допустимой (${min})`,
+            code: 'price_below_min',
+          },
+        ]),
+      }
+    }
+    if (max != null && price > max) {
+      return {
+        ok: false,
+        status: 422,
+        problem: validationProblem([
+          {
+            field: 'price',
+            message: `Ставка выше максимально допустимой (${max})`,
+            code: 'price_above_max',
+          },
+        ]),
+      }
+    }
+    if (step != null && step > 0 && available != null) {
+      const diff = Math.abs(price - available)
+      const remainder = Math.round((diff % step) * 1e9) / 1e9
+      if (remainder > 1e-6) {
+        return {
+          ok: false,
+          status: 422,
+          problem: validationProblem([
+            {
+              field: 'price',
+              message: `Ставка не соответствует шагу торгов (шаг: ${step})`,
+              code: 'price_invalid_step',
+            },
+          ]),
+        }
+      }
+    }
+  }
+
   const previousUserBet = findUserActiveBet(auction)
   const previousUserPrice = previousUserBet?.price_with_vat ?? null
 
-  const newBet: BetItem = makeUserBetRecord(price)
+  const newBet: BetItem = makeUserBetRecord(auction, price)
   state.nextBetId += 1
 
   if (previousUserBet) {
@@ -157,11 +247,12 @@ export function writeBet(uuid: string, price: number): PlaceBetResult {
   return { ok: true, bet: { ...newBet } }
 }
 
-function makeUserBetRecord(priceWithVat: number): BetItem {
+function makeUserBetRecord(auction: SeedAuction, priceWithVat: number): BetItem {
   const id = state.nextBetId
+  const auctionId = auction.detail.main?.id ?? auction.list.main?.id ?? 0
   return {
     id,
-    auction_id: 1000 + id,
+    auction_id: auctionId,
     created_at: new Date().toISOString(),
     subscriber_id: mockCurrentUser.subscriber_id,
     contact_name: mockCurrentUser.contact_name,

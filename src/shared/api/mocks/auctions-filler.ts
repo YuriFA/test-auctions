@@ -406,6 +406,7 @@ export function generateFillerAuctions(count: number): SeedAuction[] {
     // duplicate IDs are harmless. Adjust prices toward the new current price
     // so the bets tab does not contradict the trading block.
     for (const bet of base.bets) {
+      bet.auction_id = 1000 + i
       const place = bet.place ?? 1
       const drift = (aucType === 'Up' ? 1 : -1) * place * 250
       const betPrice = Math.max(1000, currentPrice + drift)

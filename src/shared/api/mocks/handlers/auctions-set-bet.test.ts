@@ -198,4 +198,54 @@ describe('POST /auctions/:uuid/bets — MSW handler', () => {
     expect(res.contentType).toBe('application/problem+json')
     expect((res.json as ValidationProblem)?.code).toBe('auction_not_found')
   })
+
+  it('rejects bet when can_set_bet=false with a ValidationProblem', async () => {
+    const res = await postBet(seedAuctionUuids.fixPriceHidden, { price: 50000 })
+    expectValidationProblem(res)
+    expect((res.json as ValidationProblem)?.errors?.[0]?.code).toBe('bet_not_allowed')
+  })
+
+  it('rejects bet in Planning status with a ValidationProblem', async () => {
+    const res = await postBet(seedAuctionUuids.planningUpcoming, { price: 50000 })
+    expectValidationProblem(res)
+    expect((res.json as ValidationProblem)?.errors?.[0]?.code).toBe('auction_not_biddable')
+  })
+
+  it('rejects bet in terminal Stopped status with a ValidationProblem', async () => {
+    const res = await postBet(seedAuctionUuids.stoppedRejected, { price: 50000 })
+    expectValidationProblem(res)
+    expect((res.json as ValidationProblem)?.errors?.[0]?.code).toBe('auction_not_biddable')
+  })
+
+  it('rejects price below min with a price_below_min error', async () => {
+    const res = await postBet(seedAuctionUuids.downLeading, { price: 39000 })
+    expectValidationProblem(res)
+    expect((res.json as ValidationProblem)?.errors?.[0]?.code).toBe('price_below_min')
+    expect((res.json as ValidationProblem)?.errors?.[0]?.field).toBe('price')
+  })
+
+  it('rejects price above max with a price_above_max error', async () => {
+    const res = await postBet(seedAuctionUuids.upLosing, { price: 61000 })
+    expectValidationProblem(res)
+    expect((res.json as ValidationProblem)?.errors?.[0]?.code).toBe('price_above_max')
+    expect((res.json as ValidationProblem)?.errors?.[0]?.field).toBe('price')
+  })
+
+  it('rejects price that does not match the step with a price_invalid_step error', async () => {
+    const res = await postBet(seedAuctionUuids.downLeading, { price: 44250 })
+    expectValidationProblem(res)
+    expect((res.json as ValidationProblem)?.errors?.[0]?.code).toBe('price_invalid_step')
+    expect((res.json as ValidationProblem)?.errors?.[0]?.field).toBe('price')
+  })
+
+  it('accepts a valid on-step price at min boundary', async () => {
+    const res = await postBet(seedAuctionUuids.downLeading, { price: 40000 })
+    expect(res.status).toBe(200)
+  })
+
+  it('returns correct auction_id in the bet record matching the auction integer id', async () => {
+    const res = await postBet(seedAuctionUuids.downLeading, { price: 44000 })
+    expect(res.status).toBe(200)
+    expect((res.json as BetResponse & { auction_id?: number })?.auction_id).toBe(1)
+  })
 })
