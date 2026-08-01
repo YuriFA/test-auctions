@@ -132,7 +132,7 @@ function AuctionBetFormRestricted({ vm }: { vm: AuctionDetailVM }) {
   return (
     <>
       <Alert>
-        <AlertTitle>Нельзя поставить ставку</AlertTitle>
+        <AlertTitle>Нельзя сделать ставку</AlertTitle>
         <AlertDescription>
           Приём ставок по этому аукциону закрыт — например, торги завершены или ещё не начались.
         </AlertDescription>

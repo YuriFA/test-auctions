@@ -34,6 +34,6 @@ test.describe('bet form stepper', () => {
     await minusBtn.click()
     await expect(input).toHaveValue(afterFirstPlus)
 
-    await expect(page.getByRole('button', { name: 'Поставить ставку' })).toBeEnabled()
+    await expect(page.getByRole('button', { name: 'Сделать ставку' })).toBeEnabled()
   })
 })

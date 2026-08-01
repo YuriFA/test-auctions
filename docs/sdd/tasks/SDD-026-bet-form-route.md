@@ -17,7 +17,7 @@ restricted card ("Ставка недоступна" с Alert "Нельзя по
 покрывает три bets-кейса: valid UUID с can_set_bet=true → h1
 "Ставка по аукциону" и section "Цена"; `requestWinner` seed
 (can_set_bet=false) → h1 "Ставка по аукциону" и alert "Нельзя
-поставить ставку"; unknown UUID → detail-driven alert "Аукцион
+сделать ставку"; unknown UUID → detail-driven alert "Аукцион
 недоступен".
 
 ## Цель

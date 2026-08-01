@@ -19,7 +19,7 @@ test.describe('bet mutation flow — cross-screen consistency', () => {
     await expect(page.locator('h1')).toHaveText('Ставка по аукциону')
 
     await page.locator('#bet-price').fill(String(PLACED_PRICE))
-    await page.getByRole('button', { name: 'Поставить ставку' }).click()
+    await page.getByRole('button', { name: 'Сделать ставку' }).click()
 
     // Successful submit navigates to the bets history page.
     await expect(page.locator('h1')).toHaveText('История ставок')

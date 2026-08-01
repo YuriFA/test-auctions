@@ -60,7 +60,7 @@ test.describe('routes', () => {
     await page.goto(`/auctions/${REQUEST_WINNER_UUID}/bet`)
     await expect(page).toHaveURL(`/auctions/${REQUEST_WINNER_UUID}/bet`)
     await expect(page.locator('h1')).toHaveText('Ставка по аукциону')
-    await expect(page.locator('[role="alert"]')).toContainText('Нельзя поставить ставку')
+    await expect(page.locator('[role="alert"]')).toContainText('Нельзя сделать ставку')
   })
 
   test('unknown UUID on the bet route shows the error alert', async ({ page }) => {

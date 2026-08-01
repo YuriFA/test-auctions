@@ -158,7 +158,7 @@ export function BetForm({ auctionUuid, constraints, available, onSuccess }: BetF
 
       <div className="flex items-center gap-2">
         <Button type="submit" disabled={placeBet.isPending}>
-          {placeBet.isPending ? 'Сохранение…' : 'Поставить ставку'}
+          {placeBet.isPending ? 'Сохранение…' : 'Сделать ставку'}
         </Button>
         <Button type="reset" variant="ghost" disabled={placeBet.isPending}>
           Очистить
