@@ -210,14 +210,12 @@ export function isDefaultFilters(value: AuctionsListFilters): boolean {
   return countActiveFilters(value) === 0
 }
 
-// NOTE: `cargo_num` is excluded — it's a separate header search input, not a
-// filter. Optionals count as active whenever present (true OR false), since
+// NOTE: `cargo_num` and `page` are excluded — search is a separate header
+// input, and pagination is navigation. Both affect the URL but are not
+// filters. Optionals count as active whenever present (true OR false), since
 // defaults are `undefined`; arrays count as one field regardless of length.
 export function countActiveFilters(value: AuctionsListFilters): number {
   let count = 0
-  if (value.page !== DEFAULT_PAGE) {
-    count += 1
-  }
   if (value.is_oldest !== DEFAULT_IS_OLDEST) {
     count += 1
   }

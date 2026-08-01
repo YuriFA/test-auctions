@@ -308,8 +308,8 @@ describe('isDefaultFilters', () => {
     expect(isDefaultFilters(DEFAULT_AUCTIONS_LIST_FILTERS)).toBe(true)
   })
 
-  it('returns false when page differs', () => {
-    expect(isDefaultFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 2 })).toBe(false)
+  it('returns true when only page differs — pagination is navigation, not a filter', () => {
+    expect(isDefaultFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 2 })).toBe(true)
   })
 
   it('returns false when any array is non-empty', () => {
@@ -326,8 +326,8 @@ describe('countActiveFilters', () => {
     expect(countActiveFilters(DEFAULT_AUCTIONS_LIST_FILTERS)).toBe(0)
   })
 
-  it('counts page as one active filter when not default', () => {
-    expect(countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 2 })).toBe(1)
+  it('does not count page — pagination is navigation, not a filter', () => {
+    expect(countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 2 })).toBe(0)
   })
 
   it('counts each non-default scalar as one, not per array item', () => {
