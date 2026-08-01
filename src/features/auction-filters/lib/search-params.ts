@@ -154,10 +154,10 @@ export const auctionsListFiltersSchema: z.ZodType<AuctionsListFilters> = z.objec
   statuses: stringArray.transform((arr) => parseNumericStatuses(arr ?? [])),
   current_price_from: fromStringArray((v) => parseOptionalNumber(v ?? null)),
   current_price_to: fromStringArray((v) => parseOptionalNumber(v ?? null)),
-  create_date_from: fromStringArray((v) => v),
-  create_date_to: fromStringArray((v) => v),
-  load_date_from: fromStringArray((v) => v),
-  load_date_to: fromStringArray((v) => v),
+  create_date_from: fromStringArray((v) => parseOptionalDate(v ?? null)),
+  create_date_to: fromStringArray((v) => parseOptionalDate(v ?? null)),
+  load_date_from: fromStringArray((v) => parseOptionalDate(v ?? null)),
+  load_date_to: fromStringArray((v) => parseOptionalDate(v ?? null)),
   is_available: fromStringArray((v) => parseOptionalBoolean(v ?? null)),
   is_bidder: fromStringArray((v) => parseOptionalBoolean(v ?? null)),
 })
@@ -187,6 +187,13 @@ function parseSortFlag(raw: string | null): boolean {
     return false
   }
   return DEFAULT_IS_OLDEST
+}
+
+function parseOptionalDate(raw: string | null): string | undefined {
+  if (!raw || !/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    return undefined
+  }
+  return raw
 }
 
 function parseEnumArray<T extends readonly string[]>(

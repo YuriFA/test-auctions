@@ -1,4 +1,5 @@
 import type { AuctionListRequest } from '@shared/api'
+import { toEndOfDayISO, toStartOfDayISO } from '@shared/lib'
 
 import {
   DEFAULT_AUCTIONS_LIST_FILTERS,
@@ -44,17 +45,19 @@ export function buildAuctionListRequest(parsed: AuctionsListFilters): AuctionLis
     request.current_price_to = parsed.current_price_to
   }
 
+  // NOTE: create_date_* are intentionally absent from the filter form UI; they
+  // are kept in the type so programmatic / deep-link usage remains possible.
   if (parsed.create_date_from) {
-    request.create_date_from = parsed.create_date_from
+    request.create_date_from = toStartOfDayISO(parsed.create_date_from)
   }
   if (parsed.create_date_to) {
-    request.create_date_to = parsed.create_date_to
+    request.create_date_to = toEndOfDayISO(parsed.create_date_to)
   }
   if (parsed.load_date_from) {
-    request.load_date_from = parsed.load_date_from
+    request.load_date_from = toStartOfDayISO(parsed.load_date_from)
   }
   if (parsed.load_date_to) {
-    request.load_date_to = parsed.load_date_to
+    request.load_date_to = toEndOfDayISO(parsed.load_date_to)
   }
 
   if (typeof parsed.is_available === 'boolean') {

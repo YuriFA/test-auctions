@@ -146,18 +146,40 @@ describe('parseAuctionsListSearchParams', () => {
     ).toBeUndefined()
   })
 
-  it('passes through create_date_* as ISO strings', () => {
+  it('parses create_date_* as YYYY-MM-DD date strings', () => {
+    expect(
+      parseAuctionsListSearchParams(new URLSearchParams('create_date_from=2026-01-01'))
+        .create_date_from,
+    ).toBe('2026-01-01')
+  })
+
+  it('drops create_date_* when value is not YYYY-MM-DD', () => {
     expect(
       parseAuctionsListSearchParams(new URLSearchParams('create_date_from=2026-01-01T00:00:00Z'))
         .create_date_from,
-    ).toBe('2026-01-01T00:00:00Z')
+    ).toBeUndefined()
+    expect(
+      parseAuctionsListSearchParams(new URLSearchParams('create_date_from=garbage'))
+        .create_date_from,
+    ).toBeUndefined()
   })
 
-  it('passes through load_date_* as ISO strings', () => {
+  it('parses load_date_* as YYYY-MM-DD date strings', () => {
+    expect(
+      parseAuctionsListSearchParams(new URLSearchParams('load_date_from=2026-06-01'))
+        .load_date_from,
+    ).toBe('2026-06-01')
+  })
+
+  it('drops load_date_* when value is not YYYY-MM-DD', () => {
     expect(
       parseAuctionsListSearchParams(new URLSearchParams('load_date_from=2026-06-01T08:00:00Z'))
         .load_date_from,
-    ).toBe('2026-06-01T08:00:00Z')
+    ).toBeUndefined()
+    expect(
+      parseAuctionsListSearchParams(new URLSearchParams('load_date_from=not-a-date'))
+        .load_date_from,
+    ).toBeUndefined()
   })
 
   it('ignores unknown query keys', () => {
@@ -290,9 +312,9 @@ describe('round-trip parse ∘ serialize', () => {
       is_bidder: false,
       current_price_from: 1000,
       current_price_to: 5000,
-      create_date_from: '2026-01-01T00:00:00Z',
-      create_date_to: '2026-12-31T23:59:59Z',
-      load_date_from: '2026-06-01T08:00:00Z',
+      create_date_from: '2026-01-01',
+      create_date_to: '2026-12-31',
+      load_date_from: '2026-06-01',
     }
     const serialized = serializeAuctionsListSearchParams(value)
     expect(parseAuctionsListSearchParams(serialized)).toEqual(value)

@@ -168,20 +168,49 @@ describe('buildAuctionListRequest', () => {
   })
 
   describe('date filters', () => {
-    it('maps ISO date strings as-is for create_date and load_date ranges', () => {
+    it('converts YYYY-MM-DD create_date_from to start-of-day datetime with offset', () => {
       const filters: AuctionsListFilters = {
         ...DEFAULT_AUCTIONS_LIST_FILTERS,
-        create_date_from: '2026-01-01T00:00:00Z',
-        create_date_to: '2026-01-31T23:59:59Z',
-        load_date_from: '2026-02-01T00:00:00Z',
-        load_date_to: '2026-02-28T23:59:59Z',
+        create_date_from: '2026-01-01',
       }
-      expect(buildAuctionListRequest(filters)).toEqual({
-        create_date_from: '2026-01-01T00:00:00Z',
-        create_date_to: '2026-01-31T23:59:59Z',
-        load_date_from: '2026-02-01T00:00:00Z',
-        load_date_to: '2026-02-28T23:59:59Z',
-      })
+      const result = buildAuctionListRequest(filters)
+      expect(result.create_date_from).toMatch(/^2026-01-01T00:00:00[+-]\d{2}:\d{2}$/)
+    })
+
+    it('converts YYYY-MM-DD create_date_to to end-of-day datetime with offset', () => {
+      const filters: AuctionsListFilters = {
+        ...DEFAULT_AUCTIONS_LIST_FILTERS,
+        create_date_to: '2026-01-31',
+      }
+      const result = buildAuctionListRequest(filters)
+      expect(result.create_date_to).toMatch(/^2026-01-31T23:59:59[+-]\d{2}:\d{2}$/)
+    })
+
+    it('converts YYYY-MM-DD load_date_from to start-of-day datetime with offset', () => {
+      const filters: AuctionsListFilters = {
+        ...DEFAULT_AUCTIONS_LIST_FILTERS,
+        load_date_from: '2026-02-01',
+      }
+      const result = buildAuctionListRequest(filters)
+      expect(result.load_date_from).toMatch(/^2026-02-01T00:00:00[+-]\d{2}:\d{2}$/)
+    })
+
+    it('converts YYYY-MM-DD load_date_to to end-of-day datetime with offset', () => {
+      const filters: AuctionsListFilters = {
+        ...DEFAULT_AUCTIONS_LIST_FILTERS,
+        load_date_to: '2026-02-28',
+      }
+      const result = buildAuctionListRequest(filters)
+      expect(result.load_date_to).toMatch(/^2026-02-28T23:59:59[+-]\d{2}:\d{2}$/)
+    })
+
+    it('passes through already-expanded datetime strings unchanged', () => {
+      const filters: AuctionsListFilters = {
+        ...DEFAULT_AUCTIONS_LIST_FILTERS,
+        load_date_from: '2026-02-01T00:00:00+03:00',
+      }
+      const result = buildAuctionListRequest(filters)
+      expect(result.load_date_from).toBe('2026-02-01T00:00:00+03:00')
     })
 
     it('drops undefined date fields', () => {
@@ -265,14 +294,15 @@ describe('buildAuctionListRequest', () => {
         unload_city: 'Казань',
         current_price_from: 100,
         current_price_to: 500,
-        create_date_from: '2026-01-01T00:00:00Z',
-        create_date_to: '2026-01-31T23:59:59Z',
-        load_date_from: '2026-02-01T00:00:00Z',
-        load_date_to: '2026-02-28T23:59:59Z',
+        create_date_from: '2026-01-01',
+        create_date_to: '2026-01-31',
+        load_date_from: '2026-02-01',
+        load_date_to: '2026-02-28',
         is_available: true,
         is_bidder: false,
       }
-      expect(buildAuctionListRequest(filters)).toEqual({
+      const result = buildAuctionListRequest(filters)
+      expect(result).toMatchObject({
         page: 2,
         is_oldest: true,
         cargo_num: 'MSK-001',
@@ -283,13 +313,13 @@ describe('buildAuctionListRequest', () => {
         unload_city: 'Казань',
         current_price_from: 100,
         current_price_to: 500,
-        create_date_from: '2026-01-01T00:00:00Z',
-        create_date_to: '2026-01-31T23:59:59Z',
-        load_date_from: '2026-02-01T00:00:00Z',
-        load_date_to: '2026-02-28T23:59:59Z',
         is_available: true,
         is_bidder: false,
       })
+      expect(result.create_date_from).toMatch(/^2026-01-01T00:00:00[+-]\d{2}:\d{2}$/)
+      expect(result.create_date_to).toMatch(/^2026-01-31T23:59:59[+-]\d{2}:\d{2}$/)
+      expect(result.load_date_from).toMatch(/^2026-02-01T00:00:00[+-]\d{2}:\d{2}$/)
+      expect(result.load_date_to).toMatch(/^2026-02-28T23:59:59[+-]\d{2}:\d{2}$/)
     })
   })
 })
