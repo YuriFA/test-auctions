@@ -7,14 +7,15 @@ const AUCTION_TYPES = ['Request', 'Up', 'Down', 'FixPrice', 'Unknown'] as const
 // URL filter set accepts it — see request-builder.ts.
 const API_AUC_TYPES = ['Request', 'Up', 'Down', 'FixPrice'] as const
 
-// NOTE: list DTO never surfaces OnPending/ChoosingWinner/Accepted — exclude
-// them from the URL filter set so unknown values drop on parse.
 const MOBILE_STATUSES = [
   'NotParticipating',
   'Leading',
   'Losing',
+  'OnPending',
   'Winner',
   'Confirmed',
+  'ChoosingWinner',
+  'Accepted',
   'Unknown',
 ] as const
 

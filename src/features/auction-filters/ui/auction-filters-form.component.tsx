@@ -36,7 +36,17 @@ const AUC_TYPE_OPTIONS: ReadonlyArray<{ value: AuctionType; label: string }> = [
 ]
 
 const TRADING_STATUS_OPTIONS = (
-  ['NotParticipating', 'Leading', 'Losing', 'Winner', 'Confirmed', 'Unknown'] as const
+  [
+    'NotParticipating',
+    'Leading',
+    'Losing',
+    'OnPending',
+    'Confirmed',
+    'ChoosingWinner',
+    'Winner',
+    'Accepted',
+    'Unknown',
+  ] as const
 ).map((value) => ({ value, label: describeTradingStatus(value) }))
 
 const AUCTION_STATUS_CODE_OPTIONS = Array.from({ length: 7 }, (_, idx) => {

@@ -80,6 +80,26 @@ describe('parseAuctionsListSearchParams', () => {
     ).toEqual(['Leading', 'Losing'])
   })
 
+  it('accepts all contract status enum values from the URL', () => {
+    expect(
+      parseAuctionsListSearchParams(
+        new URLSearchParams(
+          'status=NotParticipating&status=Leading&status=Losing&status=OnPending&status=Confirmed&status=ChoosingWinner&status=Winner&status=Accepted&status=Unknown',
+        ),
+      ).status,
+    ).toEqual([
+      'NotParticipating',
+      'Leading',
+      'Losing',
+      'OnPending',
+      'Confirmed',
+      'ChoosingWinner',
+      'Winner',
+      'Accepted',
+      'Unknown',
+    ])
+  })
+
   it('drops unknown status enum values', () => {
     expect(
       parseAuctionsListSearchParams(new URLSearchParams('status=Leading&status=NotARealStatus'))
@@ -304,7 +324,7 @@ describe('round-trip parse ∘ serialize', () => {
       is_oldest: true,
       cargo_num: 'MSK-001',
       auc_type: ['Down', 'Up'],
-      status: ['Leading', 'Losing'],
+      status: ['Leading', 'ChoosingWinner'],
       statuses: [1, 2, 3],
       load_city: 'Москва',
       unload_city: 'Казань',

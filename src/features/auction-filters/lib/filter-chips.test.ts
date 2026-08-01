@@ -43,6 +43,15 @@ describe('getActiveFilterChips', () => {
     ])
   })
 
+  it('renders labels for full contract trading statuses', () => {
+    const filters: AuctionsListFilters = {
+      ...DEFAULT_AUCTIONS_LIST_FILTERS,
+      status: ['ChoosingWinner', 'Accepted'],
+    }
+    const labels = getActiveFilterChips(filters).map((chip) => chip.label)
+    expect(labels).toEqual(['Мой статус: Выбор победителя', 'Мой статус: Принят'])
+  })
+
   it('formats price with ru-RU thousands separator and currency', () => {
     const filters: AuctionsListFilters = {
       ...DEFAULT_AUCTIONS_LIST_FILTERS,
@@ -89,7 +98,7 @@ describe('getActiveFilterChips', () => {
       ...DEFAULT_AUCTIONS_LIST_FILTERS,
       is_oldest: true,
       auc_type: ['Down', 'Up'],
-      status: ['Leading'],
+      status: ['ChoosingWinner'],
       statuses: [1, 2],
       load_city: 'Москва',
       unload_city: 'Казань',
