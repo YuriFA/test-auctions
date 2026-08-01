@@ -14,7 +14,8 @@ OpenAPI contract (`docs/openapi.auctions.v0.json`), mocked end-to-end with MSW.
 | Forms              | React Hook Form                                            |
 | Validation         | Zod                                                        |
 | Mock API           | MSW (single in-memory runtime store)                       |
-| Client UI state    | URL search params + local `useState` (no global store)     |
+| Client UI state    | URL search params + local `useState` (see note below)      |
+| Notifications      | Sonner (toasts for bet mutation feedback)                  |
 | Styling            | Tailwind CSS v4 + `shadcn/ui`                              |
 | Architecture       | Feature-Sliced Design                                      |
 | Codegen            | Hey API → `src/shared/api/generated/`                      |
@@ -126,3 +127,9 @@ The mutation-flow spec is the SDD-028 acceptance gate: it walks the same `writeB
 - Browser smokes are not in `pnpm check` — they need a running vite dev server and Playwright browsers. Run them via `pnpm test:e2e` separately.
 - Visual regression and mobile-specific rendering are not covered by automation; the design is responsive but only smoke-checked at 375 px in `filters-ui.spec.ts`.
 - Current route param is `auctionRef` (backed by `main.order_uid` in list DTO), while adapter-layer resolves it to the real `auctionUuid` required by the OpenAPI paths. This keeps list DTO contract-clean but remains a mock-era workaround until backend exposes a contract-level list->detail identity.
+
+### Client UI state — why no Zustand store
+
+The assignment mandates "MobX or Zustand for targeted UI state." The current solution has **no global client store**: URL search params are the source of truth for filters, and the remaining UI state (form fields, stepper, modal open/close flags) lives in local `useState` / React Hook Form. This is a **deliberate tradeoff, not an oversight**: every piece of UI state we have is either already server-derived (URL params, TanStack Query cache) or strictly component-local, so a Zustand store would be a formal checkbox with no real responsibility. Introducing a global store purely to satisfy the requirement would add indirection without a single concrete consumer.
+
+The seam is preserved: if cross-component client state appears (e.g. persisted drafts, multi-step wizards, optimistic UI overlays that several screens must agree on), Zustand slots in at `shared/lib`/`features/*` without touching existing hooks. Until that need is real, the codebase stays leaner without it.

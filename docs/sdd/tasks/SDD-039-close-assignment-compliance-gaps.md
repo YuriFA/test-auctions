@@ -2,7 +2,7 @@
 
 ## Статус
 
-Запланировано.
+Выполнено.
 
 ## Цель
 
@@ -37,3 +37,9 @@
 ## Заметки и риски
 
 - На интервью часто отсеивают именно по таким "очевидным, но не сделанным" требованиям: они читаются как невнимательность, а не как tradeoff.
+
+## Что сделано
+
+- **Toast-инфраструктура**: добавлен Sonner; `Toaster` смонтирован в `RootLayout` (`src/app/layouts/root-layout.component.tsx`); `toast.success`/`toast.error` в `handleSubmit` bet-form (`src/features/bet-form/ui/bet-form.component.tsx`). Success-мутация ставки даёт явный feedback сверх навигации на `/bets`; error path (422 validation + generic server error) даёт toast наряду с inline-формой/field errors.
+- **Zustand — сознательный отказ**: вместо тихого несоответствия позиция зафиксирована явно в README (отдельная секция "Client UI state — why no Zustand store") и AI_USAGE.md (пункт в "Какие AI-предложения были отклонены"). Обоснование: нет cross-component client state — URL params для фильтров, остальное server-derived (TanStack Query) или component-local (`useState`/RHF). Seam сохранён для будущего внедрения.
+- README и AI_USAGE обновлены: стек-таблица отражает Sonner + honest Zustand tradeoff, SDD-027-заметка про отсутствие toast отмечена как закрытая этим SDD, пункт "Toast infrastructure" из "что улучшить" удалён (выполнено).
