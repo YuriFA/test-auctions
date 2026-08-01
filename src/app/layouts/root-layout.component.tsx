@@ -1,11 +1,12 @@
-import { Header } from '@shared/ui'
 import { Outlet } from '@tanstack/react-router'
 import { Toaster } from 'sonner'
+
+import { AppHeader } from './app-header.component'
 
 export function RootLayout() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
-      <Header />
+      <AppHeader />
       <Outlet />
       <Toaster richColors closeButton />
     </div>

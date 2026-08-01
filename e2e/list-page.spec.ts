@@ -45,16 +45,13 @@ test.describe('auctions list page', () => {
   test('pagination writes the page param to the URL and re-requests the list', async ({ page }) => {
     await page.goto('/')
 
-    // base-ui Button forces role="button" onto the underlying element even
-    // when `nativeButton={false}` renders an `<a>`. The Previous/Next controls
-    // carry aria-labels identifying direction.
-    const nextButton = page.getByRole('button', { name: 'Следующая страница' })
-    await expect(nextButton).toBeVisible()
+    const nextLink = page.getByRole('link', { name: 'Следующая страница' })
+    await expect(nextLink).toBeVisible()
 
     const listRequest = page.waitForRequest(
       (req) => req.method() === 'POST' && req.url().endsWith('/auctions/list'),
     )
-    await nextButton.click()
+    await nextLink.click()
     await listRequest
     await expect(page).toHaveURL(/page=/)
   })

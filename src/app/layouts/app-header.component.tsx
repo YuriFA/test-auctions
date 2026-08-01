@@ -1,15 +1,14 @@
 import { cn } from '@shared/lib/cn'
+import { ThemeToggle } from '@shared/ui'
 import { Link } from '@tanstack/react-router'
-
-import { ThemeToggle } from './theme-toggle.component'
 
 const APP_NAME = 'ГрузоТорг'
 
-export interface HeaderProps {
+export interface AppHeaderProps {
   className?: string
 }
 
-export function Header({ className }: HeaderProps) {
+export function AppHeader({ className }: AppHeaderProps) {
   return (
     <header className={cn('sticky top-0 z-40 border-b border-border bg-background', className)}>
       <div className="mx-auto flex h-14 w-full max-w-(--page-max-width) items-center justify-between gap-4 px-4 sm:px-6">

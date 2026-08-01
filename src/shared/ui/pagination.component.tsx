@@ -2,8 +2,6 @@ import { cn } from '@shared/lib/cn'
 import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
 import * as React from 'react'
 
-import { Button } from './button.component'
-
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (
     <nav
@@ -32,13 +30,9 @@ function PaginationItem({ ...props }: React.ComponentProps<'li'>) {
 
 type PaginationLinkProps = {
   isActive?: boolean
-  // NOTE: `render` lets callers swap the underlying `<a>` for a router-aware
-  // element (e.g. TanStack Router `<Link>`) so the href is real, cmd+click
-  // works, and no-JS fallback navigates. Defaults to a plain `<a>`. `ref` is
-  // omitted from anchor props to avoid clashing with Button's button-typed ref.
   render?: React.ReactElement
-} & Pick<React.ComponentProps<typeof Button>, 'size'> &
-  Omit<React.ComponentProps<'a'>, 'ref'>
+  size?: 'default' | 'icon'
+} & Omit<React.ComponentProps<'a'>, 'ref'>
 
 function PaginationLink({
   className,
@@ -50,27 +44,29 @@ function PaginationLink({
   children,
   ...rest
 }: PaginationLinkProps) {
-  // NOTE: aria-* and data-slot land on Button itself; base-ui's render prop
-  // merges them onto whatever element is rendered (default `<a>` or a
-  // caller-provided `<Link>`), so they survive in both cases. The remaining
-  // anchor props (href, onClick, etc.) only apply to the default `<a>`.
-  // `children` must be passed explicitly — otherwise they end up in `...rest`
-  // and are dropped when `render` is provided.
-  return (
-    <Button
-      variant={isActive ? 'outline' : 'ghost'}
-      size={size}
-      className={cn(className)}
-      nativeButton={false}
-      aria-label={ariaLabel}
-      aria-current={ariaCurrentProp ?? (isActive ? 'page' : undefined)}
-      data-slot="pagination-link"
-      data-active={isActive}
-      render={render ?? <a {...rest} />}
-    >
-      {children}
-    </Button>
+  const classes = cn(
+    'inline-flex shrink-0 items-center justify-center rounded-md border border-transparent bg-clip-padding text-xs/relaxed font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+    isActive
+      ? 'border-border hover:bg-input/50 hover:text-foreground'
+      : 'hover:bg-muted hover:text-foreground',
+    size === 'default' ? 'h-7 gap-1 px-2' : "size-7 [&_svg:not([class*='size-'])]:size-3.5",
+    className,
   )
+
+  const anchorProps = {
+    className: classes,
+    'aria-label': ariaLabel,
+    'aria-current': ariaCurrentProp ?? (isActive ? 'page' : undefined),
+    'data-slot': 'pagination-link',
+    'data-active': isActive ? '' : undefined,
+    ...rest,
+  }
+
+  if (render) {
+    return React.cloneElement(render, anchorProps, children)
+  }
+
+  return <a {...anchorProps}>{children}</a>
 }
 
 function PaginationPrevious({
