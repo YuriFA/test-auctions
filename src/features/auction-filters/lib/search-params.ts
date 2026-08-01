@@ -1,3 +1,4 @@
+import { parseOptionalNumber } from '@shared/lib'
 import { z } from 'zod'
 
 const AUCTION_TYPES = ['Request', 'Up', 'Down', 'FixPrice', 'Unknown'] as const
@@ -126,17 +127,6 @@ function parseNumericStatuses(values: string[]): number[] {
     .filter(
       (n): n is number => Number.isInteger(n) && n >= AUCTION_STATUS_MIN && n <= AUCTION_STATUS_MAX,
     )
-}
-
-function parseOptionalNumber(raw: string | null): number | undefined {
-  if (raw === null || raw === '') {
-    return undefined
-  }
-  const num = Number(raw)
-  if (!Number.isFinite(num)) {
-    return undefined
-  }
-  return num
 }
 
 function parseOptionalBoolean(raw: string | null): boolean | undefined {

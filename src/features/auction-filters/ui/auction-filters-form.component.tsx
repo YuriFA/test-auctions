@@ -5,6 +5,7 @@ import {
 } from '@entities/auction'
 import type { AuctionType } from '@shared/api'
 import { cities } from '@shared/config'
+import { parseOptionalNumber } from '@shared/lib'
 import {
   Button,
   Checkbox,
@@ -20,16 +21,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@shared/ui'
-import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useCallback } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import {
   DEFAULT_AUCTIONS_LIST_FILTERS,
   isDefaultFilters,
-  toAuctionsListSearch,
   type AuctionsListFilters,
 } from '../lib/search-params'
+import { useAuctionsListFiltersCommit } from '../lib/use-auctions-list-filters-commit'
+import { CheckboxList } from './checkbox-list.component'
 
 const AUC_TYPE_OPTIONS: ReadonlyArray<{ value: AuctionType; label: string }> = [
   { value: 'Request', label: describeAuctionType('Request') },
@@ -289,70 +290,9 @@ export function AuctionFiltersForm({ onApplied }: Props) {
   )
 }
 
-function useAuctionsListFiltersCommit() {
-  const navigate = useNavigate({ from: '/' })
-  const search = useSearch({ from: '/' })
-
-  const initialFilters: AuctionsListFilters = {
-    ...DEFAULT_AUCTIONS_LIST_FILTERS,
-    ...search,
-  }
-
-  const commitFilters = useCallback(
-    (next: AuctionsListFilters) => {
-      navigate({
-        to: '/',
-        search: toAuctionsListSearch({ ...next, page: 1 }),
-      })
-    },
-    [navigate],
-  )
-
-  return { initialFilters, commitFilters }
-}
-
 function toggleInArray<T>(current: ReadonlyArray<T>, value: T, checked: boolean): T[] {
   if (checked) {
     return current.includes(value) ? [...current] : [...current, value]
   }
   return current.filter((v) => v !== value)
-}
-
-function parseOptionalNumber(raw: string): number | undefined {
-  if (raw.trim() === '') {
-    return undefined
-  }
-  const parsed = Number(raw)
-  return Number.isFinite(parsed) ? parsed : undefined
-}
-
-function CheckboxList<T extends string | number>({
-  options,
-  selected,
-  onToggle,
-  idPrefix,
-}: {
-  options: ReadonlyArray<{ value: T; label: string }>
-  selected: ReadonlyArray<T>
-  onToggle: (value: T, checked: boolean) => void
-  idPrefix: string
-}) {
-  return (
-    <FieldGroup data-slot="checkbox-group">
-      {options.map((option) => {
-        const id = `${idPrefix}-${option.value}`
-        const checked = selected.includes(option.value)
-        return (
-          <Field key={id} orientation="horizontal">
-            <Checkbox
-              id={id}
-              checked={checked}
-              onCheckedChange={(state) => onToggle(option.value, state === true)}
-            />
-            <FieldLabel htmlFor={id}>{option.label}</FieldLabel>
-          </Field>
-        )
-      })}
-    </FieldGroup>
-  )
 }
