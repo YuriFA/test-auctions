@@ -4,6 +4,7 @@ import { isApiValidationError } from '@shared/api'
 import { Alert, AlertDescription, AlertTitle, Button } from '@shared/ui'
 import { useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { toast } from 'sonner'
 
 import { applyValidationErrors, errorMessage } from '../lib/api-errors'
 import type { BetFormValues, BetPriceConstraints } from '../lib/bet-form-schema'
@@ -30,13 +31,19 @@ export function BetForm({ auctionRef, constraints, available, onSuccess }: BetFo
   const handleSubmit = form.handleSubmit(async (values) => {
     try {
       await placeBet.mutateAsync(values.price)
+      toast.success('Ставка сохранена', { description: 'Она появилась в истории ставок.' })
       onSuccess()
     } catch (error) {
       if (isApiValidationError(error)) {
         applyValidationErrors(error, form.setError)
+        toast.error('Проверьте введённую цену', {
+          description: 'Сервер отклонил ставку. Ошибки показаны в форме.',
+        })
         return
       }
-      form.setError('root.serverError', { message: errorMessage(error) })
+      const message = errorMessage(error)
+      form.setError('root.serverError', { message })
+      toast.error('Не удалось сохранить ставку', { description: message })
     }
   })
 
