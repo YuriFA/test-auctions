@@ -139,8 +139,3 @@ export function AuctionsList() {
     </>
   )
 }
-
-// NOTE: render at most 7 slots so the bar stays tappable on mobile — always
-// pin first and last, show a 3-page window around the current page, and
-// collapse the gaps with a single ellipsis each. The discriminated `PageListEntry`
-// lets the JSX switch between real page numbers and `ellipsis` markers.
