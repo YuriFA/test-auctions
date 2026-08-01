@@ -23,7 +23,7 @@ page.on('request', (req) => {
 })
 
 // 1. List page serves and renders cards from MSW.
-await page.goto(`${BASE}/auctions`, { waitUntil: 'networkidle' })
+await page.goto(`${BASE}/`, { waitUntil: 'networkidle' })
 const h1 = ((await page.locator('h1').first().textContent()) ?? '').trim()
 check('list page h1 is "Аукционы"', h1 === 'Аукционы', `"${h1}"`)
 
@@ -67,7 +67,7 @@ if (await firstArticle.count()) {
     navigated && /\/auctions\/[0-9a-f-]+$/.test(url),
     url,
   )
-  await page.goto(`${BASE}/auctions`, { waitUntil: 'networkidle' })
+  await page.goto(`${BASE}/`, { waitUntil: 'networkidle' })
 } else {
   console.log('FAIL no article to click')
   failures.push('no article to click')

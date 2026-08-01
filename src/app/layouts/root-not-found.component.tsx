@@ -9,7 +9,7 @@ export function RootNotFound() {
         <EmptyDescription>
           The page you are looking for does not exist or has been moved.
         </EmptyDescription>
-        <Button nativeButton={false} render={<Link to="/auctions" search={{}} />}>
+        <Button nativeButton={false} render={<Link to="/" search={{}} />}>
           Go to auctions →
         </Button>
       </Empty>

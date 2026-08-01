@@ -13,8 +13,7 @@ const FINISHED_HIDDEN_BETS_UUID = '00000000-0000-4000-8000-000000000006'
 const REQUEST_WINNER_UUID = '00000000-0000-4000-8000-000000000004'
 
 const cases = [
-  { path: '/', expect: { url: '/auctions', h1: 'Аукционы' } },
-  { path: '/auctions', expect: { url: '/auctions', h1: 'Аукционы' } },
+  { path: '/', expect: { url: '/', h1: 'Аукционы' } },
   {
     path: `/auctions/${DOWN_LEADING_UUID}`,
     expect: { url: `/auctions/${DOWN_LEADING_UUID}`, h1: 'Аукцион № MSK-001', section: 'Маршрут' },

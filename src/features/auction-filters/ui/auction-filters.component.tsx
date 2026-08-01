@@ -17,7 +17,7 @@ import { AuctionFiltersForm } from './auction-filters-form.component'
 
 export function AuctionFilters() {
   const [open, setOpen] = useState(false)
-  const search = useSearch({ from: '/auctions' })
+  const search = useSearch({ from: '/' })
   const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
   const activeCount = countActiveFilters(filters)
 

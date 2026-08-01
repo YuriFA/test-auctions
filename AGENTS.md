@@ -80,7 +80,7 @@ This file defines the project-level rules for any AI/LLM agent working in this r
 ## Route And UX Requirements
 
 - Required route structure:
-  - `/auctions`
+  - `/` (auctions list — the entry route)
   - `/auctions/$auctionUuid`
   - `/auctions/$auctionUuid/bets`
   - `/auctions/$auctionUuid/bet`

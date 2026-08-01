@@ -6,8 +6,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { DEFAULT_AUCTIONS_LIST_FILTERS, toAuctionsListSearch } from '../lib/search-params'
 
 export function AuctionSearchInput() {
-  const navigate = useNavigate({ from: '/auctions' })
-  const search = useSearch({ from: '/auctions' })
+  const navigate = useNavigate({ from: '/' })
+  const search = useSearch({ from: '/' })
   const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
 
   const [local, setLocal] = useState(filters.cargo_num)
@@ -20,7 +20,7 @@ export function AuctionSearchInput() {
       return
     }
     navigate({
-      to: '/auctions',
+      to: '/',
       search: toAuctionsListSearch({ ...filters, cargo_num: local, page: 1 }),
     })
   }

@@ -15,7 +15,7 @@ function check(label, ok, detail = '') {
 }
 
 await page.setViewportSize({ width: 1280, height: 900 })
-await page.goto(`${BASE}/auctions`, { waitUntil: 'networkidle' })
+await page.goto(`${BASE}/`, { waitUntil: 'networkidle' })
 
 // Search input lives in the page header (not inside the sheet).
 const headerSearch = page.locator('input[placeholder*="номеру заявки"]').first()
@@ -97,7 +97,7 @@ if (await closeButton.count()) {
 
 // Mobile viewport: trigger still visible, opens sheet.
 await page.setViewportSize({ width: 375, height: 800 })
-await page.goto(`${BASE}/auctions`, { waitUntil: 'networkidle' })
+await page.goto(`${BASE}/`, { waitUntil: 'networkidle' })
 const mobileTrigger = page.getByRole('button', { name: /Фильтры/ }).first()
 const mobileVisible = await mobileTrigger.isVisible().catch(() => false)
 check('filter trigger visible on mobile', mobileVisible)

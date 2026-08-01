@@ -21,10 +21,10 @@ import { useCallback, useMemo } from 'react'
 import { AuctionListItemCard } from './auction-list-item-card.component'
 
 export function AuctionsList() {
-  const navigate = useNavigate({ from: '/auctions' })
+  const navigate = useNavigate({ from: '/' })
   const prefetchAuctionDetail = usePrefetchAuctionDetail()
 
-  const search = useSearch({ from: '/auctions' })
+  const search = useSearch({ from: '/' })
   const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
   const request = useMemo(() => buildAuctionListRequest(filters), [filters])
   const query = useAuctionsList(request)
@@ -37,7 +37,7 @@ export function AuctionsList() {
         return
       }
       navigate({
-        to: '/auctions',
+        to: '/',
         search: toAuctionsListSearch({ ...filters, page: clamped }),
       })
     },

@@ -290,8 +290,8 @@ export function AuctionFiltersForm({ onApplied }: Props) {
 }
 
 function useAuctionsListFiltersCommit() {
-  const navigate = useNavigate({ from: '/auctions' })
-  const search = useSearch({ from: '/auctions' })
+  const navigate = useNavigate({ from: '/' })
+  const search = useSearch({ from: '/' })
 
   const initialFilters: AuctionsListFilters = {
     ...DEFAULT_AUCTIONS_LIST_FILTERS,
@@ -301,7 +301,7 @@ function useAuctionsListFiltersCommit() {
   const commitFilters = useCallback(
     (next: AuctionsListFilters) => {
       navigate({
-        to: '/auctions',
+        to: '/',
         search: toAuctionsListSearch({ ...next, page: 1 }),
       })
     },

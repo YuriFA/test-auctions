@@ -153,7 +153,7 @@ function BackLink() {
       size="sm"
       nativeButton={false}
       className="w-fit px-0 text-muted-foreground"
-      render={<Link to="/auctions" search={{}} />}
+      render={<Link to="/" search={{}} />}
     >
       <ArrowLeft className="size-4" aria-hidden />
       К списку аукционов
