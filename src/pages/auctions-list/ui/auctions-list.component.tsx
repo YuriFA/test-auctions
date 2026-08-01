@@ -6,41 +6,31 @@ import {
 } from '@features/auction-filters'
 import { cn } from '@shared/lib/cn'
 import {
-  Button,
   Empty,
   EmptyDescription,
   EmptyTitle,
   ErrorAlert,
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
   Skeleton,
 } from '@shared/ui'
-import { useNavigate, useSearch } from '@tanstack/react-router'
+import { Link, useSearch } from '@tanstack/react-router'
 import { useCallback, useMemo } from 'react'
 
 import { AuctionListItemCard } from './auction-list-item-card.component'
 
 export function AuctionsList() {
-  const navigate = useNavigate({ from: '/' })
   const prefetchAuctionDetail = usePrefetchAuctionDetail()
 
   const search = useSearch({ from: '/' })
   const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
   const request = useMemo(() => buildAuctionListRequest(filters), [filters])
   const query = useAuctionsList(request)
-
-  const setPage = useCallback(
-    (next: number) => {
-      const lastPage = query.data?.lastPage ?? 1
-      const clamped = Math.min(Math.max(next, 1), lastPage)
-      if (clamped === filters.page) {
-        return
-      }
-      navigate({
-        to: '/',
-        search: toAuctionsListSearch({ ...filters, page: clamped }),
-      })
-    },
-    [filters, navigate, query.data?.lastPage],
-  )
 
   const handleIntent = useCallback(
     (auctionUuid: string) => {
@@ -70,12 +60,14 @@ export function AuctionsList() {
         description={
           query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'
         }
-        onRetry={() => setPage(filters.page)}
+        onRetry={() => query.refetch()}
       />
     )
   }
 
   const { items, currentPage, lastPage } = query.data
+  const pageList = buildPageList(currentPage, lastPage)
+  const searchForPage = (page: number) => toAuctionsListSearch({ ...filters, page })
 
   if (items.length === 0) {
     return (
@@ -102,27 +94,80 @@ export function AuctionsList() {
         ))}
       </section>
 
-      <nav className="flex items-center justify-between gap-3" aria-label="Пагинация">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(currentPage - 1)}
-          disabled={query.isFetching || currentPage <= 1}
-        >
-          Назад
-        </Button>
-        <span className="text-sm text-muted-foreground">
-          {currentPage} / {lastPage}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(currentPage + 1)}
-          disabled={query.isFetching || currentPage >= lastPage}
-        >
-          Вперёд
-        </Button>
-      </nav>
+      <Pagination className="mx-auto flex w-full justify-center" aria-label="Пагинация">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              text="Назад"
+              render={<Link to="/" search={searchForPage(Math.max(1, currentPage - 1))} />}
+              aria-disabled={query.isFetching || currentPage <= 1}
+              className={cn(
+                (query.isFetching || currentPage <= 1) && 'pointer-events-none opacity-50',
+              )}
+            />
+          </PaginationItem>
+          {pageList.map((entry) =>
+            entry === 'ellipsis' ? (
+              <PaginationItem key="ellipsis">
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={entry}>
+                <PaginationLink
+                  isActive={entry === currentPage}
+                  render={
+                    <Link
+                      to="/"
+                      search={searchForPage(entry)}
+                      aria-current={entry === currentPage ? 'page' : undefined}
+                    />
+                  }
+                >
+                  {entry}
+                </PaginationLink>
+              </PaginationItem>
+            ),
+          )}
+          <PaginationItem>
+            <PaginationNext
+              text="Вперёд"
+              render={
+                <Link to="/" search={searchForPage(Math.min(lastPage, currentPage + 1))} />
+              }
+              aria-disabled={query.isFetching || currentPage >= lastPage}
+              className={cn(
+                (query.isFetching || currentPage >= lastPage) && 'pointer-events-none opacity-50',
+              )}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </>
   )
+}
+
+// NOTE: render at most 7 slots so the bar stays tappable on mobile — always
+// pin first and last, show a 3-page window around the current page, and
+// collapse the gaps with a single ellipsis each. Returns `ellipsis` markers
+// alongside page numbers so the JSX can switch on the discriminated entry.
+type PageListEntry = number | 'ellipsis'
+
+function buildPageList(currentPage: number, lastPage: number): PageListEntry[] {
+  if (lastPage <= 7) {
+    return Array.from({ length: lastPage }, (_, i) => i + 1)
+  }
+  const entries: PageListEntry[] = [1]
+  const windowStart = Math.max(2, currentPage - 1)
+  const windowEnd = Math.min(lastPage - 1, currentPage + 1)
+  if (windowStart > 2) {
+    entries.push('ellipsis')
+  }
+  for (let p = windowStart; p <= windowEnd; p++) {
+    entries.push(p)
+  }
+  if (windowEnd < lastPage - 1) {
+    entries.push('ellipsis')
+  }
+  entries.push(lastPage)
+  return entries
 }
