@@ -12,7 +12,7 @@ import { AuctionUserBetBadge } from './auction-user-bet-badge.component'
 
 interface Props {
   item: AuctionListItemVM
-  onIntent?: (auctionUuid: string) => void
+  onIntent?: (auctionRef: string) => void
 }
 
 function DatesRow({
@@ -45,7 +45,7 @@ function DatesRow({
 }
 
 export function AuctionListItemCard({ item, onIntent }: Props) {
-  const handleIntent = () => onIntent?.(item.auctionUuid)
+  const handleIntent = () => onIntent?.(item.auctionRef)
   const action: AuctionCardPrimaryAction = deriveAuctionCardPrimaryAction({
     auctionStatus: item.auctionStatus,
     canSetBet: item.canSetBet,
@@ -81,7 +81,7 @@ export function AuctionListItemCard({ item, onIntent }: Props) {
 
       <div className="auction-card-action mt-auto flex items-center justify-between gap-2 border-t pt-3">
         <AuctionUserBetBadge item={item} />
-        <AuctionAction action={action} auctionUuid={item.auctionUuid} />
+        <AuctionAction action={action} auctionRef={item.auctionRef} />
       </div>
     </article>
   )

@@ -5,13 +5,13 @@ import { Link } from '@tanstack/react-router'
 
 export interface DetailActionBarProps {
   action: ReturnType<typeof deriveAuctionCardPrimaryAction>
-  auctionUuid: string
+  auctionRef: string
   restrictions: AuctionRestrictions
 }
 
 // NOTE: two distinct Link branches keep `to` a string literal — TanStack
 // Router infers param types from the literal, so a computed value would lose it.
-export function DetailActionBar({ action, auctionUuid, restrictions }: DetailActionBarProps) {
+export function DetailActionBar({ action, auctionRef, restrictions }: DetailActionBarProps) {
   if (action.kind === 'disabled') {
     return (
       <div className="flex flex-wrap items-center gap-2">
@@ -27,7 +27,7 @@ export function DetailActionBar({ action, auctionUuid, restrictions }: DetailAct
       {action.route === 'bet' ? (
         <Button
           nativeButton={false}
-          render={<Link to="/auctions/$auctionUuid/bet" params={{ auctionUuid }} />}
+          render={<Link to="/auctions/$auctionRef/bet" params={{ auctionRef }} />}
         >
           {action.label}
         </Button>
@@ -35,7 +35,7 @@ export function DetailActionBar({ action, auctionUuid, restrictions }: DetailAct
         <Button
           variant="outline"
           nativeButton={false}
-          render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}
+          render={<Link to="/auctions/$auctionRef/bets" params={{ auctionRef }} />}
         >
           {action.label}
         </Button>
@@ -44,7 +44,7 @@ export function DetailActionBar({ action, auctionUuid, restrictions }: DetailAct
         <Button
           variant="ghost"
           nativeButton={false}
-          render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}
+          render={<Link to="/auctions/$auctionRef/bets" params={{ auctionRef }} />}
         >
           История ставок
         </Button>

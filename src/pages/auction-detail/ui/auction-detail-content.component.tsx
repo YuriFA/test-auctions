@@ -19,10 +19,10 @@ import { DetailActionBar } from './detail-action-bar.component'
 
 export interface AuctionDetailContentProps {
   vm: AuctionDetailVM
-  auctionUuid: string
+  auctionRef: string
 }
 
-export function AuctionDetailContent({ vm, auctionUuid }: AuctionDetailContentProps) {
+export function AuctionDetailContent({ vm, auctionRef }: AuctionDetailContentProps) {
   const restrictions = deriveAuctionRestrictions({
     canSetBet: vm.canSetBet,
     hideBetsHistory: vm.hideBetsHistory,
@@ -42,7 +42,6 @@ export function AuctionDetailContent({ vm, auctionUuid }: AuctionDetailContentPr
           {vm.cargoNum && (
             <span className="text-lg font-semibold tracking-tight">№ {vm.cargoNum}</span>
           )}
-          <span className="text-sm text-muted-foreground">заявка {vm.orderUid || '—'}</span>
           {vm.createdAt && (
             <span className="text-sm text-muted-foreground">· создан {formatDate(vm.createdAt)}</span>
           )}
@@ -54,7 +53,7 @@ export function AuctionDetailContent({ vm, auctionUuid }: AuctionDetailContentPr
         </div>
       </header>
 
-      <DetailActionBar action={action} auctionUuid={auctionUuid} restrictions={restrictions} />
+      <DetailActionBar action={action} auctionRef={auctionRef} restrictions={restrictions} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <OrganizerCard vm={vm} />

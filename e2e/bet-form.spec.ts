@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test'
 
 // downLeading seed pins trading.price.step = 500, available = 44500.
-const DOWN_LEADING_UUID = '00000000-0000-4000-8000-000000000001'
+const DOWN_LEADING_REF = '3a05d045-0e67-4f85-b20a-de81d18bba7a'
 const EXPECTED_STEP = 500
 const EXPECTED_AVAILABLE = 44500
 
 test.describe('bet form stepper', () => {
   test('+/- buttons move the input by one step', async ({ page }) => {
-    await page.goto(`/auctions/${DOWN_LEADING_UUID}/bet`)
+    await page.goto(`/auctions/${DOWN_LEADING_REF}/bet`)
 
     const plusBtn = page.getByRole('button', { name: 'Увеличить на шаг' })
     const minusBtn = page.getByRole('button', { name: 'Уменьшить на шаг' })

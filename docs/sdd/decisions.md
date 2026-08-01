@@ -73,11 +73,11 @@
 
 ### D-011 Идентичность Auction UUID
 
-- OpenAPI-спецификация маршрутизирует аукционы по `auctionUuid: format: uuid` в path-параметрах (`/auctions/{auctionUuid}`, bets, set-bet), но не экспонирует поле `auction_uuid` ни в одном DTO ответа. Mock-слой закрывает этот контрактный разрыв так, как сделал бы реальный бэкенд: MSW инжектит `main.auction_uuid` в ответы `AuctionListItem`, чтобы клиент мог перейти из списка в детальную карточку без угадываний.
-- Обоснование: явное расширение лучше неявной интерпретации. Ранее мы рассматривали трактовку `auctionUuid` как семантически эквивалентной `main.order_uid` (единственный UUID в DTO), но это прятало бы логику роутинга за записью в `decisions.md`, которую ревьюер должен найти. Поле расширения видно в сетевых ответах и самодокументируемо. Также оно forward-compatible: если будущая ревизия схемы добавит `auction_uuid` в DTO, поменяется только mock-слой — клиентский код уже читает поле по имени.
-- `auction_uuid` намеренно отличен от `order_uid`. Домен грузовых аукционов трактует аукцион как торговую процедуру, наслоённую поверх заказа; смешение их идентификаторов потеряло бы разделение, которое поддерживает реальная система.
-- Реализация: `MockAuctionListItemMain` (в `src/shared/api/mocks/auctions.ts`) расширяет сгенерированный `AuctionListItemMain` обязательным полем `auction_uuid`. `SeedAuction.uuid === list.main.auction_uuid`, при этом `SeedAuction.list.main.order_uid` остаётся независимым под `seedOrderUids`. MSW-обработчики (SDD-011+) резолвят path-параметры по совпадению с `main.auction_uuid`; клиентские ссылки строятся как `params={{ auctionUuid: item.main.auction_uuid }}`.
-- Объём отклонения: это mock-only расширение сгенерированного DTO. Оно НЕ ДОЛЖНО протекать в production-типы `shared/api` или в `entities` / `features` / `widgets` / `pages`. Когда клиенту нужно прочитать `auction_uuid`, он должен делать это через типизированный view-model-маппер, потребляющий `MockAuctionListItem` только внутри MSW-setup и тестов.
+- OpenAPI-спецификация маршрутизирует аукционы по `auctionUuid: format: uuid` в path-параметрах (`/auctions/{auctionUuid}`, bets, set-bet), но list DTO не отдаёт этот идентификатор ни в одном поле ответа.
+- `order_uid` не приравнивается к `auctionUuid` на transport-уровне. Это другой доменный идентификатор, и подмена одного другим в path была бы скрытым contract drift.
+- Реализация после SDD-032: внешний route contract приложения использует `auctionRef`, который в текущем mock-backed приложении равен `main.order_uid`. Adapter-layer (`shared/api`) резолвит `auctionRef -> auctionUuid` через mock runtime lookup и только затем вызывает OpenAPI endpoints.
+- Выигрыш такого подхода: production DTO больше не расширяется несуществующим полем, UI не читает invented field, а контрактный разрыв остаётся явным и локализованным в одном resolver boundary.
+- Ограничение подхода: это по-прежнему mock-era workaround. Для реального backend корректный list -> detail flow требует либо явного `auctionUuid` в list DTO, либо отдельного контрактного endpoint/lookup механизма.
 
 ### D-012 Двусторонний URL-контракт фильтров
 

@@ -125,4 +125,4 @@ The mutation-flow spec is the SDD-028 acceptance gate: it walks the same `writeB
 - No real backend; MSW is the only API. The adapter boundary (`shared/api`) is structured so a real backend can drop in by replacing the mock handlers, but no integration test exists against a non-mock service.
 - Browser smokes are not in `pnpm check` — they need a running vite dev server and Playwright browsers. Run them via `pnpm test:e2e` separately.
 - Visual regression and mobile-specific rendering are not covered by automation; the design is responsive but only smoke-checked at 375 px in `filters-ui.spec.ts`.
-- Mock-only extension `main.auction_uuid` (decision D-011) bridges a contract gap and must not leak into production types — enforced by the `generated/` isolation, not by a test.
+- Current route param is `auctionRef` (backed by `main.order_uid` in list DTO), while adapter-layer resolves it to the real `auctionUuid` required by the OpenAPI paths. This keeps list DTO contract-clean but remains a mock-era workaround until backend exposes a contract-level list->detail identity.

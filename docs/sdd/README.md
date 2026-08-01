@@ -105,9 +105,9 @@
 ## Запланированные маршруты
 
 - `/auctions`
-- `/auctions/$auctionUuid`
-- `/auctions/$auctionUuid/bets`
-- `/auctions/$auctionUuid/bet`
+- `/auctions/$auctionRef`
+- `/auctions/$auctionRef/bets`
+- `/auctions/$auctionRef/bet`
 
 ## Сквозные правила
 

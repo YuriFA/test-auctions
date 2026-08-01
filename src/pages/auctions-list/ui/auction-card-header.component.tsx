@@ -5,7 +5,7 @@ import { Link } from '@tanstack/react-router'
 interface Props {
   item: Pick<
     AuctionListItemVM,
-    | 'auctionUuid'
+    | 'auctionRef'
     | 'cargoNum'
     | 'aucType'
     | 'auctionStatus'
@@ -19,8 +19,8 @@ export function AuctionCardHeader({ item }: Props) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <Link
-        to="/auctions/$auctionUuid"
-        params={{ auctionUuid: item.auctionUuid }}
+        to="/auctions/$auctionRef"
+        params={{ auctionRef: item.auctionRef }}
         aria-label={`Открыть аукцион ${item.cargoNum || 'без номера'}`}
         className="text-sm font-medium text-foreground underline-offset-4 after:absolute after:inset-0"
       >

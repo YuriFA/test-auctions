@@ -11,15 +11,15 @@ import { betFormSchema } from '../lib/bet-form-schema'
 import { PriceField } from './price-field.component'
 
 export interface BetFormProps {
-  auctionUuid: string
+  auctionRef: string
   constraints: BetPriceConstraints
   available: number | null
   onSuccess: () => void
 }
 
-export function BetForm({ auctionUuid, constraints, available, onSuccess }: BetFormProps) {
+export function BetForm({ auctionRef, constraints, available, onSuccess }: BetFormProps) {
   const schema = useMemo(() => betFormSchema(constraints), [constraints])
-  const placeBet = usePlaceBet(auctionUuid)
+  const placeBet = usePlaceBet(auctionRef)
 
   const form = useForm<{ price: string }, undefined, BetFormValues>({
     resolver: zodResolver(schema),

@@ -24,7 +24,7 @@ test.describe('MSW worker (browser)', () => {
         body: JSON.stringify({ per_page: 2 }),
       })
       const json = (await res.json()) as {
-        data?: Array<{ main?: { auction_uuid?: string } }>
+        data?: Array<{ main?: { order_uid?: string } }>
         meta?: { total?: number; per_page?: number }
       }
       return { status: res.status, json }
@@ -34,6 +34,6 @@ test.describe('MSW worker (browser)', () => {
     expect(result.json?.data?.length).toBe(2)
     expect(result.json?.meta?.total).toBe(TOTAL_AUCTIONS)
     expect(result.json?.meta?.per_page).toBe(2)
-    expect(typeof result.json?.data?.[0]?.main?.auction_uuid).toBe('string')
+    expect(typeof result.json?.data?.[0]?.main?.order_uid).toBe('string')
   })
 })

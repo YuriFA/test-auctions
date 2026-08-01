@@ -1,10 +1,12 @@
 import { expect, test } from '@playwright/test'
 
 test.describe('auctions list page', () => {
+  const DOWN_LEADING_REF = '3a05d045-0e67-4f85-b20a-de81d18bba7a'
+
   test('renders the header and at least one auction card', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('h1')).toHaveText('Аукционы')
-    await expect(page.locator('a[href^="/auctions/0"]').first()).toBeVisible()
+    await expect(page.locator(`a[href="/auctions/${DOWN_LEADING_REF}"]`).first()).toBeVisible()
   })
 
   test('hovering a card triggers a detail prefetch GET', async ({ page }) => {
@@ -16,7 +18,7 @@ test.describe('auctions list page', () => {
       (req) => req.method() === 'GET' && /\/api\/v1\/auctions\/[0-9a-f-]+$/.test(req.url()),
       { timeout: 5000 },
     )
-    await page.locator('a[href^="/auctions/0"]').first().hover()
+    await page.locator(`a[href="/auctions/${DOWN_LEADING_REF}"]`).first().hover()
     await detailRequest
   })
 

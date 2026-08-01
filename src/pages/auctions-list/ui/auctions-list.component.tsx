@@ -33,8 +33,8 @@ export function AuctionsList() {
   const request = useMemo(() => buildAuctionListRequest(filters), [filters])
   const query = useAuctionsList(request)
 
-  const handleIntent = (auctionUuid: string) => {
-    prefetchAuctionDetail(auctionUuid)
+  const handleIntent = (auctionRef: string) => {
+    prefetchAuctionDetail(auctionRef)
   }
 
   if (query.isPending) {
@@ -86,7 +86,7 @@ export function AuctionsList() {
         )}
       >
         {items.map((item) => (
-          <AuctionListItemCard key={item.auctionUuid} item={item} onIntent={handleIntent} />
+          <AuctionListItemCard key={item.auctionRef} item={item} onIntent={handleIntent} />
         ))}
       </section>
 

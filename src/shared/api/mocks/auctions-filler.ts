@@ -202,7 +202,6 @@ export function generateFillerAuctions(count: number): SeedAuction[] {
       list.main.cargo_date = cargoDate
       list.main.auc_type = aucType
       list.main.order_uid = orderUid
-      list.main.auction_uuid = uuid
       list.main.created_at = createdAt
       list.main.priority_sort = 100 - i
       list.main.price_per_km = pricePerKm

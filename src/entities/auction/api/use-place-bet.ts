@@ -1,16 +1,17 @@
-import { placeBet } from '@shared/api'
+import type { AuctionRef } from '@shared/api'
+import { placeBetByRef } from '@shared/api'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { betMutationInvalidationTargets } from './query-keys'
 
-export function usePlaceBet(auctionUuid: string) {
+export function usePlaceBet(auctionRef: AuctionRef) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationKey: ['auctions', 'detail', auctionUuid, 'bet'],
-    mutationFn: (price: number) => placeBet({ auctionUuid, body: { price } }),
+    mutationKey: ['auctions', 'detail', auctionRef, 'bet'],
+    mutationFn: (price: number) => placeBetByRef({ auctionRef, body: { price } }),
     onSuccess: () =>
       Promise.all(
-        betMutationInvalidationTargets(auctionUuid).map((key) =>
+        betMutationInvalidationTargets(auctionRef).map((key) =>
           queryClient.invalidateQueries({ queryKey: key }),
         ),
       ),

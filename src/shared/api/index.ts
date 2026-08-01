@@ -21,7 +21,13 @@ export type {
   ValidationError,
   ValidationProblem,
 } from './generated'
-export { extractAuctionUuid, fetchAuctionDetail, fetchAuctionList } from './auctions'
-export type { AuctionDetail, AuctionListFilters, AuctionListResponse } from './auctions'
-export { fetchBets, placeBet } from './bets'
+export {
+  extractAuctionRef,
+  fetchAuctionDetail,
+  fetchAuctionDetailByRef,
+  fetchAuctionList,
+  resolveAuctionUuid,
+} from './auctions'
+export type { AuctionDetail, AuctionListFilters, AuctionListResponse, AuctionRef } from './auctions'
+export { fetchBets, fetchBetsByRef, placeBet, placeBetByRef } from './bets'
 export type { BetsListResponse, FetchBetsOptions, PlaceBetInput, PlaceBetOptions } from './bets'

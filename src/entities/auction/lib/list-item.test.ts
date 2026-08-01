@@ -3,22 +3,18 @@ import { describe, expect, it } from 'vitest'
 
 import { toAuctionListItemVM } from './list-item'
 
-// `auction_uuid` is injected by the mock layer; the production DTO type
-// doesn't carry it. Tests construct it directly, so we widen the main type
-// here to avoid pretending the field exists on the production shape.
-type TestMain = NonNullable<AuctionListItem['main']> & { auction_uuid?: string }
+type TestMain = NonNullable<AuctionListItem['main']>
 type TestItem = Omit<AuctionListItem, 'main'> & { main?: TestMain }
 
-function makeItem(overrides: Partial<TestItem> & { auctionUuid?: string } = {}): AuctionListItem {
-  const { auctionUuid, main: mainOverride, ...rest } = overrides
+function makeItem(overrides: Partial<TestItem> = {}): AuctionListItem {
+  const { main: mainOverride, ...rest } = overrides
   const base: TestItem = {
     main: {
       id: 1,
       cargo_num: 'MSK-001',
       cargo_date: '2026-08-12T09:00:00+03:00',
       auc_type: 'Down',
-      order_uid: 'order-1',
-      auction_uuid: auctionUuid ?? '00000000-0000-4000-8000-000000000001',
+      order_uid: '3a05d045-0e67-4f85-b20a-de81d18bba7a',
       created_at: '2026-07-20T10:15:00+03:00',
       price_per_km: 28.5,
       ...mainOverride,
@@ -54,20 +50,18 @@ function makeItem(overrides: Partial<TestItem> & { auctionUuid?: string } = {}):
 }
 
 describe('toAuctionListItemVM', () => {
-  it('returns null when auction_uuid is missing', () => {
-    // The mock layer injects `auction_uuid`; if it ever disappears the card
-    // cannot route, so the VM refuses to render. The list filters nulls.
+  it('returns null when order_uid is missing', () => {
     const item = makeItem()
-    delete (item.main as { auction_uuid?: string }).auction_uuid
+    delete item.main?.order_uid
     expect(toAuctionListItemVM(item)).toBeNull()
   })
 
   it('maps every required card field', () => {
     const vm = toAuctionListItemVM(makeItem())
     expect(vm).toMatchObject({
-      auctionUuid: '00000000-0000-4000-8000-000000000001',
+      auctionRef: '3a05d045-0e67-4f85-b20a-de81d18bba7a',
       cargoNum: 'MSK-001',
-      orderUid: 'order-1',
+      orderUid: '3a05d045-0e67-4f85-b20a-de81d18bba7a',
       aucType: 'Down',
       aucTypeLabel: 'На понижение',
       pricePerKm: 28.5,
@@ -123,7 +117,7 @@ describe('toAuctionListItemVM', () => {
   it('falls back to "—" labels when enum value is missing', () => {
     const vm = toAuctionListItemVM(
       makeItem({
-        main: { auction_uuid: 'x', cargo_num: 'X', auc_type: undefined },
+        main: { order_uid: 'x', cargo_num: 'X', auc_type: undefined },
         trading: { status: undefined, status_mobile: undefined, can_set_bet: false },
       }),
     )

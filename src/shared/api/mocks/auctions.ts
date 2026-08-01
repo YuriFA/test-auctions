@@ -1,20 +1,13 @@
 import type {
   AuctionListItem,
-  AuctionListItemMain,
   AuctionShowResponse,
   BetItem,
 } from '../generated'
 import { mockCompetitors, mockCurrentUser } from './user'
 
-// FIXME: production DTO has no `auction_uuid` field — the mock layer injects
-// it for routing. Must not leak into `shared/api` types.
-export type MockAuctionListItemMain = AuctionListItemMain & {
-  auction_uuid: string
-}
+export type MockAuctionListItemMain = NonNullable<AuctionListItem['main']>
 
-export type MockAuctionListItem = Omit<AuctionListItem, 'main'> & {
-  main?: MockAuctionListItemMain
-}
+export type MockAuctionListItem = AuctionListItem
 
 export interface SeedAuction {
   uuid: string
@@ -36,9 +29,6 @@ export const seedAuctionUuids = {
   canceledEmpty: '00000000-0000-4000-8000-000000000010',
 } as const
 
-// NOTE: routing identity (auctionUuid) and order identity (order_uid) are
-// deliberately separate — an auction is a trading procedure layered on an
-// order; the mock dataset must keep both stable across mutations.
 const seedOrderUids = {
   downLeading: '3a05d045-0e67-4f85-b20a-de81d18bba7a',
   upLosing: '3a05d046-0e67-4f85-b20a-de81d18bba7a',
@@ -128,7 +118,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-08-12T09:00:00+03:00',
         auc_type: 'Down',
         order_uid: seedOrderUids.downLeading,
-        auction_uuid: seedAuctionUuids.downLeading,
         created_at: '2026-07-20T10:15:00+03:00',
         priority_sort: 100,
         price_per_km: 28.5,
@@ -411,7 +400,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-08-15T08:00:00+03:00',
         auc_type: 'Up',
         order_uid: seedOrderUids.upLosing,
-        auction_uuid: seedAuctionUuids.upLosing,
         created_at: '2026-07-22T14:00:00+03:00',
         priority_sort: 95,
         price_per_km: 32.1,
@@ -695,7 +683,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-08-18T07:00:00+05:00',
         auc_type: 'Down',
         order_uid: seedOrderUids.downNewcomer,
-        auction_uuid: seedAuctionUuids.downNewcomer,
         created_at: '2026-07-24T09:00:00+05:00',
         priority_sort: 90,
         price_per_km: 18.4,
@@ -992,7 +979,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-08-22T06:00:00+07:00',
         auc_type: 'Request',
         order_uid: seedOrderUids.requestWinner,
-        auction_uuid: seedAuctionUuids.requestWinner,
         created_at: '2026-07-15T09:00:00+07:00',
         priority_sort: 88,
         price_per_km: 22.0,
@@ -1275,7 +1261,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-08-30T08:00:00+03:00',
         auc_type: 'FixPrice',
         order_uid: seedOrderUids.fixPriceHidden,
-        auction_uuid: seedAuctionUuids.fixPriceHidden,
         created_at: '2026-07-18T12:00:00+03:00',
         priority_sort: 80,
         price_per_km: null,
@@ -1522,7 +1507,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-07-05T06:00:00+04:00',
         auc_type: 'Down',
         order_uid: seedOrderUids.finishedConfirmed,
-        auction_uuid: seedAuctionUuids.finishedConfirmed,
         created_at: '2026-06-10T09:00:00+04:00',
         priority_sort: 50,
         price_per_km: 24.0,
@@ -1804,7 +1788,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-08-25T07:00:00+03:00',
         auc_type: 'Down',
         order_uid: seedOrderUids.downHiddenContacts,
-        auction_uuid: seedAuctionUuids.downHiddenContacts,
         created_at: '2026-07-23T11:00:00+03:00',
         priority_sort: 92,
         price_per_km: 26.0,
@@ -2062,7 +2045,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-09-15T08:00:00+07:00',
         auc_type: 'Up',
         order_uid: seedOrderUids.planningUpcoming,
-        auction_uuid: seedAuctionUuids.planningUpcoming,
         created_at: '2026-07-29T10:00:00+07:00',
         priority_sort: 70,
         price_per_km: null,
@@ -2309,7 +2291,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-07-29T07:00:00+03:00',
         auc_type: 'Down',
         order_uid: seedOrderUids.stoppedRejected,
-        auction_uuid: seedAuctionUuids.stoppedRejected,
         created_at: '2026-06-25T09:00:00+03:00',
         priority_sort: 40,
         price_per_km: 21.0,
@@ -2594,7 +2575,6 @@ export const seedAuctions: SeedAuction[] = [
         cargo_date: '2026-08-05T07:00:00+05:00',
         auc_type: 'Up',
         order_uid: seedOrderUids.canceledEmpty,
-        auction_uuid: seedAuctionUuids.canceledEmpty,
         created_at: '2026-06-12T11:00:00+05:00',
         priority_sort: 30,
         price_per_km: null,

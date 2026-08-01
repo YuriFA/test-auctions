@@ -70,6 +70,10 @@ export function readAuctionDetail(uuid: string): AuctionShowResponse | undefined
   return auction?.detail
 }
 
+export function resolveAuctionUuidFromRef(ref: string): string | undefined {
+  return state.auctions.find((auction) => auction.uuid === ref || auction.list.main?.order_uid === ref)?.uuid
+}
+
 export function readAuctionBets(
   uuid: string,
   options: { includeCanceled?: boolean } = {},

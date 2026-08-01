@@ -5,15 +5,15 @@ import { BackLink, PageContainer } from '@shared/ui'
 import { AuctionBets } from './auction-bets.component'
 
 export function AuctionBetsPage() {
-  const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid/bets' })
+  const { auctionRef } = useParams({ from: '/auctions/$auctionRef/bets' })
 
   return (
     <PageContainer className="gap-4">
-      <BackLink to="/auctions/$auctionUuid" params={{ auctionUuid }}>
+      <BackLink to="/auctions/$auctionRef" params={{ auctionRef }}>
         К аукциону
       </BackLink>
       <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">История ставок</h1>
-      <AuctionBets auctionUuid={auctionUuid} />
+      <AuctionBets auctionRef={auctionRef} />
     </PageContainer>
   )
 }

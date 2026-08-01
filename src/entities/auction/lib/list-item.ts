@@ -1,10 +1,10 @@
-import type { AuctionListItem, AuctionStatus, AuctionType, TradingStatus } from '@shared/api'
-import { extractAuctionUuid } from '@shared/api'
+import type { AuctionListItem, AuctionRef, AuctionStatus, AuctionType, TradingStatus } from '@shared/api'
+import { extractAuctionRef } from '@shared/api'
 
 import { describeAuctionStatus, describeAuctionType, describeTradingStatus } from './describe'
 
 export type AuctionListItemVM = {
-  auctionUuid: string
+  auctionRef: AuctionRef
 
   cargoNum: string
   orderUid: string
@@ -36,8 +36,8 @@ export type AuctionListItemVM = {
 }
 
 export function toAuctionListItemVM(item: AuctionListItem): AuctionListItemVM | null {
-  const auctionUuid = extractAuctionUuid(item)
-  if (!auctionUuid) {
+  const auctionRef = extractAuctionRef(item)
+  if (!auctionRef) {
     return null
   }
 
@@ -59,7 +59,6 @@ export function toAuctionListItemVM(item: AuctionListItem): AuctionListItemVM | 
   const statusMobile = trading?.status_mobile
 
   return {
-    auctionUuid,
     cargoNum: main?.cargo_num ?? '',
     orderUid: main?.order_uid ?? '',
     aucType,
@@ -87,5 +86,6 @@ export function toAuctionListItemVM(item: AuctionListItem): AuctionListItemVM | 
     currentPrice: price?.current ?? null,
     currentPriceNoVat: price?.current_no_vat ?? null,
     startPrice: price?.start ?? null,
+    auctionRef,
   }
 }

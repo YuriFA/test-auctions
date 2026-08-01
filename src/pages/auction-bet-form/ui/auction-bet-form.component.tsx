@@ -16,8 +16,8 @@ import {
 import { useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
 
-export function AuctionBetForm({ auctionUuid }: { auctionUuid: string }) {
-  const detail = useAuctionDetail(auctionUuid)
+export function AuctionBetForm({ auctionRef }: { auctionRef: string }) {
+  const detail = useAuctionDetail(auctionRef)
   const navigate = useNavigate()
 
   if (detail.isPending) {
@@ -60,11 +60,11 @@ export function AuctionBetForm({ auctionUuid }: { auctionUuid: string }) {
   return (
     <AuctionBetFormContent
       vm={vm}
-      auctionUuid={auctionUuid}
+      auctionRef={auctionRef}
       onSuccess={() =>
         navigate({
-          to: '/auctions/$auctionUuid/bets',
-          params: { auctionUuid },
+          to: '/auctions/$auctionRef/bets',
+          params: { auctionRef },
         })
       }
     />
@@ -73,11 +73,11 @@ export function AuctionBetForm({ auctionUuid }: { auctionUuid: string }) {
 
 function AuctionBetFormContent({
   vm,
-  auctionUuid,
+  auctionRef,
   onSuccess,
 }: {
   vm: AuctionDetailVM
-  auctionUuid: string
+  auctionRef: string
   onSuccess: () => void
 }) {
   const constraints = useMemo(
@@ -102,7 +102,7 @@ function AuctionBetFormContent({
         </CardHeader>
         <CardContent>
           <BetForm
-            auctionUuid={auctionUuid}
+            auctionRef={auctionRef}
             constraints={constraints}
             available={vm.priceAvailable}
             onSuccess={onSuccess}

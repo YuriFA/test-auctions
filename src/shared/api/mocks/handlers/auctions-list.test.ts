@@ -1,7 +1,6 @@
 import { setupServer } from 'msw/node'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
-import { seedAuctionUuids } from '../auctions'
 import { mockHandlers } from './index'
 
 // Keep in sync with src/shared/api/mocks/runtime/store.ts.
@@ -30,7 +29,7 @@ async function postList(body?: unknown) {
     status: res.status,
     contentType: res.headers.get('content-type'),
     json: json as {
-      data?: Array<{ main?: { auction_uuid?: string; auc_type?: string } }>
+      data?: Array<{ main?: { order_uid?: string; auc_type?: string } }>
       meta?: { total?: number; per_page?: number; current_page?: number; from?: number; to?: number; last_page?: number }
     } | null,
   }
@@ -69,10 +68,10 @@ describe('POST /auctions/list — MSW handler', () => {
     expect(json?.meta?.total).toBe(TOTAL_AUCTIONS)
   })
 
-  it('injects main.auction_uuid on every list item', async () => {
+  it('returns order_uid on every list item', async () => {
     const { json } = await postList()
     for (const item of json?.data ?? []) {
-      expect(typeof item?.main?.auction_uuid).toBe('string')
+      expect(typeof item?.main?.order_uid).toBe('string')
     }
   })
 
@@ -82,8 +81,8 @@ describe('POST /auctions/list — MSW handler', () => {
     for (const item of json?.data ?? []) {
       expect(item?.main?.auc_type).toBe('Down')
     }
-    const uuids = (json?.data ?? []).map((item) => item?.main?.auction_uuid)
-    expect(uuids).toContain(seedAuctionUuids.downLeading)
+    const refs = (json?.data ?? []).map((item) => item?.main?.order_uid)
+    expect(refs).toContain('3a05d045-0e67-4f85-b20a-de81d18bba7a')
     expect((json?.meta?.total ?? 0)).toBeGreaterThan(0)
   })
 
@@ -91,7 +90,7 @@ describe('POST /auctions/list — MSW handler', () => {
     const { status, json } = await postList({ cargo_num: 'MSK-001' })
     expect(status).toBe(200)
     expect(json?.meta?.total).toBe(1)
-    expect(json?.data?.[0]?.main?.auction_uuid).toBe(seedAuctionUuids.downLeading)
+    expect(json?.data?.[0]?.main?.order_uid).toBe('3a05d045-0e67-4f85-b20a-de81d18bba7a')
   })
 
   it('rejects malformed JSON body with a 422 ValidationProblem', async () => {
@@ -105,8 +104,8 @@ describe('POST /auctions/list — MSW handler', () => {
   it('flips sort order between is_oldest true and false', async () => {
     const newest = await postList({ is_oldest: false })
     const oldest = await postList({ is_oldest: true })
-    const newestFirst = newest.json?.data?.[0]?.main?.auction_uuid
-    const oldestFirst = oldest.json?.data?.[0]?.main?.auction_uuid
+    const newestFirst = newest.json?.data?.[0]?.main?.order_uid
+    const oldestFirst = oldest.json?.data?.[0]?.main?.order_uid
     expect(newestFirst).not.toBe(oldestFirst)
   })
 })

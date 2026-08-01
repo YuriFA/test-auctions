@@ -5,6 +5,6 @@ import { rootRoute } from './root.route'
 
 export const auctionDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: 'auctions/$auctionUuid',
+  path: 'auctions/$auctionRef',
   component: AuctionLayout,
 })

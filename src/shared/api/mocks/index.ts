@@ -22,6 +22,7 @@ export {
   readAuctionDetail,
   readAuctionList,
   resetMockRuntime,
+  resolveAuctionUuidFromRef,
   writeBet,
 } from './runtime/store'
 export type { PlaceBetResult } from './runtime/store'

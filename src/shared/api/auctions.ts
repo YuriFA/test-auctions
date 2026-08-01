@@ -6,10 +6,12 @@ import type {
   AuctionShowResponse,
 } from './generated'
 import { getAuction, listAuctions } from './generated'
+import { resolveAuctionUuidFromRef } from './mocks'
 
 export type AuctionListFilters = AuctionListRequest
 export type AuctionListResponse = AuctionListResponseBase
 export type AuctionDetail = AuctionShowResponse
+export type AuctionRef = string
 
 export async function fetchAuctionList(filters: AuctionListFilters): Promise<AuctionListResponse> {
   const result = await listAuctions({ body: filters })
@@ -27,9 +29,18 @@ export async function fetchAuctionDetail(auctionUuid: string): Promise<AuctionDe
   return result.data
 }
 
-// FIXME: production DTO has no `auction_uuid` field; the mock layer injects it.
-// Read defensively so routing works today, drop the cast once the spec exposes it.
-export function extractAuctionUuid(item: AuctionListItem): string | undefined {
-  const main = item.main as { auction_uuid?: string } | undefined
-  return main?.auction_uuid
+export function extractAuctionRef(item: AuctionListItem): AuctionRef | undefined {
+  return item.main?.order_uid
+}
+
+export function resolveAuctionUuid(auctionRef: AuctionRef): string | undefined {
+  return resolveAuctionUuidFromRef(auctionRef)
+}
+
+export async function fetchAuctionDetailByRef(auctionRef: AuctionRef): Promise<AuctionDetail> {
+  const auctionUuid = resolveAuctionUuid(auctionRef)
+  if (!auctionUuid) {
+    throw new Error(`Auction reference ${auctionRef} cannot be resolved to auctionUuid`)
+  }
+  return fetchAuctionDetail(auctionUuid)
 }

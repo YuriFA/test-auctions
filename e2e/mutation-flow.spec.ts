@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 // downLeading seed: can_set_bet=true, initial current=45000, step=500, min=40000.
 // Placing 44000 makes the user Leading at the new lower price.
-const DOWN_LEADING_UUID = '00000000-0000-4000-8000-000000000001'
+const DOWN_LEADING_REF = '3a05d045-0e67-4f85-b20a-de81d18bba7a'
 const PLACED_PRICE = 44000
 
 // formatPrice uses NBSP (U+00A0) as the thousands separator; build a regex
@@ -15,7 +15,7 @@ test.describe('bet mutation flow — cross-screen consistency', () => {
   test('places a bet and reflects the new leading price on bets / detail / list', async ({
     page,
   }) => {
-    await page.goto(`/auctions/${DOWN_LEADING_UUID}/bet`)
+    await page.goto(`/auctions/${DOWN_LEADING_REF}/bet`)
     await expect(page.locator('h1')).toHaveText('Ставка по аукциону')
 
     await page.locator('#bet-price').fill(String(PLACED_PRICE))

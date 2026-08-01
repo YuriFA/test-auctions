@@ -36,7 +36,7 @@ interface DetailBody {
 }
 
 interface ListBody {
-  data?: Array<{ main?: { auction_uuid?: string }; trading?: { status_mobile?: string; price?: { current?: number } } }>
+  data?: Array<{ main?: { order_uid?: string }; trading?: { status_mobile?: string; price?: { current?: number } } }>
 }
 
 interface BetsListBody {
@@ -129,7 +129,7 @@ describe('POST /auctions/:uuid/bets — MSW handler', () => {
 
     const list = await getList()
     const listItem = list?.data?.find(
-      (item) => item?.main?.auction_uuid === seedAuctionUuids.downLeading,
+      (item) => item?.main?.order_uid === '3a05d045-0e67-4f85-b20a-de81d18bba7a',
     )
     expect(listItem?.trading?.price?.current).toBe(44000)
     expect(listItem?.trading?.status_mobile).toBe('Leading')
