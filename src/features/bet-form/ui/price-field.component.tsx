@@ -16,6 +16,8 @@ export function PriceField({ constraints, available, disabled }: PriceFieldProps
   const { control, setValue } = useFormContext<{ price: string }>()
   const { field, fieldState } = useController({ control, name: 'price' })
   const priceInputId = 'bet-price'
+  const priceErrorId = 'bet-price-error'
+  const priceHintId = 'bet-price-hint'
 
   const hasStep = (constraints.step ?? 0) > 0
   const numericValue = parseOptionalNumber(field.value)
@@ -61,6 +63,9 @@ export function PriceField({ constraints, available, disabled }: PriceFieldProps
             inputMode="decimal"
             placeholder={placeholder}
             aria-invalid={Boolean(fieldState.error)}
+            aria-describedby={
+              fieldState.error ? priceErrorId : available != null ? priceHintId : undefined
+            }
             className="w-28 text-center"
             value={field.value}
             onChange={field.onChange}
@@ -88,6 +93,9 @@ export function PriceField({ constraints, available, disabled }: PriceFieldProps
           inputMode="decimal"
           placeholder={placeholder}
           aria-invalid={Boolean(fieldState.error)}
+          aria-describedby={
+            fieldState.error ? priceErrorId : available != null ? priceHintId : undefined
+          }
           className="w-32 text-center"
           value={field.value}
           onChange={field.onChange}
@@ -97,10 +105,12 @@ export function PriceField({ constraints, available, disabled }: PriceFieldProps
         />
       )}
       {fieldState.error?.message && (
-        <span className="text-xs text-destructive">{fieldState.error.message}</span>
+        <span id={priceErrorId} className="text-xs text-destructive" role="alert">
+          {fieldState.error.message}
+        </span>
       )}
       {available != null && !fieldState.error && (
-        <span className="text-xs text-muted-foreground">
+        <span id={priceHintId} className="text-xs text-muted-foreground">
           Доступная цена — {formatPrice(available)}
           {constraints.step != null && constraints.step > 0
             ? ` · шаг ${formatPrice(constraints.step)}`

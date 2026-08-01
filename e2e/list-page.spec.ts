@@ -48,7 +48,7 @@ test.describe('auctions list page', () => {
     // base-ui Button forces role="button" onto the underlying element even
     // when `nativeButton={false}` renders an `<a>`. The Previous/Next controls
     // carry aria-labels identifying direction.
-    const nextButton = page.getByRole('button', { name: 'Go to next page' })
+    const nextButton = page.getByRole('button', { name: 'Следующая страница' })
     await expect(nextButton).toBeVisible()
 
     const listRequest = page.waitForRequest(

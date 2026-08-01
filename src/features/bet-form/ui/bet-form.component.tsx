@@ -48,7 +48,7 @@ export function BetForm({ auctionRef, constraints, available, onSuccess }: BetFo
         <PriceField constraints={constraints} available={available} disabled={placeBet.isPending} />
 
         {rootError && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" role="alert">
             <AlertTitle>Не удалось сохранить ставку</AlertTitle>
             <AlertDescription>{rootError}</AlertDescription>
           </Alert>
