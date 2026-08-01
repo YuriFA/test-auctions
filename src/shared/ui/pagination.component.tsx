@@ -51,12 +51,15 @@ function PaginationLink({
   render,
   "aria-label": ariaLabel,
   "aria-current": ariaCurrentProp,
+  children,
   ...rest
 }: PaginationLinkProps) {
   // NOTE: aria-* and data-slot land on Button itself; base-ui's render prop
   // merges them onto whatever element is rendered (default `<a>` or a
   // caller-provided `<Link>`), so they survive in both cases. The remaining
   // anchor props (href, onClick, etc.) only apply to the default `<a>`.
+  // `children` must be passed explicitly — otherwise they end up in `...rest`
+  // and are dropped when `render` is provided.
   return (
     <Button
       variant={isActive ? "outline" : "ghost"}
@@ -68,7 +71,9 @@ function PaginationLink({
       data-slot="pagination-link"
       data-active={isActive}
       render={render ?? <a {...rest} />}
-    />
+    >
+      {children}
+    </Button>
   )
 }
 
