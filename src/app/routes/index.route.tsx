@@ -1,4 +1,4 @@
-import { auctionKeys } from '@entities/auction/api/query-keys'
+import { auctionKeys } from '@entities/auction'
 import {
   DEFAULT_AUCTIONS_LIST_FILTERS,
   buildAuctionListRequest,

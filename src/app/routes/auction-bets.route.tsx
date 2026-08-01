@@ -1,4 +1,4 @@
-import { auctionKeys } from '@entities/auction/api/query-keys'
+import { auctionKeys } from '@entities/auction'
 import { AuctionBetsPage } from '@pages/auction-bets'
 import { fetchBetsByRef } from '@shared/api'
 import { createRoute } from '@tanstack/react-router'

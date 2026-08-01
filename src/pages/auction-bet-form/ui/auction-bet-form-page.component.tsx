@@ -1,10 +1,11 @@
 import { BackLink, PageContainer } from '@shared/ui'
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 
 import { AuctionBetForm } from './auction-bet-form.component'
 
 export function AuctionBetFormPage() {
   const { auctionRef } = useParams({ from: '/auctions/$auctionRef/bet' })
+  const navigate = useNavigate()
 
   return (
     <PageContainer className="max-w-2xl gap-4">
@@ -12,7 +13,10 @@ export function AuctionBetFormPage() {
         К аукциону
       </BackLink>
       <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Ставка по аукциону</h1>
-      <AuctionBetForm auctionRef={auctionRef} />
+      <AuctionBetForm
+        auctionRef={auctionRef}
+        onSuccess={() => navigate({ to: '/auctions/$auctionRef/bets', params: { auctionRef } })}
+      />
     </PageContainer>
   )
 }

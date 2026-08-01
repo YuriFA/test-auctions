@@ -1,8 +1,10 @@
-import type { AuctionBadgeVariant } from '@entities/auction'
-import { auctionTypeBadgeVariant, describeAuctionType } from '@entities/auction'
 import type { AuctionType } from '@shared/api'
 import { Badge } from '@shared/ui'
 import { HelpCircle, Megaphone, Tag, TrendingDown, TrendingUp, type LucideIcon } from 'lucide-react'
+
+import type { AuctionBadgeVariant } from '../lib/badge-variants'
+import { auctionTypeBadgeVariant } from '../lib/badge-variants'
+import { describeAuctionType } from '../lib/describe'
 
 interface Props {
   type: AuctionType | undefined

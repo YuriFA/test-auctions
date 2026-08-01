@@ -1,7 +1,9 @@
-import type { AuctionBadgeVariant } from '@entities/auction'
-import { describeTradingStatus, tradingStatusBadgeVariant } from '@entities/auction'
 import type { TradingStatus } from '@shared/api'
 import { Badge } from '@shared/ui'
+
+import type { AuctionBadgeVariant } from '../lib/badge-variants'
+import { tradingStatusBadgeVariant } from '../lib/badge-variants'
+import { describeTradingStatus } from '../lib/describe'
 
 interface Props {
   status: TradingStatus | undefined

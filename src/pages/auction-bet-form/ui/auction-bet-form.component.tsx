@@ -13,12 +13,16 @@ import {
   ErrorAlert,
   Skeleton,
 } from '@shared/ui'
-import { useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
 
-export function AuctionBetForm({ auctionRef }: { auctionRef: string }) {
+export function AuctionBetForm({
+  auctionRef,
+  onSuccess,
+}: {
+  auctionRef: string
+  onSuccess: () => void
+}) {
   const detail = useAuctionDetail(auctionRef)
-  const navigate = useNavigate()
 
   if (detail.isPending) {
     return <AuctionBetFormSkeleton />
@@ -55,18 +59,7 @@ export function AuctionBetForm({ auctionRef }: { auctionRef: string }) {
     return <AuctionBetFormRestricted vm={vm} />
   }
 
-  return (
-    <AuctionBetFormContent
-      vm={vm}
-      auctionRef={auctionRef}
-      onSuccess={() =>
-        navigate({
-          to: '/auctions/$auctionRef/bets',
-          params: { auctionRef },
-        })
-      }
-    />
-  )
+  return <AuctionBetFormContent vm={vm} auctionRef={auctionRef} onSuccess={onSuccess} />
 }
 
 function AuctionBetFormContent({
