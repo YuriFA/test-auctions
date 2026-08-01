@@ -267,8 +267,16 @@ export function AuctionFiltersForm({ onApplied }: Props) {
       </div>
 
       <div className="sticky bottom-0 flex items-center justify-between gap-2 border-t border-border bg-popover p-4">
-        <ResetButton control={form.control} defaultValues={initialFilters} onReset={reset} />
-        <Button type="submit">Применить</Button>
+        <ResetButton
+          size="lg"
+          variant="ghost"
+          control={form.control}
+          defaultValues={initialFilters}
+          onReset={reset}
+        />
+        <Button type="submit" size="lg">
+          Применить
+        </Button>
       </div>
     </form>
   )
