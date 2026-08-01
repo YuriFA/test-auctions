@@ -31,7 +31,20 @@ export function resolveTheme(theme: Theme): ResolvedTheme {
 
 export function applyTheme(theme: Theme): ResolvedTheme {
   const resolved = resolveTheme(theme)
-  document.documentElement.classList.toggle('dark', resolved === 'dark')
+  const root = document.documentElement
+  if (root.classList.contains('dark') === (resolved === 'dark')) {
+    return resolved
+  }
+
+  const apply = () => root.classList.toggle('dark', resolved === 'dark')
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  if (!prefersReducedMotion && typeof document.startViewTransition === 'function') {
+    document.startViewTransition(apply)
+  } else {
+    apply()
+  }
+
   return resolved
 }
 
