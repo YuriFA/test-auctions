@@ -5,10 +5,9 @@ import {
   TradingStatusBadge,
   deriveAuctionCardPrimaryAction,
   deriveAuctionRestrictions,
-  formatDate,
-  formatPrice,
   useAuctionDetail,
 } from '@entities/auction'
+import { formatDate, formatPrice } from '@shared/lib/format'
 import {
   Alert,
   AlertDescription,

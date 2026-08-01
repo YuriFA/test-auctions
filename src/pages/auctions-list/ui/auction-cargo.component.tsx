@@ -1,4 +1,4 @@
-import { formatVolume, formatWeight } from '@entities/auction'
+import { formatVolume, formatWeight } from '@shared/lib/format'
 import { Box, Package, Scale, Truck } from 'lucide-react'
 
 interface Props {

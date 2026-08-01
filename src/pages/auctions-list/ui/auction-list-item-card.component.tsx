@@ -1,5 +1,6 @@
 import type { AuctionCardPrimaryAction, AuctionListItemVM } from '@entities/auction'
-import { deriveAuctionCardPrimaryAction, formatDate } from '@entities/auction'
+import { deriveAuctionCardPrimaryAction } from '@entities/auction'
+import { formatDate } from '@shared/lib/format'
 import { Calendar, Clock } from 'lucide-react'
 import { useMemo } from 'react'
 

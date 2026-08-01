@@ -42,7 +42,6 @@ export {
   describePaymentDelayType,
   describeTradingStatus,
 } from './lib/describe'
-export { formatDate, formatPrice, formatPricePerKm, formatVolume, formatWeight } from './lib/format'
 export {
   AUCTION_STATUS_BADGE_VARIANTS,
   AUCTION_TYPE_BADGE_VARIANTS,

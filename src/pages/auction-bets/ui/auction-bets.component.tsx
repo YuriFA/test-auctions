@@ -1,6 +1,7 @@
 import type { AuctionBetsVM, AuctionBetVM } from '@entities/auction'
-import { formatDate, formatPrice, useAuctionBets, useAuctionDetail } from '@entities/auction'
+import { useAuctionBets, useAuctionDetail } from '@entities/auction'
 import { cn } from '@shared/lib/cn'
+import { formatDate, formatPrice } from '@shared/lib/format'
 import {
   Alert,
   AlertDescription,

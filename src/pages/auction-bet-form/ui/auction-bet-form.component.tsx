@@ -1,6 +1,7 @@
 import type { AuctionDetailVM } from '@entities/auction'
-import { deriveAuctionRestrictions, formatPrice, useAuctionDetail } from '@entities/auction'
+import { deriveAuctionRestrictions, useAuctionDetail } from '@entities/auction'
 import { BetForm } from '@features/bet-form'
+import { formatPrice } from '@shared/lib/format'
 import {
   Alert,
   AlertDescription,

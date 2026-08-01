@@ -1,5 +1,5 @@
 import type { AuctionListItemVM } from '@entities/auction'
-import { formatPrice, formatPricePerKm } from '@entities/auction'
+import { formatPrice, formatPricePerKm } from '@shared/lib/format'
 
 interface Props {
   item: Pick<AuctionListItemVM, 'currentPrice' | 'pricePerKm'>
