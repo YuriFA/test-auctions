@@ -2,7 +2,6 @@ import { usePlaceBet } from '@entities/auction'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { isApiValidationError } from '@shared/api'
 import { Alert, AlertDescription, AlertTitle, Button } from '@shared/ui'
-import { useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 
@@ -19,11 +18,10 @@ export interface BetFormProps {
 }
 
 export function BetForm({ auctionRef, constraints, available, onSuccess }: BetFormProps) {
-  const schema = useMemo(() => betFormSchema(constraints), [constraints])
   const placeBet = usePlaceBet(auctionRef)
 
   const form = useForm<{ price: string }, undefined, BetFormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(betFormSchema(constraints)),
     defaultValues: { price: '' },
     mode: 'onSubmit',
   })
@@ -65,7 +63,12 @@ export function BetForm({ auctionRef, constraints, available, onSuccess }: BetFo
           <Button type="submit" disabled={placeBet.isPending}>
             {placeBet.isPending ? 'Сохранение…' : 'Сделать ставку'}
           </Button>
-          <Button type="reset" variant="ghost" disabled={placeBet.isPending}>
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={placeBet.isPending}
+            onClick={() => form.reset({ price: '' })}
+          >
             Очистить
           </Button>
         </div>

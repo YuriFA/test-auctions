@@ -1,16 +1,19 @@
-import type { AuctionDetailVM } from '@entities/auction'
 import { formatPrice } from '@shared/lib'
 
-export function describeConstraints(vm: AuctionDetailVM): string {
+import type { BetPriceConstraints } from './bet-form-schema'
+
+export function describeConstraints(
+  constraints: Pick<BetPriceConstraints, 'min' | 'max' | 'step'>,
+): string {
   const parts: string[] = []
-  if (vm.priceMin != null) {
-    parts.push(`от ${formatPrice(vm.priceMin)}`)
+  if (constraints.min != null) {
+    parts.push(`от ${formatPrice(constraints.min)}`)
   }
-  if (vm.priceMax != null) {
-    parts.push(`до ${formatPrice(vm.priceMax)}`)
+  if (constraints.max != null) {
+    parts.push(`до ${formatPrice(constraints.max)}`)
   }
-  if (vm.priceStep != null) {
-    parts.push(`шаг ${formatPrice(vm.priceStep)}`)
+  if (constraints.step != null) {
+    parts.push(`шаг ${formatPrice(constraints.step)}`)
   }
   return parts.length > 0 ? parts.join(' · ') : 'Без явных ограничений'
 }

@@ -13,7 +13,6 @@ import {
   ErrorAlert,
   Skeleton,
 } from '@shared/ui'
-import { useMemo } from 'react'
 
 export function AuctionBetForm({
   auctionRef,
@@ -66,15 +65,12 @@ function AuctionBetFormContent({
   auctionRef: string
   onSuccess: () => void
 }) {
-  const constraints = useMemo(
-    () => ({
-      min: vm.priceMin,
-      max: vm.priceMax,
-      step: vm.priceStep,
-      base: vm.priceStart,
-    }),
-    [vm.priceMin, vm.priceMax, vm.priceStep, vm.priceStart],
-  )
+  const constraints = {
+    min: vm.priceMin,
+    max: vm.priceMax,
+    step: vm.priceStep,
+    base: vm.priceStart,
+  }
 
   return (
     <>
@@ -84,7 +80,7 @@ function AuctionBetFormContent({
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Цена</CardTitle>
-          <CardDescription>{describeConstraints(vm)}</CardDescription>
+          <CardDescription>{describeConstraints(constraints)}</CardDescription>
         </CardHeader>
         <CardContent>
           <BetForm

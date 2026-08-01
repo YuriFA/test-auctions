@@ -20,7 +20,6 @@ import {
   Skeleton,
 } from '@shared/ui'
 import { Link, useSearch } from '@tanstack/react-router'
-import { useMemo } from 'react'
 
 import { buildPageList } from '../lib/build-page-list'
 import { AuctionListItemCard } from './auction-list-item-card.component'
@@ -29,8 +28,8 @@ export function AuctionsList() {
   const prefetchAuctionDetail = usePrefetchAuctionDetail()
 
   const search = useSearch({ from: '/' })
-  const filters = useMemo(() => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }), [search])
-  const request = useMemo(() => buildAuctionListRequest(filters), [filters])
+  const filters = { ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }
+  const request = buildAuctionListRequest(filters)
   const query = useAuctionsList(request)
 
   const handleIntent = (auctionRef: string) => {
