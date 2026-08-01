@@ -1,5 +1,5 @@
 import { formatVolume, formatWeight } from '@entities/auction'
-import { Package, Scale, Truck } from 'lucide-react'
+import { Box, Package, Scale, Truck } from 'lucide-react'
 
 interface Props {
   name: string
@@ -32,6 +32,7 @@ export function AuctionCargo({ name, weight, volume, bodyType }: Props) {
       )}
       {volume != null && (
         <div className="flex items-center gap-1.5">
+          <Box className="size-3.5" aria-hidden />
           <dt className="sr-only">Объём</dt>
           <dd>{formatVolume(volume)}</dd>
         </div>
