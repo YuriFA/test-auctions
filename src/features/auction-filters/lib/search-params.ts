@@ -73,7 +73,7 @@ type FieldKind =
   | 'optionalNumber'
   | 'optionalBoolean'
 
-const FIELD_KINDS = {
+export const FIELD_KINDS = {
   page: 'defaultNumber',
   is_oldest: 'defaultBoolean',
   cargo_num: 'string',
@@ -92,14 +92,17 @@ const FIELD_KINDS = {
   is_bidder: 'optionalBoolean',
 } as const satisfies Record<keyof AuctionsListFilters, FieldKind>
 
-const ACTIVE_FIELDS = Object.keys(FIELD_KINDS) as Array<keyof AuctionsListFilters>
+export const ACTIVE_FIELDS = Object.keys(FIELD_KINDS) as Array<keyof AuctionsListFilters>
 
 // `page` and `cargo_num` are excluded from `countActiveFilters` /
 // `isDefaultFilters`: pagination is navigation and search is a separate
 // header input. Both still serialize to URL and the API request.
-const NON_FILTER_FIELDS: ReadonlySet<keyof AuctionsListFilters> = new Set(['page', 'cargo_num'])
+export const NON_FILTER_FIELDS: ReadonlySet<keyof AuctionsListFilters> = new Set([
+  'page',
+  'cargo_num',
+])
 
-function isActive<K extends keyof AuctionsListFilters>(
+export function isActive<K extends keyof AuctionsListFilters>(
   key: K,
   value: AuctionsListFilters[K],
 ): boolean {

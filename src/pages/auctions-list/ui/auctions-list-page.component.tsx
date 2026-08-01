@@ -1,4 +1,4 @@
-import { AuctionFilters, AuctionSearchInput } from '@features/auction-filters'
+import { ActiveFilterChips, AuctionFilters, AuctionSearchInput } from '@features/auction-filters'
 import { PageContainer } from '@shared/ui'
 
 import { AuctionsList } from './auctions-list.component'
@@ -14,6 +14,7 @@ export function AuctionsPage() {
         </div>
       </header>
 
+      <ActiveFilterChips />
       <AuctionsList />
     </PageContainer>
   )
