@@ -2,71 +2,75 @@ import { expect, test } from '@playwright/test'
 
 test.use({ viewport: { width: 1280, height: 900 } })
 
+// Selectors here are semantic (role + accessible name) rather than DOM-structural
+// so they survive shadcn/base-ui internals changes — see SDD-040.
 test.describe('filters UI — desktop', () => {
   test('header search commits to URL on blur and does not bump the filter counter', async ({
     page,
   }) => {
     await page.goto('/')
 
-    const headerSearch = page.locator('input[placeholder*="номеру заявки"]').first()
+    const headerSearch = page.getByPlaceholder(/номеру заявки/i).first()
     await expect(headerSearch).toBeVisible()
 
     await headerSearch.fill('12345')
     await headerSearch.blur()
     await expect(page).toHaveURL(/cargo_num=12345/)
 
-    const trigger = page.getByRole('button', { name: /Фильтры/ }).first()
+    const trigger = page.getByRole('button', { name: /^Фильтры$/ })
     await expect(trigger).toHaveText(/^Фильтры$/)
   })
 
   test('filter sheet opens, drafts checkboxes, applies, and closes', async ({ page }) => {
     await page.goto('/')
 
-    // No filter panel rendered before opening.
-    await expect(page.locator('fieldset > legend')).toHaveCount(0)
+    const trigger = page.getByRole('button', { name: /^Фильтры$/ })
+    const dialog = page.getByRole('dialog')
 
-    const trigger = page.getByRole('button', { name: /Фильтры/ }).first()
+    // No dialog before opening.
+    await expect(dialog).toBeHidden()
+
     await trigger.click()
-
-    // Sections render in the sheet.
-    const legends = page.locator('fieldset > legend')
-    expect(await legends.count()).toBeGreaterThanOrEqual(6)
+    await expect(dialog).toBeVisible()
 
     // Toggle a checkbox — it stays as a draft until Apply.
-    const downField = page
-      .locator('[data-slot="field"]')
-      .filter({ has: page.locator('label', { hasText: 'На понижение' }) })
-      .first()
-    await downField.locator('[data-slot="checkbox"]').click()
+    const downCheckbox = page.getByRole('checkbox', { name: /На понижение/ })
+    await downCheckbox.check()
     await expect(page).not.toHaveURL(/auc_type/)
 
     // Apply commits to URL, bumps the counter, and closes the sheet.
-    await page.getByRole('button', { name: 'Применить' }).first().click()
+    await page.getByRole('button', { name: 'Применить' }).click()
     await expect(page).toHaveURL(/auc_type=Down/)
     await expect(trigger).toContainText('1')
-    await expect(page.locator('fieldset > legend')).toHaveCount(0)
+    await expect(dialog).toBeHidden()
   })
 
   test('sheet closes on backdrop click', async ({ page }) => {
     await page.goto('/')
 
-    const trigger = page.getByRole('button', { name: /Фильтры/ }).first()
-    await trigger.click()
-    await expect(page.locator('fieldset > legend')).not.toHaveCount(0)
+    const trigger = page.getByRole('button', { name: /^Фильтры$/ })
+    const dialog = page.getByRole('dialog')
 
-    await page.locator('[data-slot="sheet-overlay"]').first().click()
-    await expect(page.locator('fieldset > legend')).toHaveCount(0)
+    await trigger.click()
+    await expect(dialog).toBeVisible()
+
+    // Click outside the dialog — the only place not covered by it is the
+    // backdrop layer between viewport edge and dialog bounds.
+    await page.mouse.click(8, 8)
+    await expect(dialog).toBeHidden()
   })
 
   test('sheet closes on the X button', async ({ page }) => {
     await page.goto('/')
 
-    const trigger = page.getByRole('button', { name: /Фильтры/ }).first()
-    await trigger.click()
-    await expect(page.locator('fieldset > legend')).not.toHaveCount(0)
+    const trigger = page.getByRole('button', { name: /^Фильтры$/ })
+    const dialog = page.getByRole('dialog')
 
-    await page.locator('[data-slot="sheet-close"]').first().click()
-    await expect(page.locator('fieldset > legend')).toHaveCount(0)
+    await trigger.click()
+    await expect(dialog).toBeVisible()
+
+    await page.getByRole('button', { name: 'Закрыть' }).click()
+    await expect(dialog).toBeHidden()
   })
 })
 
@@ -76,9 +80,9 @@ test.describe('filters UI — mobile', () => {
   test('filter trigger is visible and opens the sheet', async ({ page }) => {
     await page.goto('/')
 
-    const trigger = page.getByRole('button', { name: /Фильтры/ }).first()
+    const trigger = page.getByRole('button', { name: /^Фильтры$/ })
     await expect(trigger).toBeVisible()
     await trigger.click()
-    expect(await page.locator('fieldset > legend').count()).toBeGreaterThanOrEqual(6)
+    await expect(page.getByRole('dialog')).toBeVisible()
   })
 })
