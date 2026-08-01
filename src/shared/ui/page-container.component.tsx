@@ -6,7 +6,7 @@ export function PageContainer({ className, ...props }: React.ComponentProps<'div
     <div
       data-slot="page-container"
       className={cn(
-        'mx-auto flex w-full max-w-5xl flex-col gap-8 px-4 py-6 sm:px-6 sm:py-8',
+        'mx-auto flex w-full max-w-(--page-max-width) flex-col gap-8 p-4 sm:p-6',
         className,
       )}
       {...props}

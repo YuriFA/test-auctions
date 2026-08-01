@@ -4,7 +4,7 @@ import { AuctionDetail } from './auction-detail.component'
 
 export function AuctionDetailPage() {
   return (
-    <PageContainer className="max-w-5xl gap-4">
+    <PageContainer className="gap-4">
       <BackLink to="/" search={{}}>
         К списку аукционов
       </BackLink>

@@ -8,7 +8,7 @@ export function AuctionBetFormPage() {
   const navigate = useNavigate()
 
   return (
-    <PageContainer className="max-w-2xl gap-4">
+    <PageContainer className="gap-4">
       <BackLink to="/auctions/$auctionRef" params={{ auctionRef }}>
         К аукциону
       </BackLink>
