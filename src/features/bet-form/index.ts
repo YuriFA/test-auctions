@@ -1,4 +1,6 @@
 export type { BetFormValues, BetPriceConstraints } from './lib/bet-form-schema'
 export { betFormSchema, nextStepPrice, prevStepPrice } from './lib/bet-form-schema'
+export { describeConstraints } from './lib/describe-constraints'
+export { applyValidationErrors, errorMessage } from './lib/api-errors'
 export { BetForm } from './ui/bet-form.component'
 export type { BetFormProps } from './ui/bet-form.component'
