@@ -1,4 +1,4 @@
-import { auctionBetsQueryOptions } from '@entities/auction'
+import { auctionDetailQueryOptions } from '@entities/auction'
 import { AuctionBetsPage } from '@pages/auction-bets'
 import { createRoute } from '@tanstack/react-router'
 
@@ -9,5 +9,8 @@ export const auctionBetsRoute = createRoute({
   path: 'bets',
   component: AuctionBetsPage,
   loader: ({ context: { queryClient }, params: { auctionRef } }) =>
-    queryClient.ensureQueryData(auctionBetsQueryOptions(auctionRef)),
+    queryClient.ensureQueryData({
+      ...auctionDetailQueryOptions(auctionRef),
+      revalidateIfStale: true,
+    }),
 })

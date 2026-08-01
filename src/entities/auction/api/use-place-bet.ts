@@ -12,7 +12,7 @@ export function usePlaceBet(auctionRef: AuctionRef) {
     onSuccess: () =>
       Promise.all(
         betMutationInvalidationTargets(auctionRef).map((key) =>
-          queryClient.invalidateQueries({ queryKey: key }),
+          queryClient.refetchQueries({ queryKey: key }),
         ),
       ),
   })

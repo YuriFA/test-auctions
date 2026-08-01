@@ -48,6 +48,23 @@ test.describe('routes', () => {
     await expect(page.locator('[role="alert"]')).toContainText('История скрыта')
   })
 
+  test('bets history page does NOT fetch /bets when hide_bets_history=true', async ({ page }) => {
+    const betsRequests: string[] = []
+    page.on('request', (req) => {
+      if (req.method() === 'GET' && /\/api\/v1\/auctions\/[^/]+\/bets/.test(req.url())) {
+        betsRequests.push(req.url())
+      }
+    })
+
+    await page.goto(`/auctions/${FINISHED_HIDDEN_BETS_REF}/bets`)
+    await expect(page.locator('[role="alert"]')).toContainText('История скрыта')
+
+    // Allow a tick for any deferred requests to fire.
+    await page.waitForTimeout(300)
+
+    expect(betsRequests).toHaveLength(0)
+  })
+
   test('bet form opens with the price card when betting is allowed', async ({ page }) => {
     await page.goto(`/auctions/${DOWN_LEADING_REF}/bet`)
     await expect(page).toHaveURL(`/auctions/${DOWN_LEADING_REF}/bet`)

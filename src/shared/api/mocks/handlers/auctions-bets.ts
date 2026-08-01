@@ -3,8 +3,6 @@ import { HttpResponse, http } from 'msw'
 import type { BetItem, BetListResponse, ProblemDetail } from '../../generated'
 import { readAuctionBets } from '../runtime/store'
 
-// NOTE: `hide_bets_history` is NOT enforced here — it is a UI gate driven by
-// the detail DTO. The bets endpoint always returns the real history.
 const AUCTIONS_BETS_PATH = '*/api/v1/auctions/:auctionUuid/bets'
 
 export const auctionsBetsHandler = http.get(AUCTIONS_BETS_PATH, ({ params, request }): Response => {
