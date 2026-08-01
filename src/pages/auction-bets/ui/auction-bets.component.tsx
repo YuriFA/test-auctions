@@ -1,7 +1,8 @@
 import type { AuctionBetVM, AuctionBetsVM } from '@entities/auction'
 import { useAuctionBets, useAuctionDetail } from '@entities/auction'
 import { cn } from '@shared/lib/cn'
-import { formatDate, formatPrice } from '@shared/lib/format'
+import { formatPrice } from '@shared/lib/currency'
+import { formatDate } from '@shared/lib/date'
 import { Alert, AlertDescription, AlertTitle, Badge, ErrorAlert, Skeleton } from '@shared/ui'
 import { Crown } from 'lucide-react'
 

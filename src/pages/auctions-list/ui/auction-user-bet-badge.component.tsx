@@ -1,5 +1,5 @@
 import type { AuctionListItemVM } from '@entities/auction'
-import { formatPrice } from '@shared/lib/format'
+import { formatPrice } from '@shared/lib/currency'
 
 interface Props {
   item: Pick<AuctionListItemVM, 'hasUserBet' | 'userLastBet'>

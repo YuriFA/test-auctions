@@ -4,6 +4,7 @@ import {
   describeTradingStatus,
 } from '@entities/auction'
 import type { AuctionType, TradingStatus } from '@shared/api'
+import { formatPrice } from '@shared/lib'
 
 import {
   ACTIVE_FIELDS,
@@ -42,10 +43,6 @@ const BOOLEAN_FLAG_LABEL = {
 } as const
 
 const IS_OLDEST_LABEL = 'Сначала старые'
-
-function formatPrice(value: number): string {
-  return `${value.toLocaleString('ru-RU')} ₽`
-}
 
 function describeValue(key: keyof AuctionsListFilters, value: string | number | boolean): string {
   switch (key) {
