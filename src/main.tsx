@@ -8,8 +8,9 @@ import { App } from './app/app.component'
 // started in every environment (including PROD on Netlify) because there is
 // no real backend; without it, /api/v1 requests 404 against the static host.
 async function enableMockWorker(): Promise<void> {
-  const { worker } = await import('@shared/api/mocks/browser')
+  const { worker, installMockResolver } = await import('@shared/api/mocks/browser')
   await worker.start({ onUnhandledRequest: 'bypass' })
+  installMockResolver()
 }
 
 await enableMockWorker()
