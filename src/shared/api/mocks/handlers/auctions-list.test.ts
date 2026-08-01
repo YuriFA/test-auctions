@@ -82,6 +82,18 @@ describe('POST /auctions/list — MSW handler', () => {
     }
   })
 
+  // SDD-032 regression guard: list DTO must not carry the previously-invented
+  // `main.auction_uuid` field. Routing identity is `order_uid` only; the
+  // auctionUuid→OpenAPI path translation lives in the adapter resolver, not in
+  // the list contract. If this fires, someone reintroduced contract drift.
+  it('does not surface an invented main.auction_uuid on list items', async () => {
+    const { json } = await postList()
+    expect(json?.data?.length).toBeGreaterThan(0)
+    for (const item of json?.data ?? []) {
+      expect(item?.main).not.toHaveProperty('auction_uuid')
+    }
+  })
+
   it('narrows by auc_type filter and includes the expected seed', async () => {
     const { status, json } = await postList({ auc_type: ['Down'] })
     expect(status).toBe(200)
