@@ -2,14 +2,7 @@ import type { AuctionBetVM, AuctionBetsVM } from '@entities/auction'
 import { useAuctionBets, useAuctionDetail } from '@entities/auction'
 import { cn } from '@shared/lib/cn'
 import { formatDate, formatPrice } from '@shared/lib/format'
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-  Badge,
-  ErrorAlert,
-  Skeleton,
-} from '@shared/ui'
+import { Alert, AlertDescription, AlertTitle, Badge, ErrorAlert, Skeleton } from '@shared/ui'
 import { Crown } from 'lucide-react'
 
 export function AuctionBets({ auctionRef }: { auctionRef: string }) {
@@ -37,9 +30,7 @@ export function AuctionBets({ auctionRef }: { auctionRef: string }) {
     return (
       <Alert>
         <AlertTitle>Аукцион не найден</AlertTitle>
-        <AlertDescription>
-          Возможно, ссылка устарела или аукцион был удалён.
-        </AlertDescription>
+        <AlertDescription>Возможно, ссылка устарела или аукцион был удалён.</AlertDescription>
       </Alert>
     )
   }
@@ -48,9 +39,7 @@ export function AuctionBets({ auctionRef }: { auctionRef: string }) {
     return (
       <Alert>
         <AlertTitle>История скрыта</AlertTitle>
-        <AlertDescription>
-          Организатор скрыл историю ставок по этому аукциону.
-        </AlertDescription>
+        <AlertDescription>Организатор скрыл историю ставок по этому аукциону.</AlertDescription>
       </Alert>
     )
   }
@@ -74,9 +63,7 @@ export function AuctionBets({ auctionRef }: { auctionRef: string }) {
     return (
       <Alert>
         <AlertTitle>Ставок пока нет</AlertTitle>
-        <AlertDescription>
-          По этому аукциону ещё никто не делал ставок.
-        </AlertDescription>
+        <AlertDescription>По этому аукциону ещё никто не делал ставок.</AlertDescription>
       </Alert>
     )
   }

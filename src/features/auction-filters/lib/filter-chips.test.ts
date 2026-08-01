@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
+import { getActiveFilterChips, removeFilterValue } from './filter-chips'
 import type { AuctionsListFilters } from './search-params'
 import { DEFAULT_AUCTIONS_LIST_FILTERS } from './search-params'
-import { getActiveFilterChips, removeFilterValue } from './filter-chips'
 
 describe('getActiveFilterChips', () => {
   it('returns an empty array for default filters', () => {
@@ -38,7 +38,9 @@ describe('getActiveFilterChips', () => {
       load_city: 'Москва',
     }
     const chips = getActiveFilterChips(filters)
-    expect(chips).toEqual([{ id: 'load_city', key: 'load_city', value: 'Москва', label: 'Погрузка: Москва' }])
+    expect(chips).toEqual([
+      { id: 'load_city', key: 'load_city', value: 'Москва', label: 'Погрузка: Москва' },
+    ])
   })
 
   it('formats price with ru-RU thousands separator and currency', () => {

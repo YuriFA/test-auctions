@@ -38,11 +38,21 @@ export function CargoCard({ vm }: CargoCardProps) {
             <div className="mb-1 text-xs font-medium text-muted-foreground">Требования к ТС</div>
             <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
               {car.type && <DefinitionRow label="Тип" value={car.type} />}
-              {car.weight != null && <DefinitionRow label="Тоннаж" value={formatWeight(car.weight)} />}
-              {car.volume != null && <DefinitionRow label="Объём" value={formatVolume(car.volume)} />}
-              {car.length != null && <DefinitionRow label="Длина" value={formatLength(car.length)} />}
-              {car.width != null && <DefinitionRow label="Ширина" value={formatLength(car.width)} />}
-              {car.height != null && <DefinitionRow label="Высота" value={formatLength(car.height)} />}
+              {car.weight != null && (
+                <DefinitionRow label="Тоннаж" value={formatWeight(car.weight)} />
+              )}
+              {car.volume != null && (
+                <DefinitionRow label="Объём" value={formatVolume(car.volume)} />
+              )}
+              {car.length != null && (
+                <DefinitionRow label="Длина" value={formatLength(car.length)} />
+              )}
+              {car.width != null && (
+                <DefinitionRow label="Ширина" value={formatLength(car.width)} />
+              )}
+              {car.height != null && (
+                <DefinitionRow label="Высота" value={formatLength(car.height)} />
+              )}
             </dl>
           </div>
         )}

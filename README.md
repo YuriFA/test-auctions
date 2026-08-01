@@ -78,37 +78,37 @@ Three layers of automated checks; each layer owns a distinct concern.
 
 Fast loop, runs locally on every save and in CI.
 
-| Layer            | Command           | What it asserts                                                                                  |
-| ---------------- | ----------------- | ------------------------------------------------------------------------------------------------ |
-| Types            | `pnpm typecheck`  | `tsc -b` across app + tests; catches contract drift between OpenAPI codegen, DTOs, and consumers |
-| Lint             | `pnpm lint`       | oxlint — React hooks, accessibility, import order                                                |
-| FSD boundaries   | `pnpm lint:fsd`   | steiger — `shared/api/generated` isolation, public/private slices, import direction              |
+| Layer          | Command          | What it asserts                                                                                  |
+| -------------- | ---------------- | ------------------------------------------------------------------------------------------------ |
+| Types          | `pnpm typecheck` | `tsc -b` across app + tests; catches contract drift between OpenAPI codegen, DTOs, and consumers |
+| Lint           | `pnpm lint`      | oxlint — React hooks, accessibility, import order                                                |
+| FSD boundaries | `pnpm lint:fsd`  | steiger — `shared/api/generated` isolation, public/private slices, import direction              |
 
 ### `pnpm test:run` (logic + MSW integration)
 
 Vitest, ~310 tests across 17 files. Co-located with source as `*.test.ts`.
 
-| Area                                        | Suite                                                                               | Notable cases                                                                                                     |
-| ------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Search params contract (parse/serialize)    | `features/auction-filters/lib/search-params.test.ts`                                | round-trip parse ∘ serialize, defaults are not serialized, falsy `is_available: false` preserved                  |
-| Filter chips                                | `features/auction-filters/lib/filter-chips.test.ts`                                 | one chip per array value, `page`/`cargo_num` excluded, immutable removal                                          |
-| Request builder                             | `features/auction-filters/lib/request-builder.test.ts`                              | defaults skipped, `auc_type: 'Unknown'` filtered, admin-only fields never leak                                    |
-| Bet form schema                             | `features/bet-form/lib/bet-form-schema.test.ts`                                     | required + `> 0`, `min`/`max`/`step` from constraints, step-alignment from `base`, NaN/Infinity rejection         |
-| ViewModel mappers                           | `entities/auction/lib/{list-item,detail,bets,restrictions,primary-action}.test.ts`  | nullable collapse, enum→label, restriction derivation, primary-action priority over `can_set_bet`                 |
-| Formatters + badge variants                 | `entities/auction/lib/{format,badge-variants}.test.ts`                              | ru-RU `Intl`, NBSP thousands separator, fallback `—`, every enum covered                                          |
-| **MSW handler integration** (SDD-028 API)   | `shared/api/mocks/handlers/auctions-set-bet.test.ts`                                | after `writeBet`: list + detail + bets return updated DTO (current price, `Leading`, rejected previous bet)       |
+| Area                                      | Suite                                                                              | Notable cases                                                                                               |
+| ----------------------------------------- | ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Search params contract (parse/serialize)  | `features/auction-filters/lib/search-params.test.ts`                               | round-trip parse ∘ serialize, defaults are not serialized, falsy `is_available: false` preserved            |
+| Filter chips                              | `features/auction-filters/lib/filter-chips.test.ts`                                | one chip per array value, `page`/`cargo_num` excluded, immutable removal                                    |
+| Request builder                           | `features/auction-filters/lib/request-builder.test.ts`                             | defaults skipped, `auc_type: 'Unknown'` filtered, admin-only fields never leak                              |
+| Bet form schema                           | `features/bet-form/lib/bet-form-schema.test.ts`                                    | required + `> 0`, `min`/`max`/`step` from constraints, step-alignment from `base`, NaN/Infinity rejection   |
+| ViewModel mappers                         | `entities/auction/lib/{list-item,detail,bets,restrictions,primary-action}.test.ts` | nullable collapse, enum→label, restriction derivation, primary-action priority over `can_set_bet`           |
+| Formatters + badge variants               | `entities/auction/lib/{format,badge-variants}.test.ts`                             | ru-RU `Intl`, NBSP thousands separator, fallback `—`, every enum covered                                    |
+| **MSW handler integration** (SDD-028 API) | `shared/api/mocks/handlers/auctions-set-bet.test.ts`                               | after `writeBet`: list + detail + bets return updated DTO (current price, `Leading`, rejected previous bet) |
 
 ### `pnpm test:e2e` (browser smokes)
 
 Playwright, 21 tests across 6 specs. Auto-starts vite on `:5175` via `playwright.config.ts` `webServer`.
 
-| Spec                          | Covers                                                                                            |
-| ----------------------------- | ------------------------------------------------------------------------------------------------- |
-| `e2e/route.spec.ts` (9)       | 4 routes + 3 error states + restricted bets + unknown UUID on `/bet`                              |
-| `e2e/list-page.spec.ts` (4)   | header render, hover-prefetch GET, card click → detail, pagination writes `page` param            |
-| `e2e/filters-ui.spec.ts` (5)  | search commits on blur w/o bumping counter, sheet open/apply/close, backdrop close, X close       |
-| `e2e/bet-form.spec.ts` (1)    | +/- stepper moves by one step, button disabled at boundaries, submit enabled                      |
-| `e2e/msw-browser.spec.ts` (1) | MSW intercepts SDK-shaped fetches in the real browser worker                                       |
+| Spec                            | Covers                                                                                                                       |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `e2e/route.spec.ts` (9)         | 4 routes + 3 error states + restricted bets + unknown UUID on `/bet`                                                         |
+| `e2e/list-page.spec.ts` (4)     | header render, hover-prefetch GET, card click → detail, pagination writes `page` param                                       |
+| `e2e/filters-ui.spec.ts` (5)    | search commits on blur w/o bumping counter, sheet open/apply/close, backdrop close, X close                                  |
+| `e2e/bet-form.spec.ts` (1)      | +/- stepper moves by one step, button disabled at boundaries, submit enabled                                                 |
+| `e2e/msw-browser.spec.ts` (1)   | MSW intercepts SDK-shaped fetches in the real browser worker                                                                 |
 | `e2e/mutation-flow.spec.ts` (1) | **SDD-028 UI**: place bet 44000 → `/bets` shows it → SPA nav to detail shows "44 000 ₽" → SPA nav to list reflects new price |
 
 The mutation-flow spec is the SDD-028 acceptance gate: it walks the same `writeBet` mutation through bets → detail → list using SPA clicks (not `page.goto`) so MSW's in-memory state survives between screens. This is what proves query invalidation (`betMutationInvalidationTargets`) keeps the three views consistent without a manual refetch.

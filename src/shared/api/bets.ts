@@ -49,7 +49,10 @@ export async function placeBet(options: PlaceBetOptions): Promise<void> {
   }
 }
 
-export async function placeBetByRef(options: { auctionRef: string; body: PlaceBetInput }): Promise<void> {
+export async function placeBetByRef(options: {
+  auctionRef: string
+  body: PlaceBetInput
+}): Promise<void> {
   const auctionUuid = resolveAuctionUuid(options.auctionRef)
   if (!auctionUuid) {
     throw new Error(`Auction reference ${options.auctionRef} cannot be resolved to auctionUuid`)

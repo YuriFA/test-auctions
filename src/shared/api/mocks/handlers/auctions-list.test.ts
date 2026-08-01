@@ -30,7 +30,14 @@ async function postList(body?: unknown) {
     contentType: res.headers.get('content-type'),
     json: json as {
       data?: Array<{ main?: { order_uid?: string; auc_type?: string } }>
-      meta?: { total?: number; per_page?: number; current_page?: number; from?: number; to?: number; last_page?: number }
+      meta?: {
+        total?: number
+        per_page?: number
+        current_page?: number
+        from?: number
+        to?: number
+        last_page?: number
+      }
     } | null,
   }
 }
@@ -83,7 +90,7 @@ describe('POST /auctions/list — MSW handler', () => {
     }
     const refs = (json?.data ?? []).map((item) => item?.main?.order_uid)
     expect(refs).toContain('3a05d045-0e67-4f85-b20a-de81d18bba7a')
-    expect((json?.meta?.total ?? 0)).toBeGreaterThan(0)
+    expect(json?.meta?.total ?? 0).toBeGreaterThan(0)
   })
 
   it('returns the single expected record for a cargo_num filter', async () => {

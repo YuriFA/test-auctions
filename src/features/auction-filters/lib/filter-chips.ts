@@ -47,10 +47,7 @@ function formatPrice(value: number): string {
   return `${value.toLocaleString('ru-RU')} ₽`
 }
 
-function describeValue(
-  key: keyof AuctionsListFilters,
-  value: string | number | boolean,
-): string {
+function describeValue(key: keyof AuctionsListFilters, value: string | number | boolean): string {
   switch (key) {
     case 'auc_type':
       return `${FILTER_LABEL_PREFIX.auc_type}: ${describeAuctionType(value as AuctionType)}`
@@ -73,9 +70,7 @@ function describeValue(
         ? BOOLEAN_FLAG_LABEL.is_available
         : `${BOOLEAN_FLAG_LABEL.is_available}: нет`
     case 'is_bidder':
-      return value === true
-        ? BOOLEAN_FLAG_LABEL.is_bidder
-        : `${BOOLEAN_FLAG_LABEL.is_bidder}: нет`
+      return value === true ? BOOLEAN_FLAG_LABEL.is_bidder : `${BOOLEAN_FLAG_LABEL.is_bidder}: нет`
     case 'is_oldest':
       return IS_OLDEST_LABEL
     default:

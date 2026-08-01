@@ -24,15 +24,64 @@ interface CityPair {
 
 const CITY_PAIRS: CityPair[] = [
   { load: 'Москва', loadGc: 1, unload: 'Казань', unloadGc: 5, tz: '+03:00', distance: 820 },
-  { load: 'Санкт-Петербург', loadGc: 2, unload: 'Москва', unloadGc: 1, tz: '+03:00', distance: 710 },
+  {
+    load: 'Санкт-Петербург',
+    loadGc: 2,
+    unload: 'Москва',
+    unloadGc: 1,
+    tz: '+03:00',
+    distance: 710,
+  },
   { load: 'Екатеринбург', loadGc: 3, unload: 'Уфа', unloadGc: 9, tz: '+05:00', distance: 460 },
-  { load: 'Новосибирск', loadGc: 4, unload: 'Краснодар', unloadGc: 10, tz: '+07:00', distance: 3650 },
-  { load: 'Нижний Новгород', loadGc: 6, unload: 'Самара', unloadGc: 7, tz: '+03:00', distance: 410 },
-  { load: 'Ростов-на-Дону', loadGc: 8, unload: 'Москва', unloadGc: 1, tz: '+03:00', distance: 1080 },
+  {
+    load: 'Новосибирск',
+    loadGc: 4,
+    unload: 'Краснодар',
+    unloadGc: 10,
+    tz: '+07:00',
+    distance: 3650,
+  },
+  {
+    load: 'Нижний Новгород',
+    loadGc: 6,
+    unload: 'Самара',
+    unloadGc: 7,
+    tz: '+03:00',
+    distance: 410,
+  },
+  {
+    load: 'Ростов-на-Дону',
+    loadGc: 8,
+    unload: 'Москва',
+    unloadGc: 1,
+    tz: '+03:00',
+    distance: 1080,
+  },
   { load: 'Уфа', loadGc: 9, unload: 'Екатеринбург', unloadGc: 3, tz: '+05:00', distance: 460 },
-  { load: 'Казань', loadGc: 5, unload: 'Нижний Новгород', unloadGc: 6, tz: '+03:00', distance: 410 },
-  { load: 'Самара', loadGc: 7, unload: 'Санкт-Петербург', unloadGc: 2, tz: '+04:00', distance: 1700 },
-  { load: 'Краснодар', loadGc: 10, unload: 'Ростов-на-Дону', unloadGc: 8, tz: '+03:00', distance: 270 },
+  {
+    load: 'Казань',
+    loadGc: 5,
+    unload: 'Нижний Новгород',
+    unloadGc: 6,
+    tz: '+03:00',
+    distance: 410,
+  },
+  {
+    load: 'Самара',
+    loadGc: 7,
+    unload: 'Санкт-Петербург',
+    unloadGc: 2,
+    tz: '+04:00',
+    distance: 1700,
+  },
+  {
+    load: 'Краснодар',
+    loadGc: 10,
+    unload: 'Ростов-на-Дону',
+    unloadGc: 8,
+    tz: '+03:00',
+    distance: 270,
+  },
 ]
 
 interface CargoPreset {
@@ -45,10 +94,28 @@ interface CargoPreset {
 
 const CARGO_PRESETS: CargoPreset[] = [
   { name: 'Бытовая техника', bodyType: 'тентованный', carType: 'тент', weight: 12, volume: 38 },
-  { name: 'Строительные материалы', bodyType: 'тентованный', carType: 'тент', weight: 20, volume: 60 },
+  {
+    name: 'Строительные материалы',
+    bodyType: 'тентованный',
+    carType: 'тент',
+    weight: 20,
+    volume: 60,
+  },
   { name: 'Металлопрокат', bodyType: 'открытый', carType: 'бортовая', weight: 20, volume: 35 },
-  { name: 'Продовольственные товары', bodyType: 'рефрижератор', carType: 'реф', weight: 18, volume: 70 },
-  { name: 'Промышленное оборудование', bodyType: 'тентованный', carType: 'тент', weight: 16, volume: 40 },
+  {
+    name: 'Продовольственные товары',
+    bodyType: 'рефрижератор',
+    carType: 'реф',
+    weight: 18,
+    volume: 70,
+  },
+  {
+    name: 'Промышленное оборудование',
+    bodyType: 'тентованный',
+    carType: 'тент',
+    weight: 16,
+    volume: 40,
+  },
   { name: 'Электроника', bodyType: 'тентованный', carType: 'тент', weight: 6, volume: 25 },
   { name: 'Мебель', bodyType: 'тентованный', carType: 'тент', weight: 10, volume: 45 },
   { name: 'Автозапчасти', bodyType: 'тентованный', carType: 'тент', weight: 8, volume: 30 },
@@ -191,9 +258,7 @@ export function generateFillerAuctions(count: number): SeedAuction[] {
       aucType === 'Up' ? startPrice + 2000 - (i % 3) * 250 : startPrice - 2000 + (i % 3) * 250
     const cargoNum = `F-${String(i + 1).padStart(3, '0')}`
     const pricePerKm =
-      cityPair.distance > 0
-        ? Math.round((currentPrice / cityPair.distance) * 100) / 100
-        : null
+      cityPair.distance > 0 ? Math.round((currentPrice / cityPair.distance) * 100) / 100 : null
 
     const list = base.list as MockAuctionListItem
     if (list.main) {
@@ -325,7 +390,8 @@ export function generateFillerAuctions(count: number): SeedAuction[] {
           base.detail.trading.your.bet = true
           base.detail.trading.your.last_bet = currentPrice
           base.detail.trading.your.last_bet_with_vat = currentPrice
-          base.detail.trading.your.win = trading.status === 'Finished' || trading.status === 'WaitDeal'
+          base.detail.trading.your.win =
+            trading.status === 'Finished' || trading.status === 'WaitDeal'
         } else {
           base.detail.trading.your.bet = false
           base.detail.trading.your.last_bet = null

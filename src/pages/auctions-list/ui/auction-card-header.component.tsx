@@ -5,12 +5,7 @@ import { Link } from '@tanstack/react-router'
 interface Props {
   item: Pick<
     AuctionListItemVM,
-    | 'auctionRef'
-    | 'cargoNum'
-    | 'aucType'
-    | 'auctionStatus'
-    | 'tradingStatus'
-    | 'tradingStatusLabel'
+    'auctionRef' | 'cargoNum' | 'aucType' | 'auctionStatus' | 'tradingStatus' | 'tradingStatusLabel'
   > &
     Partial<Pick<AuctionListItemVM, 'aucTypeLabel' | 'auctionStatusLabel'>>
 }

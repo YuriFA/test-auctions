@@ -45,11 +45,7 @@ export function BetForm({ auctionRef, constraints, available, onSuccess }: BetFo
   return (
     <FormProvider {...form}>
       <form className="flex flex-col gap-3" onSubmit={handleSubmit} noValidate>
-        <PriceField
-          constraints={constraints}
-          available={available}
-          disabled={placeBet.isPending}
-        />
+        <PriceField constraints={constraints} available={available} disabled={placeBet.isPending} />
 
         {rootError && (
           <Alert variant="destructive">

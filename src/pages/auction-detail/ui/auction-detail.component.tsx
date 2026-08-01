@@ -17,9 +17,7 @@ export function AuctionDetail() {
     return (
       <ErrorAlert
         title="Не удалось загрузить аукцион"
-        description={
-          query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'
-        }
+        description={query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'}
         onRetry={() => query.refetch()}
       />
     )

@@ -43,7 +43,9 @@ export function AuctionDetailContent({ vm, auctionRef }: AuctionDetailContentPro
             <span className="text-lg font-semibold tracking-tight">№ {vm.cargoNum}</span>
           )}
           {vm.createdAt && (
-            <span className="text-sm text-muted-foreground">· создан {formatDate(vm.createdAt)}</span>
+            <span className="text-sm text-muted-foreground">
+              · создан {formatDate(vm.createdAt)}
+            </span>
           )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">

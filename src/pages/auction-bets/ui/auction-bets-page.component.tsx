@@ -1,6 +1,5 @@
-import { useParams } from '@tanstack/react-router'
-
 import { BackLink, PageContainer } from '@shared/ui'
+import { useParams } from '@tanstack/react-router'
 
 import { AuctionBets } from './auction-bets.component'
 

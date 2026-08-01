@@ -1,6 +1,5 @@
-import { XIcon } from 'lucide-react'
-
 import { Badge, Button } from '@shared/ui'
+import { XIcon } from 'lucide-react'
 
 import { getActiveFilterChips, removeFilterValue } from '../lib/filter-chips'
 import { DEFAULT_AUCTIONS_LIST_FILTERS } from '../lib/search-params'
@@ -52,7 +51,7 @@ function FilterChip({ label, onRemove }: FilterChipProps) {
       <button
         type="button"
         onClick={onRemove}
-        className="inline-flex size-5 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-background/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className="inline-flex size-5 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-background/50 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         aria-label={`Убрать фильтр: ${label}`}
       >
         <XIcon className="size-3" aria-hidden />

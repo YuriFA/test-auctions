@@ -1,4 +1,10 @@
-import type { AuctionListItem, AuctionRef, AuctionStatus, AuctionType, TradingStatus } from '@shared/api'
+import type {
+  AuctionListItem,
+  AuctionRef,
+  AuctionStatus,
+  AuctionType,
+  TradingStatus,
+} from '@shared/api'
 import { extractAuctionRef } from '@shared/api'
 
 import { describeAuctionStatus, describeAuctionType, describeTradingStatus } from './describe'

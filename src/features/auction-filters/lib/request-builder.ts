@@ -1,6 +1,10 @@
 import type { AuctionListRequest } from '@shared/api'
 
-import { DEFAULT_AUCTIONS_LIST_FILTERS, isApiAucType, type AuctionsListFilters } from './search-params'
+import {
+  DEFAULT_AUCTIONS_LIST_FILTERS,
+  isApiAucType,
+  type AuctionsListFilters,
+} from './search-params'
 
 export function buildAuctionListRequest(parsed: AuctionsListFilters): AuctionListRequest {
   const request: AuctionListRequest = {}

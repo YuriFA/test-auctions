@@ -1,8 +1,4 @@
-import type {
-  AuctionListItem,
-  AuctionShowResponse,
-  BetItem,
-} from '../generated'
+import type { AuctionListItem, AuctionShowResponse, BetItem } from '../generated'
 import { mockCompetitors, mockCurrentUser } from './user'
 
 export type MockAuctionListItemMain = NonNullable<AuctionListItem['main']>

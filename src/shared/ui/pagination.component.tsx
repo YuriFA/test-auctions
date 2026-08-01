@@ -1,36 +1,32 @@
-import * as React from "react"
+import { cn } from '@shared/lib/cn'
+import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from 'lucide-react'
+import * as React from 'react'
 
-import { cn } from "@shared/lib/cn"
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
+import { Button } from './button.component'
 
-import { Button } from "./button.component"
-
-function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
+function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (
     <nav
       role="navigation"
       aria-label="pagination"
       data-slot="pagination"
-      className={cn("mx-auto flex w-full justify-center", className)}
+      className={cn('mx-auto flex w-full justify-center', className)}
       {...props}
     />
   )
 }
 
-function PaginationContent({
-  className,
-  ...props
-}: React.ComponentProps<"ul">) {
+function PaginationContent({ className, ...props }: React.ComponentProps<'ul'>) {
   return (
     <ul
       data-slot="pagination-content"
-      className={cn("flex items-center gap-0.5", className)}
+      className={cn('flex items-center gap-0.5', className)}
       {...props}
     />
   )
 }
 
-function PaginationItem({ ...props }: React.ComponentProps<"li">) {
+function PaginationItem({ ...props }: React.ComponentProps<'li'>) {
   return <li data-slot="pagination-item" {...props} />
 }
 
@@ -41,16 +37,16 @@ type PaginationLinkProps = {
   // works, and no-JS fallback navigates. Defaults to a plain `<a>`. `ref` is
   // omitted from anchor props to avoid clashing with Button's button-typed ref.
   render?: React.ReactElement
-} & Pick<React.ComponentProps<typeof Button>, "size"> &
-  Omit<React.ComponentProps<"a">, "ref">
+} & Pick<React.ComponentProps<typeof Button>, 'size'> &
+  Omit<React.ComponentProps<'a'>, 'ref'>
 
 function PaginationLink({
   className,
   isActive,
-  size = "icon",
+  size = 'icon',
   render,
-  "aria-label": ariaLabel,
-  "aria-current": ariaCurrentProp,
+  'aria-label': ariaLabel,
+  'aria-current': ariaCurrentProp,
   children,
   ...rest
 }: PaginationLinkProps) {
@@ -62,12 +58,12 @@ function PaginationLink({
   // and are dropped when `render` is provided.
   return (
     <Button
-      variant={isActive ? "outline" : "ghost"}
+      variant={isActive ? 'outline' : 'ghost'}
       size={size}
       className={cn(className)}
       nativeButton={false}
       aria-label={ariaLabel}
-      aria-current={ariaCurrentProp ?? (isActive ? "page" : undefined)}
+      aria-current={ariaCurrentProp ?? (isActive ? 'page' : undefined)}
       data-slot="pagination-link"
       data-active={isActive}
       render={render ?? <a {...rest} />}
@@ -79,14 +75,14 @@ function PaginationLink({
 
 function PaginationPrevious({
   className,
-  text = "Previous",
+  text = 'Previous',
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
       size="default"
-      className={cn("pl-2!", className)}
+      className={cn('pl-2!', className)}
       {...props}
     >
       <ChevronLeftIcon data-icon="inline-start" />
@@ -97,14 +93,14 @@ function PaginationPrevious({
 
 function PaginationNext({
   className,
-  text = "Next",
+  text = 'Next',
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
       aria-label="Go to next page"
       size="default"
-      className={cn("pr-2!", className)}
+      className={cn('pr-2!', className)}
       {...props}
     >
       <span className="hidden sm:block">{text}</span>
@@ -113,22 +109,18 @@ function PaginationNext({
   )
 }
 
-function PaginationEllipsis({
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
+function PaginationEllipsis({ className, ...props }: React.ComponentProps<'span'>) {
   return (
     <span
       aria-hidden
       data-slot="pagination-ellipsis"
       className={cn(
         "flex size-7 items-center justify-center [&_svg:not([class*='size-'])]:size-3.5",
-        className
+        className,
       )}
       {...props}
     >
-      <MoreHorizontalIcon
-      />
+      <MoreHorizontalIcon />
       <span className="sr-only">More pages</span>
     </span>
   )

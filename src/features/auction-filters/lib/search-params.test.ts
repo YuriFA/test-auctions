@@ -368,15 +368,15 @@ describe('toAuctionsListSearch', () => {
   })
 
   it('keeps falsy is_available when set', () => {
-    expect(
-      toAuctionsListSearch({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: false }),
-    ).toEqual({ is_available: false })
+    expect(toAuctionsListSearch({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: false })).toEqual(
+      { is_available: false },
+    )
   })
 
   it('preserves arrays as arrays', () => {
-    expect(
-      toAuctionsListSearch({ ...DEFAULT_AUCTIONS_LIST_FILTERS, statuses: [1, 2, 3] }),
-    ).toEqual({ statuses: [1, 2, 3] })
+    expect(toAuctionsListSearch({ ...DEFAULT_AUCTIONS_LIST_FILTERS, statuses: [1, 2, 3] })).toEqual(
+      { statuses: [1, 2, 3] },
+    )
   })
 })
 

@@ -39,9 +39,7 @@ export function AuctionBetForm({ auctionRef }: { auctionRef: string }) {
     return (
       <Alert>
         <AlertTitle>Аукцион не найден</AlertTitle>
-        <AlertDescription>
-          Возможно, ссылка устарела или аукцион был удалён.
-        </AlertDescription>
+        <AlertDescription>Возможно, ссылка устарела или аукцион был удалён.</AlertDescription>
       </Alert>
     )
   }

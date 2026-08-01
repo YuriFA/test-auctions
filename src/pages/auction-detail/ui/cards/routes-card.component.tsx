@@ -38,7 +38,8 @@ export function RoutesCard({ vm, restrictions }: RoutesCardProps) {
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
                   {point.startDate && (
                     <span className="flex items-center gap-1">
-                      <CalendarClock className="size-3" aria-hidden />с {formatDate(point.startDate)}
+                      <CalendarClock className="size-3" aria-hidden />с{' '}
+                      {formatDate(point.startDate)}
                     </span>
                   )}
                   {point.endDate && <span>до {formatDate(point.endDate)}</span>}
