@@ -2,7 +2,7 @@
 
 ## Статус
 
-Не начато.
+Готово. Коммит `0010a51 feat(auction-filters): show active filters as removable chips on list page`. Все критерии приёмки покрыты: блок chips под хедером `/`, один chip на скаляр и по chip на каждое значение массивов, индивидуальная очистка через `commitFilters(removeFilterValue(...))`, кнопка «Очистить всё» сбрасывает в `DEFAULT_AUCTIONS_LIST_FILTERS`, `page`/`cargo_num` исключены, пустое состояние возвращает `null`. 17 unit-тестов на `getActiveFilterChips`/`removeFilterValue`.
 
 ## Цель
 
@@ -52,3 +52,11 @@
 - Для редкого случая `is_available: false` / `is_bidder: false` (URL может хранить, но форма не порождает) — добавляем суффикс `: нет`, чтобы chip был осмысленным.
 - Цена форматируется через `Number.toLocaleString('ru-RU')` + ` ₽` — соответствует представлению цены в карточке аукциона.
 - `commitFilters` уже сбрасывает `page` на 1 при каждом вызове (SDD-018) — это нормально и для точечной очистки, и для «Очистить всё»: после сброса фильтров пользователь ожидает увидеть первую страницу.
+
+## Заметки о реализации
+
+- Чистые функции `getActiveFilterChips`/`removeFilterValue` живут в `features/auction-filters/lib/filter-chips.ts`, поверх существующих `FIELD_KINDS`/`isActive`/`ACTIVE_FIELDS`/`NON_FILTER_FIELDS` (стали public API модуля `search-params.ts` в рамках пост-SDD рефакторинга, без отдельной задачи). 17 unit-тестов покрывают: пустые дефолты, каждый тип поля, массивы → N chip'ов, исключение `page`/`cargo_num`, иммутабельность `removeFilterValue`, scalar/array/boolean removal, сохранение прочих полей.
+- UI-компонент `ActiveFilterChips` в `features/auction-filters/ui/active-filter-chips.component.tsx`: подписка на URL через `useAuctionsListFiltersCommit` (SDD-018), рендер через shadcn `Badge variant="secondary"` + вложенная `<button>` с lucide `XIcon`. aria-label вида «Убрать фильтр: {label}» для screen-reader. Кнопка `size-5` совпадает с высотой Badge — полный-height click target.
+- Кнопка «Очистить всё» — shadcn `Button variant="ghost" size="sm"`, коммитит `{...DEFAULT_AUCTIONS_LIST_FILTERS}` одним кликом. Живёт только в блоке chips, не дублирует Reset внутри формы (у той своя ответственность — сброс draft'а).
+- Barrel `@features/auction-filters` расширен экспортом `ActiveFilterChips` — страница импортирует как самодостаточный компонент, без props (как `AuctionFilters`/`AuctionSearchInput`).
+- Интеграция на странице `pages/auctions-list/ui/auctions-list-page.component.tsx`: одна строка `<ActiveFilterChips />` между `</header>` и `<AuctionsList />`. Страница осталась чистой композицией — ноль hooks на уровне shell'а.
