@@ -75,15 +75,24 @@ AI_USAGE.md                        # what was done with AI, decisions, risks, li
 
 Three layers of automated checks; each layer owns a distinct concern.
 
-### `pnpm check` (logic + types + boundaries)
+### `pnpm check` (format + logic + types + boundaries)
 
-Fast loop, runs locally on every save and in CI.
+Fast loop, runs locally on every save and mirrors the CI matrix in `.github/workflows/ci.yml`. Adding a gate here should also land in the workflow and vice versa.
 
 | Layer          | Command          | What it asserts                                                                                  |
 | -------------- | ---------------- | ------------------------------------------------------------------------------------------------ |
+| Format         | `pnpm fmt:check` | oxfmt — verifies formatting without writing; the only formatting gate (no `fmt` in `check`)      |
 | Types          | `pnpm typecheck` | `tsc -b` across app + tests; catches contract drift between OpenAPI codegen, DTOs, and consumers |
 | Lint           | `pnpm lint`      | oxlint — React hooks, accessibility, import order                                                |
 | FSD boundaries | `pnpm lint:fsd`  | steiger — `shared/api/generated` isolation, public/private slices, import direction              |
+
+### CI (`.github/workflows/ci.yml`)
+
+Every push to `main` and every PR runs the full gate matrix in parallel: `fmt:check`, `typecheck`, `lint`, `lint:fsd`, `test:run`, `test:e2e`. `pnpm check` covers the first four locally; the two `test:*` gates run only in CI (and via `pnpm test:run` / `pnpm test:e2e` manually) because they need a vitest/playwright runtime.
+
+### Optional: `pnpm lint:knip`
+
+Knip scans for unused files, dependencies, and exports. Not in `pnpm check` or CI yet — it currently flags FSD barrel re-exports (`entities/auction/index.ts`, `shared/api/index.ts`, etc.) as "unused". These are intentional public-API surface for downstream slices, so promoting knip to a hard gate requires either tuning `knip.json` to exempt barrel `index.ts` files or trimming the exports. Run manually to spot genuine dead code.
 
 ### `pnpm test:run` (logic + MSW integration)
 
