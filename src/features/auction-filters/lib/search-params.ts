@@ -62,8 +62,6 @@ export type AuctionsListFilters = {
   is_bidder?: boolean
 }
 
-// --- centralized field descriptors --------------------------------------------
-
 type FieldKind =
   | 'defaultNumber'
   | 'defaultBoolean'
@@ -122,8 +120,6 @@ export function isActive<K extends keyof AuctionsListFilters>(
       return Boolean(value)
   }
 }
-
-// --- URL parsing --------------------------------------------------------------
 
 function toPlainObject(raw: URLSearchParams): Record<string, string[]> {
   const out: Record<string, string[]> = {}
@@ -211,8 +207,6 @@ function parseNumericStatuses(values: string[]): number[] {
     )
 }
 
-// --- URL serialization --------------------------------------------------------
-
 // NOTE: defaults are not serialized so URLs stay readable and resilient to
 // default changes; arrays become repeated keys, never CSV.
 export function serializeAuctionsListSearchParams(value: AuctionsListFilters): URLSearchParams {
@@ -233,8 +227,6 @@ export function serializeAuctionsListSearchParams(value: AuctionsListFilters): U
   return out
 }
 
-// --- "active filters" badge ---------------------------------------------------
-
 export function isDefaultFilters(value: AuctionsListFilters): boolean {
   return countActiveFilters(value) === 0
 }
@@ -248,8 +240,6 @@ export function countActiveFilters(value: AuctionsListFilters): number {
   }
   return count
 }
-
-// --- record-object (route validateSearch) parsing -----------------------------
 
 export type AuctionsListSearch = Partial<AuctionsListFilters>
 
@@ -283,8 +273,6 @@ function normalizeRecordSearch(raw: Record<string, unknown>): Record<string, str
   }
   return out
 }
-
-// --- request-builder helpers (co-located with URL-side constants) -------------
 
 export function isApiAucType(value: string): value is ApiAucType {
   return (API_AUC_TYPES as readonly string[]).includes(value)

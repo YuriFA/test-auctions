@@ -12,8 +12,8 @@ export interface ResetButtonProps extends React.ComponentProps<typeof Button> {
 }
 
 export function ResetButton({ control, defaultValues, onReset, ...rest }: ResetButtonProps) {
-  // `useWatch` без `name` типизирует возврат как `DeepPartial`, но с `defaultValue`
-  // в runtime значения всегда полные — приводим тип обратно.
+  // NOTE: `useWatch` without `name` types its return as `DeepPartial`, but with
+  // `defaultValue` the runtime values are always complete — cast back.
   const values = useWatch({ control, defaultValue: defaultValues }) as AuctionsListFilters
   const isDefault = isDefaultFilters(values)
 

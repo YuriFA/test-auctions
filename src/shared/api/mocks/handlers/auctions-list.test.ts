@@ -3,7 +3,6 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import { mockHandlers } from './index'
 
-// Keep in sync with src/shared/api/mocks/runtime/store.ts.
 const TOTAL_AUCTIONS = 34 // 10 seeds + 24 fillers
 const DEFAULT_PER_PAGE = 12
 
@@ -82,10 +81,9 @@ describe('POST /auctions/list — MSW handler', () => {
     }
   })
 
-  // SDD-032 regression guard: list DTO must not carry the previously-invented
-  // `main.auction_uuid` field. Routing identity is `order_uid` only; the
-  // auctionUuid→OpenAPI path translation lives in the adapter resolver, not in
-  // the list contract. If this fires, someone reintroduced contract drift.
+  // NOTE: routing identity is `order_uid` only; the auctionUuid→OpenAPI path
+  // translation lives in the adapter resolver, not in the list contract. Fires
+  // if someone reintroduces a made-up `main.auction_uuid` on list items.
   it('does not surface an invented main.auction_uuid on list items', async () => {
     const { json } = await postList()
     expect(json?.data?.length).toBeGreaterThan(0)

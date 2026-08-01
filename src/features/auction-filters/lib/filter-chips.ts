@@ -111,9 +111,7 @@ export function getActiveFilterChips(filters: AuctionsListFilters): ActiveFilter
   return chips
 }
 
-// Returns a new filters object with the given field cleared (or one value
-// removed for arrays). Page is not a filter, but we still handle the kind
-// defensively — see NON_FILTER_FIELDS in search-params.ts.
+// NOTE: `page` is not a filter, but we still handle the kind defensively.
 export function removeFilterValue(
   filters: AuctionsListFilters,
   key: keyof AuctionsListFilters,
