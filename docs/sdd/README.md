@@ -69,7 +69,8 @@
 26. `SDD-026` Bet Form Route
 27. `SDD-027` Bet Mutation Integration
 28. `SDD-028` Runtime Consistency Verification
-29. `SDD-030` Final Documentation
+29. `SDD-030` Active Filter Chips
+30. `SDD-031` Final Documentation
 
 ## Порядок исполнения
 
