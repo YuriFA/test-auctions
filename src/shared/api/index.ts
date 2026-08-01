@@ -1,10 +1,4 @@
-export {
-  ApiError,
-  ApiValidationError,
-  isApiError,
-  isApiValidationError,
-  normalizeApiError,
-} from './errors'
+export { ApiValidationError, isApiError, isApiValidationError } from './errors'
 export type {
   AuctionListItem,
   AuctionListRequest,
@@ -16,18 +10,9 @@ export type {
   Contact,
   OperationType,
   PaymentDelayType,
-  ProblemDetail,
   TradingStatus,
-  ValidationError,
-  ValidationProblem,
 } from './generated'
-export {
-  extractAuctionRef,
-  fetchAuctionDetail,
-  fetchAuctionDetailByRef,
-  fetchAuctionList,
-  resolveAuctionUuid,
-} from './auctions'
-export type { AuctionDetail, AuctionListFilters, AuctionListResponse, AuctionRef } from './auctions'
-export { fetchBets, fetchBetsByRef, placeBet, placeBetByRef } from './bets'
-export type { BetsListResponse, FetchBetsOptions, PlaceBetInput, PlaceBetOptions } from './bets'
+export { extractAuctionRef, fetchAuctionDetailByRef, fetchAuctionList } from './auctions'
+export type { AuctionDetail, AuctionListResponse, AuctionRef } from './auctions'
+export { fetchBetsByRef, placeBetByRef } from './bets'
+export type { BetsListResponse } from './bets'

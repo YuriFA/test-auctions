@@ -18,7 +18,7 @@ import {
   describeTradingStatus,
 } from './describe'
 
-export type AuctionDetailContactVM = {
+type AuctionDetailContactVM = {
   name: string
   phone: string
   workPhone: string
@@ -26,7 +26,7 @@ export type AuctionDetailContactVM = {
   uid: string
 }
 
-export type AuctionDetailRoutePointCargoVM = {
+type AuctionDetailRoutePointCargoVM = {
   name: string
   packageName: string
   weight: string
@@ -37,7 +37,7 @@ export type AuctionDetailRoutePointCargoVM = {
   oversized: boolean
 }
 
-export type AuctionDetailRoutePointVM = {
+type AuctionDetailRoutePointVM = {
   opType: OperationType | undefined
   opTypeLabel: string
   startDate: string | undefined
@@ -52,7 +52,7 @@ export type AuctionDetailRoutePointVM = {
   contactPhone: string
 }
 
-export type AuctionDetailCarRequirementsVM = {
+type AuctionDetailCarRequirementsVM = {
   type: string
   weight: number | null
   volume: number | null

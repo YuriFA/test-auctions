@@ -5,15 +5,9 @@ export { usePrefetchAuctionDetail } from './api/use-prefetch-auction-detail'
 export { useAuctionBets } from './api/use-auction-bets'
 export { usePlaceBet } from './api/use-place-bet'
 export type { AuctionListItemVM } from './lib/list-item'
-export type {
-  AuctionDetailCarRequirementsVM,
-  AuctionDetailContactVM,
-  AuctionDetailRoutePointCargoVM,
-  AuctionDetailRoutePointVM,
-  AuctionDetailVM,
-} from './lib/detail'
+export type { AuctionDetailVM } from './lib/detail'
 export type { AuctionBetsVM, AuctionBetVM } from './lib/bets'
-export type { AuctionCardPrimaryAction, AuctionCardPrimaryActionKind } from './lib/primary-action'
+export type { AuctionCardPrimaryAction } from './lib/primary-action'
 export { deriveAuctionCardPrimaryAction } from './lib/primary-action'
 export type { AuctionRestrictions } from './lib/restrictions'
 export { deriveAuctionRestrictions } from './lib/restrictions'

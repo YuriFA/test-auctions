@@ -5,7 +5,7 @@ import { listBets, setBet } from './generated'
 
 export type BetsListResponse = BetListResponse
 export type PlaceBetInput = SetBetRequest
-export type PlaceBetOptions = {
+type PlaceBetOptions = {
   auctionUuid: string
   body: PlaceBetInput
 }
@@ -14,7 +14,7 @@ export type FetchBetsOptions = {
   includeCanceled?: boolean
 }
 
-export async function fetchBets(
+async function fetchBets(
   auctionUuid: string,
   options: FetchBetsOptions = {},
 ): Promise<BetsListResponse> {
@@ -39,7 +39,7 @@ export async function fetchBetsByRef(
   return fetchBets(auctionUuid, options)
 }
 
-export async function placeBet(options: PlaceBetOptions): Promise<void> {
+async function placeBet(options: PlaceBetOptions): Promise<void> {
   const result = await setBet({
     path: { auctionUuid: options.auctionUuid },
     body: options.body,

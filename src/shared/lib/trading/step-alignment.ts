@@ -1,4 +1,4 @@
-export const STEP_EPSILON = 1e-6
+const STEP_EPSILON = 1e-6
 
 export function isStepAligned(price: number, step: number, base: number): boolean {
   const drift = Math.abs(price - base)

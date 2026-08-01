@@ -143,7 +143,7 @@ const fromStringArray = <T>(fn: (val: string | undefined) => T) =>
 const enumArrayField = <T extends readonly string[]>(allowed: T) =>
   stringArray.transform((arr) => parseEnumArray(arr ?? [], allowed))
 
-export const auctionsListFiltersSchema: z.ZodType<AuctionsListFilters> = z.object({
+const auctionsListFiltersSchema: z.ZodType<AuctionsListFilters> = z.object({
   page: fromStringArray((v) => parsePage(v ?? null)),
   is_oldest: fromStringArray((v) => parseSortFlag(v ?? null)),
   cargo_num: fromStringArray((v) => v ?? ''),

@@ -6,7 +6,7 @@ import type { AuctionListItemVM } from '../lib/list-item'
 import { toAuctionListItemVM } from '../lib/list-item'
 import { auctionKeys } from './query-keys'
 
-export type AuctionsListViewData = {
+type AuctionsListViewData = {
   items: AuctionListItemVM[]
   currentPage: number
   lastPage: number

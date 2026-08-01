@@ -15,19 +15,19 @@ export const AUCTION_TYPE_LABELS: Readonly<Record<AuctionType, string>> = {
   Unknown: 'Неизвестный тип',
 }
 
-export const OPERATION_TYPE_LABELS: Readonly<Record<OperationType, string>> = {
+const OPERATION_TYPE_LABELS: Readonly<Record<OperationType, string>> = {
   Loading: 'Погрузка',
   Unloading: 'Выгрузка',
   Unknown: 'Точка маршрута',
 }
 
-export const PAYMENT_DELAY_TYPE_LABELS: Readonly<Record<PaymentDelayType, string>> = {
+const PAYMENT_DELAY_TYPE_LABELS: Readonly<Record<PaymentDelayType, string>> = {
   CalendarDays: 'календарных дней',
   WorkDays: 'рабочих дней',
   Unknown: '—',
 }
 
-export const BID_MEASUREMENT_TYPE_LABELS: Readonly<Record<BidMeasurementType, string>> = {
+const BID_MEASUREMENT_TYPE_LABELS: Readonly<Record<BidMeasurementType, string>> = {
   PerRoute: 'За маршрут',
   PerKm: 'За километр',
   Unknown: '—',

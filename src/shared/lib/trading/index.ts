@@ -1,1 +1,1 @@
-export { STEP_EPSILON, isStepAligned } from './step-alignment'
+export { isStepAligned } from './step-alignment'

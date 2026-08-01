@@ -16,11 +16,3 @@ export const cities: City[] = [
   { name: 'Уфа', gcId: 9, region: 'Республика Башкортостан' },
   { name: 'Краснодар', gcId: 10, region: 'Краснодарский край' },
 ]
-
-export function findCityByName(name: string): City | undefined {
-  return cities.find((city) => city.name === name)
-}
-
-export function findCityByGcId(gcId: number): City | undefined {
-  return cities.find((city) => city.gcId === gcId)
-}

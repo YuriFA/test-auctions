@@ -21,7 +21,7 @@ export async function fetchAuctionList(filters: AuctionListFilters): Promise<Auc
   return result.data
 }
 
-export async function fetchAuctionDetail(auctionUuid: string): Promise<AuctionDetail> {
+async function fetchAuctionDetail(auctionUuid: string): Promise<AuctionDetail> {
   const result = await getAuction({ path: { auctionUuid } })
   if (result.error) {
     throw normalizeApiError(result.response, result.error)

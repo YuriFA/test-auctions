@@ -1,4 +1,3 @@
-// oxlint-disable react/only-export-components
 import { Button as ButtonPrimitive } from '@base-ui/react/button'
 import { cn } from '@shared/lib/cn'
 import { cva, type VariantProps } from 'class-variance-authority'
@@ -50,4 +49,4 @@ function Button({ className, variant = 'default', size = 'default', ...props }: 
   )
 }
 
-export { Button, buttonVariants }
+export { Button }

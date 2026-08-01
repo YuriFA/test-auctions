@@ -1,2 +1,1 @@
-export type { City } from './cities'
-export { cities, findCityByGcId, findCityByName } from './cities'
+export { cities } from './cities'

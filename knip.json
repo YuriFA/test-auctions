@@ -1,8 +1,5 @@
 {
-  "$schema": "https://unpkg.com/knip@6/schema.json",
-  "entry": ["src/main.tsx", "steiger.config.ts"],
-  "project": ["src/**/*", "e2e/**/*.ts"],
-  "ignore": ["src/shared/api/generated/**"],
-  "ignoreBinaries": ["shadcn"],
-  "ignoreDependencies": ["shadcn"]
+  "$schema": "./node_modules/knip/schema.json",
+  "entry": ["steiger.config.ts"],
+  "ignore": ["src/shared/api/generated/**"]
 }

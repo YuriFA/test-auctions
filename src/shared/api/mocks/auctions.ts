@@ -1,8 +1,6 @@
 import type { AuctionListItem, AuctionShowResponse, BetItem } from '../generated'
 import { mockCompetitors, mockCurrentUser } from './user'
 
-export type MockAuctionListItemMain = NonNullable<AuctionListItem['main']>
-
 export type MockAuctionListItem = AuctionListItem
 
 export interface SeedAuction {

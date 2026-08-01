@@ -1,8 +1,8 @@
 import type { AuctionStatus } from '@shared/api'
 
-export type AuctionCardPrimaryActionKind = 'place-bet' | 'change-bet' | 'view-bets' | 'disabled'
+type AuctionCardPrimaryActionKind = 'place-bet' | 'change-bet' | 'view-bets' | 'disabled'
 
-export type AuctionCardPrimaryActionRoute = 'bet' | 'bets' | 'detail'
+type AuctionCardPrimaryActionRoute = 'bet' | 'bets' | 'detail'
 
 export interface AuctionCardPrimaryAction {
   kind: AuctionCardPrimaryActionKind
