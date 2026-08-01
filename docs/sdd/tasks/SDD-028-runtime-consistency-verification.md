@@ -2,11 +2,12 @@
 
 ## Статус
 
-Готово. API-level консистентность покрыта `scripts/msw-set-bet-smoke.mjs`
-(case 2 — после `writeBet` list/detail/bets возвращают обновлённые
-DTO: current price, status_mobile=Leading, rejected previous user bet).
-UI-level консистентность покрыта новым `scripts/mutation-flow-smoke.mjs`
-(5 проверок, включён в `pnpm smoke`): реальный пользователь ставит
+Готово. API-level консистентность покрыта `src/shared/api/mocks/handlers/auctions-set-bet.test.ts`
+(часть `pnpm test:run`; case «propagates the new state to list, detail, and bets endpoints» —
+после `writeBet` list/detail/bets возвращают обновлённые DTO: current price, status_mobile=Leading,
+rejected previous user bet).
+UI-level консистентность покрыта `e2e/mutation-flow.spec.ts`
+(часть `pnpm test:e2e`): реальный пользователь ставит
 44000 через форму `/auctions/{downLeading}/bet` → форма навигирует
 на `/bets` (onSuccess) → bets-список содержит 44000 → SPA-навигация
 на detail показывает "Текущая 44 000 ₽" → SPA-навигация на list
@@ -17,7 +18,7 @@ query-ключей (list + detail + bets через `betMutationInvalidationTarg
 Критический нюанс MSW 2.x, вскрытый во время верификации: handlers
 исполняются в JS-контексте страницы, не в Service Worker. Полный
 `page.goto` переинициализирует bundle и сбрасывает in-memory state
-в seed. Поэтому smoke использует SPA-навигацию (click по `<a>` с
+в seed. Поэтому e2e-тест использует SPA-навигацию (click по `<a>` с
 has-text), а не Playwright `goto` между шагами — это держит state
 живым через весь флоу.
 

@@ -13,11 +13,12 @@ vm-missing → "Аукцион не найден", `!restrictions.canPlaceBet` �
 restricted card ("Ставка недоступна" с Alert "Нельзя поставить
 ставку"). Гейт читается через `deriveAuctionRestrictions(vm).canPlaceBet`
 (SDD-022), не через прямой reading `vm.canSetBet`. Smoke
-(`scripts/route-smoke.mjs`) расширен тремя bets-кейсами: valid UUID
-с can_set_bet=true → h1 "Ставка по аукциону" и section "Цена";
-`requestWinner` seed (can_set_bet=false) → h1 "Ставка недоступна" и
-alert "Нельзя поставить ставку"; unknown UUID → detail-driven
-"Аукцион недоступен".
+(`e2e/route.spec.ts` под `@playwright/test`, часть `pnpm test:e2e`)
+покрывает три bets-кейса: valid UUID с can_set_bet=true → h1
+"Ставка по аукциону" и section "Цена"; `requestWinner` seed
+(can_set_bet=false) → h1 "Ставка по аукциону" и alert "Нельзя
+поставить ставку"; unknown UUID → detail-driven alert "Аукцион
+недоступен".
 
 ## Цель
 

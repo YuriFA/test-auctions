@@ -11,11 +11,12 @@ header (бейджжи + даты), организатор, контакты (ga
 груз + требования к ТС, оплата, параметры торгов (с hidden-флагом), ваша
 ставка. CTA reused через `deriveAuctionCardPrimaryAction` (SDD-020).
 
-Smoke: `route-smoke.mjs` покрывает happy-path (h1='Аукцион № MSK-001' +
-секция 'Маршрут') и unknown-UUID (h1='Аукцион недоступен' + alert).
-Дополнительный ad-hoc smoke проверил 3 restriction-сценария:
-`fixPriceHidden`/`downHiddenContacts`/`downLeading` — контакты и цены
-корректно скрываются по DTO-флагам.
+Smoke: `e2e/route.spec.ts` (под `@playwright/test`, часть `pnpm test:e2e`)
+покрывает happy-path (h1 'Аукцион' + секция 'Маршрут' + bodyIncl 'MSK-001')
+и unknown-UUID (alert 'Не удалось загрузить аукцион'). Дополнительный
+ad-hoc smoke проверил 3 restriction-сценария: `fixPriceHidden`/
+`downHiddenContacts`/`downLeading` — контакты и цены корректно скрываются
+по DTO-флагам.
 
 Owner логики restriction-флагов пока не вынесен (SDD-022 не начат); detail
 читает флаги прямо из VM. Это задокументировано в `AI_USAGE.md`.

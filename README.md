@@ -44,14 +44,12 @@ pnpm fmt:check      # oxfmt (check only)
 pnpm check          # typecheck + lint
 pnpm codegen        # regenerate OpenAPI SDK + types from docs/openapi.auctions.v0.json
 pnpm test           # vitest watch
-pnpm test:run       # vitest run (CI mode)
-pnpm smoke          # starts vite dev on :5175 and runs every smoke script
+pnpm test:run       # vitest run (CI mode) — logic + MSW-handler integration tests
+pnpm test:e2e       # playwright — browser smokes (auto-starts vite on :5175)
 ```
 
-`SMOKE_PORT` / `SMOKE_BASE` override the dev port and base URL for `pnpm smoke`. Individual smoke
-scripts under `scripts/*-smoke.mjs` can be invoked directly — `node scripts/list-page-smoke.mjs`
-(browser group, needs `pnpm dev` up) or `pnpm exec tsx scripts/msw-list-smoke.mjs` (MSW-node group,
-no dev server needed).
+`SMOKE_PORT` / `SMOKE_BASE` override the dev port and base URL for `pnpm test:e2e`. Filter by file
+or test name with `pnpm test:e2e e2e/route.spec.ts` or `--grep "pagination"`.
 
 ## Project Layout
 
@@ -67,7 +65,7 @@ src/
   shared/api/                      # generated SDK (isolated) + adapters + MSW
   shared/ui/                       # shadcn primitives
   shared/lib/                      # generic helpers
-scripts/                           # smoke scripts (outside `pnpm check`)
+e2e/                               # playwright browser smokes (run via `pnpm test:e2e`)
 AGENTS.md                          # rules for any AI/agent working in this repo
 AI_USAGE.md                        # what was done with AI, decisions, risks, limitations
 ```

@@ -34,11 +34,11 @@ disable'ятся на границах (at max для `+`, at min для `−`) 
 проекте нет, тянуть его только ради этого сценария неоправданно.
 Установлены `react-hook-form@^7.83` и `@hookform/resolvers@^5.5`.
 Полная верификация: `pnpm fmt && pnpm lint && pnpm test:run && pnpm
-build && pnpm smoke` — всё зелёное (246 тестов, 8 smoke-скриптов);
-новый `scripts/bet-form-smoke.mjs` покрывает stepper-интеракцию
+build && pnpm test:e2e` — всё зелёное (277 тестов в vitest, 21 e2e в
+Playwright); `e2e/bet-form.spec.ts` покрывает stepper-интеракцию
 (рендер +/-, seed от available + step, повторный шаг, обратный шаг,
-submit интерактивность); msw-set-bet-smoke покрывает мутационный
-контракт (200/422/404, problem+json).
+submit интерактивность); `src/shared/api/mocks/handlers/auctions-set-bet.test.ts`
+покрывает мутационный контракт (200/422/404, problem+json).
 
 ## Цель
 

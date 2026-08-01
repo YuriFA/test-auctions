@@ -129,7 +129,7 @@ This file defines the project-level rules for any AI/LLM agent working in this r
 - Comments that label a smell (`mock-only`, `defensive cast`, `temporary`) signal a missing type or abstraction. Solve with types; do not document the smell. If the smell is unavoidable, use the matching marker (`FIXME:` for workarounds, `XXX:` for hazards).
 - Prefer tests over comments: an invariant expressed in a test is enforceable; in a comment it rots.
 - Tooling directives (`// oxlint-disable ...`, `// @ts-expect-error`, `eslint-disable-*`, `biome-ignore`) are NOT comments — they are instructions to linters and compilers and are always allowed.
-- Step-style scaffolding inside `*.test.ts` and `scripts/*-smoke.mjs` (`// 1. ...`, fixture labels) is test narration, not production code; the rules above target implementation files.
+- Step-style scaffolding inside `*.test.ts` and `e2e/*.spec.ts` (`// 1. ...`, fixture labels) is test narration, not production code; the rules above target implementation files.
 
 ### Examples
 
@@ -171,9 +171,10 @@ const uuid = main.auction_uuid ?? orderUid
 ## Testing And Verification Rules
 
 - The project must run locally.
-- Smoke scripts (`scripts/*-smoke.mjs`) live outside `pnpm check`.
-  - `pnpm smoke` is the single entry point: it starts `vite dev` on `:5175`, waits until it is ready, runs every smoke (MSW-node first via `tsx`, then browser smokes via Playwright), and tears the dev server down on success or failure. Override the port with `SMOKE_PORT` / `SMOKE_BASE` if needed.
-  - For a narrower run, invoke a script directly: `node scripts/list-page-smoke.mjs` (browser group — needs `pnpm dev` up) or `pnpm exec tsx scripts/msw-list-smoke.mjs` (MSW-node group — no dev server needed).
+- Three test layers, all isolated:
+  - **Logic tests** (`*.test.ts` co-located next to the module under `src/`) — pure functions, view-model mappers, schemas. Run via `pnpm test:run`.
+  - **MSW-handler integration tests** (`src/shared/api/mocks/handlers/*.test.ts`) — exercise the HTTP handlers via `msw/node`'s `setupServer`, no browser. Part of `pnpm test:run`.
+  - **Browser smokes** (`e2e/*.spec.ts`) — full-app Playwright tests against the dev server. Run via `pnpm test:e2e`; the runner auto-starts `vite dev` on `:5175` via `playwright.config.ts` `webServer` and tears it down. Override the port with `SMOKE_PORT` / `SMOKE_BASE`.
 - At minimum, maintain logic tests for:
   - search params parsing
   - request builder logic
@@ -182,9 +183,9 @@ const uuid = main.auction_uuid ?? orderUid
 - Before committing, run the full verification sequence in order:
   1. `pnpm fmt` — apply oxfmt formatting first, so subsequent lint/tests run against the same shape that will land in the commit.
   2. `pnpm lint` — oxlint must pass clean.
-  3. `pnpm test:run` — all logic tests must pass.
+  3. `pnpm test:run` — all logic + MSW-handler tests must pass.
   4. `pnpm build` — `tsc --noEmit` + Vite build must succeed.
-  5. `pnpm smoke` (or specific smoke scripts) when the change touches routes, MSW handlers, or any user-visible page flow.
+  5. `pnpm test:e2e` when the change touches routes, MSW handlers, or any user-visible page flow.
      Skipping any step is not allowed; if a step fails, fix the cause before committing.
 - Before committing, re-read every comment added in this change. Delete any that paraphrase the code or reference the task; replace workaround flags with better types.
 - README must document:
