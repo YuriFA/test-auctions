@@ -21,7 +21,7 @@ export function AuctionCardHeader({ item }: Props) {
       >
         {item.cargoNum ? `№ ${item.cargoNum}` : 'Аукцион без номера'}
       </Link>
-      <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex flex-wrap items-center gap-1.5 max-sm:w-full">
         <AuctionTypeBadge type={item.aucType} label={item.aucTypeLabel} />
         <AuctionStatusBadge status={item.auctionStatus} label={item.auctionStatusLabel} />
         <TradingStatusBadge status={item.tradingStatus} label={item.tradingStatusLabel} />
