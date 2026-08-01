@@ -16,7 +16,7 @@ export function AuctionAction({ action, auctionRef }: Props) {
     )
   }
 
-  if (action.route === 'bet') {
+  if (action.kind === 'place-bet' || action.kind === 'change-bet') {
     return (
       <Button
         className="relative"

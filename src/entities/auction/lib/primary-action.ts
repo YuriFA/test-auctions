@@ -2,12 +2,9 @@ import type { AuctionStatus } from '@shared/api'
 
 type AuctionCardPrimaryActionKind = 'place-bet' | 'change-bet' | 'view-bets' | 'disabled'
 
-type AuctionCardPrimaryActionRoute = 'bet' | 'bets' | 'detail'
-
 export interface AuctionCardPrimaryAction {
   kind: AuctionCardPrimaryActionKind
   label: string
-  route: AuctionCardPrimaryActionRoute
 }
 
 export interface AuctionCardPrimaryActionSource {
@@ -28,14 +25,14 @@ export function deriveAuctionCardPrimaryAction(
   const disabledLabel =
     source.auctionStatus !== undefined ? DISABLED_LABELS[source.auctionStatus] : undefined
   if (disabledLabel) {
-    return { kind: 'disabled', label: disabledLabel, route: 'detail' }
+    return { kind: 'disabled', label: disabledLabel }
   }
 
   if (source.canSetBet) {
     return source.hasUserBet
-      ? { kind: 'change-bet', label: 'Изменить ставку', route: 'bet' }
-      : { kind: 'place-bet', label: 'Сделать ставку', route: 'bet' }
+      ? { kind: 'change-bet', label: 'Изменить ставку' }
+      : { kind: 'place-bet', label: 'Сделать ставку' }
   }
 
-  return { kind: 'view-bets', label: 'Смотреть ставки', route: 'bets' }
+  return { kind: 'view-bets', label: 'Смотреть ставки' }
 }

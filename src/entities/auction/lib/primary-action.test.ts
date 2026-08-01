@@ -14,7 +14,6 @@ describe('deriveAuctionCardPrimaryAction', () => {
           hasUserBet: true,
         })
         expect(result.kind).toBe('disabled')
-        expect(result.route).toBe('detail')
       },
     )
 
@@ -49,7 +48,7 @@ describe('deriveAuctionCardPrimaryAction', () => {
       canSetBet: true,
       hasUserBet: false,
     })
-    expect(result).toMatchObject({ kind: 'place-bet', label: 'Сделать ставку', route: 'bet' })
+    expect(result).toMatchObject({ kind: 'place-bet', label: 'Сделать ставку' })
   })
 
   it('returns change-bet when can_set_bet and user already has a bet', () => {
@@ -58,7 +57,7 @@ describe('deriveAuctionCardPrimaryAction', () => {
       canSetBet: true,
       hasUserBet: true,
     })
-    expect(result).toMatchObject({ kind: 'change-bet', label: 'Изменить ставку', route: 'bet' })
+    expect(result).toMatchObject({ kind: 'change-bet', label: 'Изменить ставку' })
   })
 
   it('returns view-bets when can_set_bet=false and status is non-terminal', () => {
@@ -67,7 +66,7 @@ describe('deriveAuctionCardPrimaryAction', () => {
       canSetBet: false,
       hasUserBet: true,
     })
-    expect(result).toMatchObject({ kind: 'view-bets', label: 'Смотреть ставки', route: 'bets' })
+    expect(result).toMatchObject({ kind: 'view-bets', label: 'Смотреть ставки' })
   })
 
   describe('missing status', () => {

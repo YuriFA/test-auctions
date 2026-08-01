@@ -24,7 +24,7 @@ export function DetailActionBar({ action, auctionRef, restrictions }: DetailActi
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {action.route === 'bet' ? (
+      {action.kind === 'place-bet' || action.kind === 'change-bet' ? (
         <Button
           nativeButton={false}
           render={<Link to="/auctions/$auctionRef/bet" params={{ auctionRef }} />}
