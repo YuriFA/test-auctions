@@ -17,6 +17,9 @@ export const indexRoute = createRoute({
   loaderDeps: ({ search }) => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }),
   loader: ({ context: { queryClient }, deps }) => {
     const request = buildAuctionListRequest(deps)
-    return queryClient.ensureQueryData(auctionListQueryOptions(request))
+    return queryClient.ensureQueryData({
+      ...auctionListQueryOptions(request),
+      revalidateIfStale: true,
+    })
   },
 })
