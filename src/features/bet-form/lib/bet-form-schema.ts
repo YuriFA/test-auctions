@@ -1,3 +1,4 @@
+import { isStepAligned } from '@shared/lib'
 import { z } from 'zod'
 
 export type BetPriceConstraints = {
@@ -5,14 +6,6 @@ export type BetPriceConstraints = {
   max?: number | null
   step?: number | null
   base?: number | null
-}
-
-const STEP_EPSILON = 1e-6
-
-function isStepAligned(price: number, step: number, base: number): boolean {
-  const drift = Math.abs(price - base)
-  const remainder = drift % step
-  return remainder <= STEP_EPSILON || step - remainder <= STEP_EPSILON
 }
 
 export function nextStepPrice(current: number, constraints: BetPriceConstraints): number {

@@ -1,3 +1,5 @@
+import { isStepAligned } from '@shared/lib'
+
 import type {
   AuctionListMeta,
   AuctionListRequest,
@@ -182,7 +184,7 @@ export function writeBet(uuid: string, price: number): PlaceBetResult {
 
   const priceConstraints = trading?.price
   if (priceConstraints) {
-    const { min, max, step, available } = priceConstraints
+    const { min, max, step } = priceConstraints
     if (min != null && price < min) {
       return {
         ok: false,
@@ -209,21 +211,21 @@ export function writeBet(uuid: string, price: number): PlaceBetResult {
         ]),
       }
     }
-    if (step != null && step > 0 && available != null) {
-      const diff = Math.abs(price - available)
-      const remainder = Math.round((diff % step) * 1e9) / 1e9
-      if (remainder > 1e-6) {
-        return {
-          ok: false,
-          status: 422,
-          problem: validationProblem([
-            {
-              field: 'price',
-              message: `Ставка не соответствует шагу торгов (шаг: ${step})`,
-              code: 'price_invalid_step',
-            },
-          ]),
-        }
+    // NOTE: step grid origin is `start` (the fixed opening price), matching
+    // the client-side schema. `available` drifts after every bet, so anchoring
+    // the grid to it would shift the set of legal prices on each turn.
+    const start = priceConstraints.start
+    if (step != null && step > 0 && start != null && !isStepAligned(price, step, start)) {
+      return {
+        ok: false,
+        status: 422,
+        problem: validationProblem([
+          {
+            field: 'price',
+            message: `Ставка не соответствует шагу торгов (шаг: ${step})`,
+            code: 'price_invalid_step',
+          },
+        ]),
       }
     }
   }

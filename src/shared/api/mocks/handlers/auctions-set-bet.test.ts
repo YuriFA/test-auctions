@@ -238,6 +238,17 @@ describe('POST /auctions/:uuid/bets — MSW handler', () => {
     expect((res.json as ValidationProblem)?.errors?.[0]?.field).toBe('price')
   })
 
+  it('accepts a price on the step grid from start even when available is off-grid', async () => {
+    const res = await postBet(seedAuctionUuids.downNewcomer, { price: 38000 })
+    expect(res.status).toBe(200)
+  })
+
+  it('rejects an off-grid price from start regardless of available alignment', async () => {
+    const res = await postBet(seedAuctionUuids.downNewcomer, { price: 38100 })
+    expectValidationProblem(res)
+    expect((res.json as ValidationProblem)?.errors?.[0]?.code).toBe('price_invalid_step')
+  })
+
   it('accepts a valid on-step price at min boundary', async () => {
     const res = await postBet(seedAuctionUuids.downLeading, { price: 40000 })
     expect(res.status).toBe(200)
