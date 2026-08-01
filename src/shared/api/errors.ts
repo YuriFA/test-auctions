@@ -59,6 +59,6 @@ export function normalizeApiError(response: Response | undefined, body: unknown)
   return new ApiError(
     status,
     null,
-    status === 0 ? 'Network request failed' : `Request failed with status ${status}`,
+    status === 0 ? 'Ошибка сети' : `Ошибка запроса (статус ${status})`,
   )
 }

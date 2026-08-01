@@ -34,7 +34,7 @@ export async function fetchBetsByRef(
 ): Promise<BetsListResponse> {
   const auctionUuid = resolveAuctionUuid(auctionRef)
   if (!auctionUuid) {
-    throw new Error(`Auction reference ${auctionRef} cannot be resolved to auctionUuid`)
+    throw new Error(`Не удалось определить аукцион по ссылке «${auctionRef}»`)
   }
   return fetchBets(auctionUuid, options)
 }
@@ -55,7 +55,7 @@ export async function placeBetByRef(options: {
 }): Promise<void> {
   const auctionUuid = resolveAuctionUuid(options.auctionRef)
   if (!auctionUuid) {
-    throw new Error(`Auction reference ${options.auctionRef} cannot be resolved to auctionUuid`)
+    throw new Error(`Не удалось определить аукцион по ссылке «${options.auctionRef}»`)
   }
   return placeBet({ auctionUuid, body: options.body })
 }

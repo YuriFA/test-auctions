@@ -40,7 +40,7 @@ export function resolveAuctionUuid(auctionRef: AuctionRef): string | undefined {
 export async function fetchAuctionDetailByRef(auctionRef: AuctionRef): Promise<AuctionDetail> {
   const auctionUuid = resolveAuctionUuid(auctionRef)
   if (!auctionUuid) {
-    throw new Error(`Auction reference ${auctionRef} cannot be resolved to auctionUuid`)
+    throw new Error(`Не удалось определить аукцион по ссылке «${auctionRef}»`)
   }
   return fetchAuctionDetail(auctionUuid)
 }
