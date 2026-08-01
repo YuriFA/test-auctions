@@ -1,7 +1,11 @@
-import { parseOptionalNumber } from '@shared/lib'
+import { parseOptionalBoolean, parseOptionalNumber } from '@shared/lib'
 import { z } from 'zod'
 
 const AUCTION_TYPES = ['Request', 'Up', 'Down', 'FixPrice', 'Unknown'] as const
+
+// API contract excludes 'Unknown' from the request payload even though the
+// URL filter set accepts it — see request-builder.ts.
+const API_AUC_TYPES = ['Request', 'Up', 'Down', 'FixPrice'] as const
 
 // NOTE: list DTO never surfaces OnPending/ChoosingWinner/Accepted — exclude
 // them from the URL filter set so unknown values drop on parse.
@@ -35,6 +39,8 @@ export const DEFAULT_AUCTIONS_LIST_FILTERS = Object.freeze({
   create_date_to: undefined,
   load_date_from: undefined,
   load_date_to: undefined,
+  is_available: undefined,
+  is_bidder: undefined,
 })
 
 export type AuctionsListFilters = {
@@ -56,6 +62,66 @@ export type AuctionsListFilters = {
   is_bidder?: boolean
 }
 
+// --- centralized field descriptors --------------------------------------------
+
+type FieldKind =
+  | 'defaultNumber'
+  | 'defaultBoolean'
+  | 'string'
+  | 'optionalString'
+  | 'array'
+  | 'optionalNumber'
+  | 'optionalBoolean'
+
+const FIELD_KINDS = {
+  page: 'defaultNumber',
+  is_oldest: 'defaultBoolean',
+  cargo_num: 'string',
+  load_city: 'string',
+  unload_city: 'string',
+  auc_type: 'array',
+  status: 'array',
+  statuses: 'array',
+  current_price_from: 'optionalNumber',
+  current_price_to: 'optionalNumber',
+  create_date_from: 'optionalString',
+  create_date_to: 'optionalString',
+  load_date_from: 'optionalString',
+  load_date_to: 'optionalString',
+  is_available: 'optionalBoolean',
+  is_bidder: 'optionalBoolean',
+} as const satisfies Record<keyof AuctionsListFilters, FieldKind>
+
+const ACTIVE_FIELDS = Object.keys(FIELD_KINDS) as Array<keyof AuctionsListFilters>
+
+// `page` and `cargo_num` are excluded from `countActiveFilters` /
+// `isDefaultFilters`: pagination is navigation and search is a separate
+// header input. Both still serialize to URL and the API request.
+const NON_FILTER_FIELDS: ReadonlySet<keyof AuctionsListFilters> = new Set(['page', 'cargo_num'])
+
+function isActive<K extends keyof AuctionsListFilters>(
+  key: K,
+  value: AuctionsListFilters[K],
+): boolean {
+  switch (FIELD_KINDS[key]) {
+    case 'defaultNumber':
+      return value !== DEFAULT_PAGE
+    case 'defaultBoolean':
+      return value !== DEFAULT_IS_OLDEST
+    case 'optionalNumber':
+      return typeof value === 'number'
+    case 'optionalBoolean':
+      return typeof value === 'boolean'
+    case 'array':
+      return (value as unknown[]).length > 0
+    case 'optionalString':
+    case 'string':
+      return Boolean(value)
+  }
+}
+
+// --- URL parsing --------------------------------------------------------------
+
 function toPlainObject(raw: URLSearchParams): Record<string, string[]> {
   const out: Record<string, string[]> = {}
   for (const key of raw.keys()) {
@@ -68,23 +134,29 @@ const first = <T>(arr: T[] | undefined): T | undefined => arr?.[0]
 
 const stringArray = z.array(z.string()).optional()
 
+const fromStringArray = <T>(fn: (val: string | undefined) => T) =>
+  stringArray.transform((arr) => fn(first(arr)))
+
+const enumArrayField = <T extends readonly string[]>(allowed: T) =>
+  stringArray.transform((arr) => parseEnumArray(arr ?? [], allowed))
+
 export const auctionsListFiltersSchema: z.ZodType<AuctionsListFilters> = z.object({
-  page: stringArray.transform((arr) => parsePage(first(arr) ?? null)),
-  is_oldest: stringArray.transform((arr) => parseSortFlag(first(arr) ?? null)),
-  cargo_num: stringArray.transform((arr) => first(arr) ?? ''),
-  auc_type: stringArray.transform((arr) => parseEnumArray(arr ?? [], AUCTION_TYPES)),
-  status: stringArray.transform((arr) => parseEnumArray(arr ?? [], MOBILE_STATUSES)),
+  page: fromStringArray((v) => parsePage(v ?? null)),
+  is_oldest: fromStringArray((v) => parseSortFlag(v ?? null)),
+  cargo_num: fromStringArray((v) => v ?? ''),
+  load_city: fromStringArray((v) => v ?? ''),
+  unload_city: fromStringArray((v) => v ?? ''),
+  auc_type: enumArrayField(AUCTION_TYPES),
+  status: enumArrayField(MOBILE_STATUSES),
   statuses: stringArray.transform((arr) => parseNumericStatuses(arr ?? [])),
-  load_city: stringArray.transform((arr) => first(arr) ?? ''),
-  unload_city: stringArray.transform((arr) => first(arr) ?? ''),
-  current_price_from: stringArray.transform((arr) => parseOptionalNumber(first(arr) ?? null)),
-  current_price_to: stringArray.transform((arr) => parseOptionalNumber(first(arr) ?? null)),
-  create_date_from: stringArray.transform((arr) => first(arr)),
-  create_date_to: stringArray.transform((arr) => first(arr)),
-  load_date_from: stringArray.transform((arr) => first(arr)),
-  load_date_to: stringArray.transform((arr) => first(arr)),
-  is_available: stringArray.transform((arr) => parseOptionalBoolean(first(arr) ?? null)),
-  is_bidder: stringArray.transform((arr) => parseOptionalBoolean(first(arr) ?? null)),
+  current_price_from: fromStringArray((v) => parseOptionalNumber(v ?? null)),
+  current_price_to: fromStringArray((v) => parseOptionalNumber(v ?? null)),
+  create_date_from: fromStringArray((v) => v),
+  create_date_to: fromStringArray((v) => v),
+  load_date_from: fromStringArray((v) => v),
+  load_date_to: fromStringArray((v) => v),
+  is_available: fromStringArray((v) => parseOptionalBoolean(v ?? null)),
+  is_bidder: fromStringArray((v) => parseOptionalBoolean(v ?? null)),
 })
 
 export function parseAuctionsListSearchParams(
@@ -129,127 +201,45 @@ function parseNumericStatuses(values: string[]): number[] {
     )
 }
 
-function parseOptionalBoolean(raw: string | null): boolean | undefined {
-  if (raw === 'true') {
-    return true
-  }
-  if (raw === 'false') {
-    return false
-  }
-  return undefined
-}
+// --- URL serialization --------------------------------------------------------
 
 // NOTE: defaults are not serialized so URLs stay readable and resilient to
 // default changes; arrays become repeated keys, never CSV.
 export function serializeAuctionsListSearchParams(value: AuctionsListFilters): URLSearchParams {
   const out = new URLSearchParams()
-
-  if (value.page !== DEFAULT_PAGE) {
-    out.set('page', String(value.page))
+  for (const key of ACTIVE_FIELDS) {
+    if (!isActive(key, value[key])) {
+      continue
+    }
+    const field = value[key]
+    if (Array.isArray(field)) {
+      for (const item of field) {
+        out.append(key, String(item))
+      }
+    } else {
+      out.set(key, String(field))
+    }
   }
-  if (value.is_oldest !== DEFAULT_IS_OLDEST) {
-    out.set('is_oldest', String(value.is_oldest))
-  }
-  if (value.cargo_num) {
-    out.set('cargo_num', value.cargo_num)
-  }
-  if (value.load_city) {
-    out.set('load_city', value.load_city)
-  }
-  if (value.unload_city) {
-    out.set('unload_city', value.unload_city)
-  }
-  for (const t of value.auc_type) {
-    out.append('auc_type', t)
-  }
-  for (const s of value.status) {
-    out.append('status', s)
-  }
-  for (const s of value.statuses) {
-    out.append('statuses', String(s))
-  }
-  if (typeof value.current_price_from === 'number') {
-    out.set('current_price_from', String(value.current_price_from))
-  }
-  if (typeof value.current_price_to === 'number') {
-    out.set('current_price_to', String(value.current_price_to))
-  }
-  if (value.create_date_from) {
-    out.set('create_date_from', value.create_date_from)
-  }
-  if (value.create_date_to) {
-    out.set('create_date_to', value.create_date_to)
-  }
-  if (value.load_date_from) {
-    out.set('load_date_from', value.load_date_from)
-  }
-  if (value.load_date_to) {
-    out.set('load_date_to', value.load_date_to)
-  }
-  if (typeof value.is_available === 'boolean') {
-    out.set('is_available', String(value.is_available))
-  }
-  if (typeof value.is_bidder === 'boolean') {
-    out.set('is_bidder', String(value.is_bidder))
-  }
-
   return out
 }
+
+// --- "active filters" badge ---------------------------------------------------
 
 export function isDefaultFilters(value: AuctionsListFilters): boolean {
   return countActiveFilters(value) === 0
 }
 
-// NOTE: `cargo_num` and `page` are excluded — search is a separate header
-// input, and pagination is navigation. Both affect the URL but are not
-// filters. Optionals count as active whenever present (true OR false), since
-// defaults are `undefined`; arrays count as one field regardless of length.
 export function countActiveFilters(value: AuctionsListFilters): number {
   let count = 0
-  if (value.is_oldest !== DEFAULT_IS_OLDEST) {
-    count += 1
-  }
-  if (value.load_city) {
-    count += 1
-  }
-  if (value.unload_city) {
-    count += 1
-  }
-  if (value.auc_type.length > 0) {
-    count += 1
-  }
-  if (value.status.length > 0) {
-    count += 1
-  }
-  if (value.statuses.length > 0) {
-    count += 1
-  }
-  if (typeof value.current_price_from === 'number') {
-    count += 1
-  }
-  if (typeof value.current_price_to === 'number') {
-    count += 1
-  }
-  if (value.create_date_from) {
-    count += 1
-  }
-  if (value.create_date_to) {
-    count += 1
-  }
-  if (value.load_date_from) {
-    count += 1
-  }
-  if (value.load_date_to) {
-    count += 1
-  }
-  if (typeof value.is_available === 'boolean') {
-    count += 1
-  }
-  if (typeof value.is_bidder === 'boolean') {
-    count += 1
+  for (const key of ACTIVE_FIELDS) {
+    if (!NON_FILTER_FIELDS.has(key) && isActive(key, value[key])) {
+      count += 1
+    }
   }
   return count
 }
+
+// --- record-object (route validateSearch) parsing -----------------------------
 
 export type AuctionsListSearch = Partial<AuctionsListFilters>
 
@@ -258,60 +248,13 @@ export function parseAuctionsListSearch(raw: Record<string, unknown>): AuctionsL
 }
 
 export function toAuctionsListSearch(filters: AuctionsListFilters): AuctionsListSearch {
-  return pickActiveFilters(filters)
-}
-
-function pickActiveFilters(filters: AuctionsListFilters): AuctionsListSearch {
-  const out: AuctionsListSearch = {}
-  if (filters.page !== DEFAULT_PAGE) {
-    out.page = filters.page
+  const out: Record<string, unknown> = {}
+  for (const key of ACTIVE_FIELDS) {
+    if (isActive(key, filters[key])) {
+      out[key] = filters[key]
+    }
   }
-  if (filters.is_oldest !== DEFAULT_IS_OLDEST) {
-    out.is_oldest = filters.is_oldest
-  }
-  if (filters.cargo_num) {
-    out.cargo_num = filters.cargo_num
-  }
-  if (filters.load_city) {
-    out.load_city = filters.load_city
-  }
-  if (filters.unload_city) {
-    out.unload_city = filters.unload_city
-  }
-  if (filters.auc_type.length > 0) {
-    out.auc_type = filters.auc_type
-  }
-  if (filters.status.length > 0) {
-    out.status = filters.status
-  }
-  if (filters.statuses.length > 0) {
-    out.statuses = filters.statuses
-  }
-  if (typeof filters.current_price_from === 'number') {
-    out.current_price_from = filters.current_price_from
-  }
-  if (typeof filters.current_price_to === 'number') {
-    out.current_price_to = filters.current_price_to
-  }
-  if (filters.create_date_from) {
-    out.create_date_from = filters.create_date_from
-  }
-  if (filters.create_date_to) {
-    out.create_date_to = filters.create_date_to
-  }
-  if (filters.load_date_from) {
-    out.load_date_from = filters.load_date_from
-  }
-  if (filters.load_date_to) {
-    out.load_date_to = filters.load_date_to
-  }
-  if (typeof filters.is_available === 'boolean') {
-    out.is_available = filters.is_available
-  }
-  if (typeof filters.is_bidder === 'boolean') {
-    out.is_bidder = filters.is_bidder
-  }
-  return out
+  return out as AuctionsListSearch
 }
 
 function normalizeRecordSearch(raw: Record<string, unknown>): Record<string, string[]> {
@@ -330,3 +273,11 @@ function normalizeRecordSearch(raw: Record<string, unknown>): Record<string, str
   }
   return out
 }
+
+// --- request-builder helpers (co-located with URL-side constants) -------------
+
+export function isApiAucType(value: string): value is ApiAucType {
+  return (API_AUC_TYPES as readonly string[]).includes(value)
+}
+
+export type ApiAucType = (typeof API_AUC_TYPES)[number]

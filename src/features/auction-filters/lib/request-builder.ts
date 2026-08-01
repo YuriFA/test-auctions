@@ -1,8 +1,6 @@
 import type { AuctionListRequest } from '@shared/api'
 
-import { DEFAULT_AUCTIONS_LIST_FILTERS, type AuctionsListFilters } from './search-params'
-
-const API_AUC_TYPES = ['Request', 'Up', 'Down', 'FixPrice'] as const
+import { DEFAULT_AUCTIONS_LIST_FILTERS, isApiAucType, type AuctionsListFilters } from './search-params'
 
 export function buildAuctionListRequest(parsed: AuctionsListFilters): AuctionListRequest {
   const request: AuctionListRequest = {}
@@ -23,15 +21,13 @@ export function buildAuctionListRequest(parsed: AuctionsListFilters): AuctionLis
     request.unload_city = parsed.unload_city
   }
 
-  const aucType = parsed.auc_type.filter((value) =>
-    (API_AUC_TYPES as readonly string[]).includes(value),
-  )
+  const aucType = parsed.auc_type.filter(isApiAucType)
   if (aucType.length > 0) {
-    request.auc_type = aucType as AuctionListRequest['auc_type']
+    request.auc_type = aucType
   }
 
   if (parsed.status.length > 0) {
-    request.status = parsed.status as AuctionListRequest['status']
+    request.status = parsed.status
   }
   if (parsed.statuses.length > 0) {
     request.statuses = parsed.statuses

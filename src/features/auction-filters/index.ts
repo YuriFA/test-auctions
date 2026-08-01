@@ -1,14 +1,9 @@
 export type { AuctionsListFilters, AuctionsListSearch } from './lib/search-params'
 export {
   DEFAULT_AUCTIONS_LIST_FILTERS,
-  DEFAULT_IS_OLDEST,
-  DEFAULT_PAGE,
-  auctionsListFiltersSchema,
   countActiveFilters,
   isDefaultFilters,
   parseAuctionsListSearch,
-  parseAuctionsListSearchParams,
-  serializeAuctionsListSearchParams,
   toAuctionsListSearch,
 } from './lib/search-params'
 export { buildAuctionListRequest } from './lib/request-builder'

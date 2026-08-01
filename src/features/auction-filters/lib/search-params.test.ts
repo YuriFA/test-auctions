@@ -5,8 +5,10 @@ import {
   DEFAULT_AUCTIONS_LIST_FILTERS,
   countActiveFilters,
   isDefaultFilters,
+  parseAuctionsListSearch,
   parseAuctionsListSearchParams,
   serializeAuctionsListSearchParams,
+  toAuctionsListSearch,
 } from './search-params'
 
 describe('parseAuctionsListSearchParams', () => {
@@ -347,5 +349,75 @@ describe('countActiveFilters', () => {
   it('counts is_available as active when set to true OR false', () => {
     expect(countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: true })).toBe(1)
     expect(countActiveFilters({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: false })).toBe(1)
+  })
+})
+
+describe('toAuctionsListSearch', () => {
+  it('returns an empty object for default filters', () => {
+    expect(toAuctionsListSearch(DEFAULT_AUCTIONS_LIST_FILTERS)).toEqual({})
+  })
+
+  it('keeps page when it differs from default', () => {
+    expect(toAuctionsListSearch({ ...DEFAULT_AUCTIONS_LIST_FILTERS, page: 3 })).toEqual({ page: 3 })
+  })
+
+  it('keeps cargo_num when non-empty', () => {
+    expect(
+      toAuctionsListSearch({ ...DEFAULT_AUCTIONS_LIST_FILTERS, cargo_num: 'MSK-001' }),
+    ).toEqual({ cargo_num: 'MSK-001' })
+  })
+
+  it('keeps falsy is_available when set', () => {
+    expect(
+      toAuctionsListSearch({ ...DEFAULT_AUCTIONS_LIST_FILTERS, is_available: false }),
+    ).toEqual({ is_available: false })
+  })
+
+  it('preserves arrays as arrays', () => {
+    expect(
+      toAuctionsListSearch({ ...DEFAULT_AUCTIONS_LIST_FILTERS, statuses: [1, 2, 3] }),
+    ).toEqual({ statuses: [1, 2, 3] })
+  })
+})
+
+describe('parseAuctionsListSearch', () => {
+  it('returns an empty object for empty input', () => {
+    expect(parseAuctionsListSearch({})).toEqual({})
+  })
+
+  it('coerces scalar string values', () => {
+    expect(parseAuctionsListSearch({ cargo_num: 'MSK-001' })).toEqual({ cargo_num: 'MSK-001' })
+  })
+
+  it('coerces numeric values to their canonical form', () => {
+    expect(parseAuctionsListSearch({ page: 3 })).toEqual({ page: 3 })
+  })
+
+  it('coerces boolean values', () => {
+    expect(parseAuctionsListSearch({ is_available: true })).toEqual({ is_available: true })
+  })
+
+  it('accepts array of strings', () => {
+    expect(parseAuctionsListSearch({ statuses: ['1', '2'] })).toEqual({ statuses: [1, 2] })
+  })
+
+  it('drops non-string entries from array values', () => {
+    expect(parseAuctionsListSearch({ statuses: ['1', '2', 3, null] })).toEqual({
+      statuses: [1, 2],
+    })
+  })
+
+  it('drops unknown keys', () => {
+    expect(parseAuctionsListSearch({ bogus_key: 'value', cargo_num: 'MSK-001' })).toEqual({
+      cargo_num: 'MSK-001',
+    })
+  })
+
+  it('drops empty arrays from the output', () => {
+    expect(parseAuctionsListSearch({ auc_type: [] })).toEqual({})
+  })
+
+  it('drops values that equal defaults', () => {
+    expect(parseAuctionsListSearch({ page: 1, is_oldest: false })).toEqual({})
   })
 })
