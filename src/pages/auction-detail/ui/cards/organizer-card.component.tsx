@@ -2,13 +2,13 @@ import type { AuctionDetailVM } from '@entities/auction'
 import { Card, CardContent, CardHeader, CardTitle } from '@shared/ui'
 import { Users } from 'lucide-react'
 
+import { DefinitionRow } from '../definition-row.component'
+
 export interface OrganizerCardProps {
   vm: AuctionDetailVM
 }
 
 export function OrganizerCard({ vm }: OrganizerCardProps) {
-  const hasInn = Boolean(vm.organizerInn)
-  const hasKpp = Boolean(vm.organizerKpp)
   return (
     <Card>
       <CardHeader>
@@ -19,21 +19,9 @@ export function OrganizerCard({ vm }: OrganizerCardProps) {
       </CardHeader>
       <CardContent className="text-sm">
         <dl className="flex flex-col gap-2">
-          <div className="font-medium">{vm.organizerName || '—'}</div>
-          <div className="flex flex-wrap gap-x-6 gap-y-1 text-muted-foreground">
-            {hasInn && (
-              <div>
-                <dt className="inline">ИНН </dt>
-                <dd className="inline font-mono text-foreground">{vm.organizerInn}</dd>
-              </div>
-            )}
-            {hasKpp && (
-              <div>
-                <dt className="inline">КПП </dt>
-                <dd className="inline font-mono text-foreground">{vm.organizerKpp}</dd>
-              </div>
-            )}
-          </div>
+          <DefinitionRow label="Название" value={vm.organizerName || '—'} />
+          {vm.organizerInn && <DefinitionRow label="ИНН" value={vm.organizerInn} />}
+          {vm.organizerKpp && <DefinitionRow label="КПП" value={vm.organizerKpp} />}
         </dl>
       </CardContent>
     </Card>
