@@ -12,6 +12,7 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  BackLink,
   Button,
   Card,
   CardContent,
@@ -22,7 +23,7 @@ import {
   Skeleton,
 } from '@shared/ui'
 import { Link, useParams } from '@tanstack/react-router'
-import { ArrowLeft, CalendarClock, MapPin, Phone, Truck, Users } from 'lucide-react'
+import { CalendarClock, MapPin, Phone, Truck, Users } from 'lucide-react'
 import { useMemo } from 'react'
 
 export function AuctionDetail() {
@@ -47,7 +48,7 @@ export function AuctionDetail() {
   if (query.isError) {
     return (
       <PageContainer className="max-w-5xl gap-4">
-        <BackLink />
+        <DetailBackLink />
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Аукцион недоступен</h1>
         <Alert variant="destructive">
           <AlertTitle>Не удалось загрузить аукцион</AlertTitle>
@@ -66,7 +67,7 @@ export function AuctionDetail() {
   if (!vm) {
     return (
       <PageContainer className="max-w-5xl gap-4">
-        <BackLink />
+        <DetailBackLink />
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Аукцион не найден</h1>
         <Alert>
           <AlertTitle>Аукцион недоступен</AlertTitle>
@@ -107,7 +108,7 @@ function AuctionDetailContent({ vm, auctionUuid }: ContentProps) {
 
   return (
     <PageContainer className="flex max-w-5xl flex-col gap-4">
-      <BackLink />
+      <DetailBackLink />
 
       <header className="flex flex-col gap-3">
         <div className="flex flex-col gap-2">
@@ -145,18 +146,11 @@ function AuctionDetailContent({ vm, auctionUuid }: ContentProps) {
   )
 }
 
-function BackLink() {
+function DetailBackLink() {
   return (
-    <Button
-      variant="link"
-      size="sm"
-      nativeButton={false}
-      className="w-fit px-0 text-muted-foreground"
-      render={<Link to="/" search={{}} />}
-    >
-      <ArrowLeft className="size-4" aria-hidden />
+    <BackLink to="/" search={{}}>
       К списку аукционов
-    </Button>
+    </BackLink>
   )
 }
 

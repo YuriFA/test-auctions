@@ -6,13 +6,14 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
+  BackLink,
   Badge,
-  Button,
+  ErrorStateCard,
   PageContainer,
   Skeleton,
 } from '@shared/ui'
-import { Link, useParams } from '@tanstack/react-router'
-import { ArrowLeft, Crown } from 'lucide-react'
+import { useParams } from '@tanstack/react-router'
+import { Crown } from 'lucide-react'
 
 export function AuctionBets() {
   const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid/bets' })
@@ -21,16 +22,24 @@ export function AuctionBets() {
     enabled: !detail.data?.hideBetsHistory,
   })
 
+  const backLink = (
+    <BackLink to="/auctions/$auctionUuid" params={{ auctionUuid }}>
+      К аукциону
+    </BackLink>
+  )
+
   if (detail.isPending) {
     return <AuctionBetsSkeleton />
   }
 
   if (detail.isError) {
     return (
-      <AuctionBetsError
+      <ErrorStateCard
         title="Аукцион недоступен"
         message={detail.error?.message ?? 'Не удалось загрузить аукцион.'}
         onRetry={() => detail.refetch()}
+        backLink={backLink}
+        className="max-w-5xl"
       />
     )
   }
@@ -38,15 +47,17 @@ export function AuctionBets() {
   const vm = detail.data
   if (!vm) {
     return (
-      <AuctionBetsError
+      <ErrorStateCard
         title="Аукцион не найден"
         message="Возможно, ссылка устарела или аукцион был удалён."
+        backLink={backLink}
+        className="max-w-5xl"
       />
     )
   }
 
   if (vm.hideBetsHistory) {
-    return <AuctionBetsRestricted />
+    return <AuctionBetsRestricted backLink={backLink} />
   }
 
   if (betsQuery.isPending) {
@@ -55,26 +66,32 @@ export function AuctionBets() {
 
   if (betsQuery.isError) {
     return (
-      <AuctionBetsError
+      <ErrorStateCard
         title="История недоступна"
         message={betsQuery.error?.message ?? 'Не удалось загрузить ставки.'}
         onRetry={() => betsQuery.refetch()}
+        backLink={backLink}
+        className="max-w-5xl"
       />
     )
   }
 
   const betsVM = betsQuery.data
   if (!betsVM || betsVM.bets.length === 0) {
-    return <AuctionBetsEmpty />
+    return <AuctionBetsEmpty backLink={backLink} />
   }
 
-  return <AuctionBetsContent vm={betsVM} />
+  return <AuctionBetsContent vm={betsVM} backLink={backLink} />
 }
 
-function AuctionBetsContent({ vm }: { vm: AuctionBetsVM }) {
+interface BranchProps {
+  backLink: React.ReactNode
+}
+
+function AuctionBetsContent({ vm, backLink }: BranchProps & { vm: AuctionBetsVM }) {
   return (
     <PageContainer className="flex max-w-5xl flex-col gap-4">
-      <BackLink />
+      {backLink}
       <header className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">История ставок</h1>
         <p className="text-sm text-muted-foreground">
@@ -137,10 +154,10 @@ function BetRow({ bet }: { bet: AuctionBetVM }) {
   )
 }
 
-function AuctionBetsRestricted() {
+function AuctionBetsRestricted({ backLink }: BranchProps) {
   return (
     <PageContainer className="flex max-w-5xl flex-col gap-4">
-      <BackLink />
+      {backLink}
       <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">История ставок</h1>
       <Alert>
         <AlertTitle>История скрыта</AlertTitle>
@@ -150,10 +167,10 @@ function AuctionBetsRestricted() {
   )
 }
 
-function AuctionBetsEmpty() {
+function AuctionBetsEmpty({ backLink }: BranchProps) {
   return (
     <PageContainer className="flex max-w-5xl flex-col gap-4">
-      <BackLink />
+      {backLink}
       <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">История ставок</h1>
       <Alert>
         <AlertTitle>Ставок пока нет</AlertTitle>
@@ -174,45 +191,5 @@ function AuctionBetsSkeleton() {
         ))}
       </div>
     </PageContainer>
-  )
-}
-
-interface ErrorProps {
-  title: string
-  message: string
-  onRetry?: () => void
-}
-
-function AuctionBetsError({ title, message, onRetry }: ErrorProps) {
-  return (
-    <PageContainer className="flex max-w-5xl flex-col gap-4">
-      <BackLink />
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
-      <Alert variant="destructive">
-        <AlertTitle>Не удалось загрузить</AlertTitle>
-        <AlertDescription>{message}</AlertDescription>
-        {onRetry && (
-          <Button variant="outline" size="sm" onClick={onRetry}>
-            Повторить
-          </Button>
-        )}
-      </Alert>
-    </PageContainer>
-  )
-}
-
-function BackLink() {
-  const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid/bets' })
-  return (
-    <Button
-      variant="link"
-      size="sm"
-      nativeButton={false}
-      className="w-fit px-0 text-muted-foreground"
-      render={<Link to="/auctions/$auctionUuid" params={{ auctionUuid }} />}
-    >
-      <ArrowLeft className="size-4" aria-hidden />
-      К аукциону
-    </Button>
   )
 }
