@@ -2,7 +2,24 @@
 
 ## Статус
 
-Не начато.
+Готово. API-level консистентность покрыта `scripts/msw-set-bet-smoke.mjs`
+(case 2 — после `writeBet` list/detail/bets возвращают обновлённые
+DTO: current price, status_mobile=Leading, rejected previous user bet).
+UI-level консистентность покрыта новым `scripts/mutation-flow-smoke.mjs`
+(5 проверок, включён в `pnpm smoke`): реальный пользователь ставит
+44000 через форму `/auctions/{downLeading}/bet` → форма навигирует
+на `/bets` (onSuccess) → bets-список содержит 44000 → SPA-навигация
+на detail показывает "Текущая 44 000 ₽" → SPA-навигация на list
+показывает в карточке MSK-001 обновлённую цену. Инвалидация
+query-ключей (list + detail + bets через `betMutationInvalidationTargets`)
+держит экраны консистентными без ручного refetch.
+
+Критический нюанс MSW 2.x, вскрытый во время верификации: handlers
+исполняются в JS-контексте страницы, не в Service Worker. Полный
+`page.goto` переинициализирует bundle и сбрасывает in-memory state
+в seed. Поэтому smoke использует SPA-навигацию (click по `<a>` с
+has-text), а не Playwright `goto` между шагами — это держит state
+живым через весь флоу.
 
 ## Цель
 

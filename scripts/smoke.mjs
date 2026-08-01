@@ -25,6 +25,7 @@ const BROWSER_SMOKES = [
   ['smoke:filters-ui', 'scripts/filters-ui-smoke.mjs'],
   ['smoke:route', 'scripts/route-smoke.mjs'],
   ['smoke:bet-form', 'scripts/bet-form-smoke.mjs'],
+  ['smoke:mutation-flow', 'scripts/mutation-flow-smoke.mjs'],
   ['smoke:msw-browser', 'scripts/msw-browser-smoke.mjs'],
 ]
 
