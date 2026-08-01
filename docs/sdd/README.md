@@ -80,6 +80,7 @@
 37. `SDD-038` Fix Navigation Semantics And Accessibility
 38. `SDD-039` Close Assignment Compliance Gaps
 39. `SDD-040` Rebuild Verification And CI Confidence
+40. `SDD-041` Dark/Light Theme And App Header
 
 ## Порядок исполнения
 

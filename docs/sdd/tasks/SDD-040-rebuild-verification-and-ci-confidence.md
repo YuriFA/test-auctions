@@ -21,7 +21,6 @@
 - **Visual regression suite**: не добавлен — Non-goal по задаче.
 - **100% coverage ради coverage**: не добавлен — Non-goal по задаче.
 
-
 ## Цель
 
 Сделать verification story проверяемой и доверяемой: tests должны соответствовать реальному DOM/behavior, а quality gates должны быть автоматизированы и непротиворечивы.
