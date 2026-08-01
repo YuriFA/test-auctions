@@ -27,7 +27,7 @@ export function AuctionFilters() {
         render={
           <Button type="button" variant="outline">
             <SlidersHorizontalIcon data-icon="inline-start" />
-            Фильтры
+            <span className="hidden sm:inline">Фильтры</span>
             {activeCount > 0 && (
               <Badge variant="secondary" className="min-w-5 rounded-full px-1.5">
                 {activeCount}

@@ -26,7 +26,7 @@ export function AuctionSearchInput() {
   }
 
   return (
-    <InputGroup className="w-48 max-w-full">
+    <InputGroup className="min-w-42 flex-1">
       <InputGroupAddon align="inline-start">
         <SearchIcon />
       </InputGroupAddon>
@@ -34,6 +34,7 @@ export function AuctionSearchInput() {
         type="text"
         inputMode="text"
         value={local}
+        className="min-w-41"
         placeholder="Поиск по номеру заявки"
         onChange={(e) => setLocal(e.target.value)}
         onBlur={commit}
