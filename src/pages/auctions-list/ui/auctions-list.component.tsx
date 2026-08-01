@@ -6,13 +6,11 @@ import {
 } from '@features/auction-filters'
 import { cn } from '@shared/lib/cn'
 import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
   Button,
   Empty,
   EmptyDescription,
   EmptyTitle,
+  ErrorAlert,
   Skeleton,
 } from '@shared/ui'
 import { useNavigate, useSearch } from '@tanstack/react-router'
@@ -67,15 +65,13 @@ export function AuctionsList() {
 
   if (query.isError) {
     return (
-      <Alert variant="destructive">
-        <AlertTitle>Не удалось загрузить аукционы</AlertTitle>
-        <AlertDescription>
-          {query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'}
-        </AlertDescription>
-        <Button variant="outline" size="sm" onClick={() => setPage(filters.page)}>
-          Повторить
-        </Button>
-      </Alert>
+      <ErrorAlert
+        title="Не удалось загрузить аукционы"
+        description={
+          query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'
+        }
+        onRetry={() => setPage(filters.page)}
+      />
     )
   }
 

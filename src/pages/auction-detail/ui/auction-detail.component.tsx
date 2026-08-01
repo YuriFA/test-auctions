@@ -12,14 +12,13 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-  BackLink,
   Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  PageContainer,
+  ErrorAlert,
   Skeleton,
 } from '@shared/ui'
 import { Link, useParams } from '@tanstack/react-router'
@@ -31,49 +30,28 @@ export function AuctionDetail() {
   const query = useAuctionDetail(auctionUuid)
 
   if (query.isPending) {
-    return (
-      <PageContainer className="max-w-5xl gap-4">
-        <Skeleton className="h-8 w-40" />
-        <Skeleton className="h-24" />
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          <Skeleton className="h-40" />
-          <Skeleton className="h-40" />
-          <Skeleton className="h-40" />
-          <Skeleton className="h-40" />
-        </div>
-      </PageContainer>
-    )
+    return <AuctionDetailSkeleton />
   }
 
   if (query.isError) {
     return (
-      <PageContainer className="max-w-5xl gap-4">
-        <DetailBackLink />
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Аукцион недоступен</h1>
-        <Alert variant="destructive">
-          <AlertTitle>Не удалось загрузить аукцион</AlertTitle>
-          <AlertDescription>
-            {query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'}
-          </AlertDescription>
-          <Button variant="outline" size="sm" onClick={() => query.refetch()}>
-            Повторить
-          </Button>
-        </Alert>
-      </PageContainer>
+      <ErrorAlert
+        title="Не удалось загрузить аукцион"
+        description={
+          query.error?.message || 'Произошла непредвиденная ошибка. Попробуйте ещё раз.'
+        }
+        onRetry={() => query.refetch()}
+      />
     )
   }
 
   const vm = query.data
   if (!vm) {
     return (
-      <PageContainer className="max-w-5xl gap-4">
-        <DetailBackLink />
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Аукцион не найден</h1>
-        <Alert>
-          <AlertTitle>Аукцион недоступен</AlertTitle>
-          <AlertDescription>Возможно, ссылка устарела или аукцион был удалён.</AlertDescription>
-        </Alert>
-      </PageContainer>
+      <Alert>
+        <AlertTitle>Аукцион недоступен</AlertTitle>
+        <AlertDescription>Возможно, ссылка устарела или аукцион был удалён.</AlertDescription>
+      </Alert>
     )
   }
 
@@ -107,18 +85,16 @@ function AuctionDetailContent({ vm, auctionUuid }: ContentProps) {
   )
 
   return (
-    <PageContainer className="flex max-w-5xl flex-col gap-4">
-      <DetailBackLink />
-
+    <>
       <header className="flex flex-col gap-3">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            {vm.cargoNum ? `Аукцион № ${vm.cargoNum}` : 'Аукцион без номера'}
-          </h1>
-          <div className="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-            <span>Заявка {vm.orderUid || '—'}</span>
-            {vm.createdAt && <span>· создан {formatDate(vm.createdAt)}</span>}
-          </div>
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+          {vm.cargoNum && (
+            <span className="text-lg font-semibold tracking-tight">№ {vm.cargoNum}</span>
+          )}
+          <span className="text-sm text-muted-foreground">заявка {vm.orderUid || '—'}</span>
+          {vm.createdAt && (
+            <span className="text-sm text-muted-foreground">· создан {formatDate(vm.createdAt)}</span>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5">
           <AuctionTypeBadge type={vm.aucType} label={vm.aucTypeLabel} />
@@ -142,15 +118,7 @@ function AuctionDetailContent({ vm, auctionUuid }: ContentProps) {
         <CargoCard vm={vm} />
         <TradingCard vm={vm} restrictions={restrictions} />
       </div>
-    </PageContainer>
-  )
-}
-
-function DetailBackLink() {
-  return (
-    <BackLink to="/" search={{}}>
-      К списку аукционов
-    </BackLink>
+    </>
   )
 }
 
@@ -327,8 +295,7 @@ function RoutesCard({
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
                   {point.startDate && (
                     <span className="flex items-center gap-1">
-                      <CalendarClock className="size-3" aria-hidden />с{' '}
-                      {formatDate(point.startDate)}
+                      <CalendarClock className="size-3" aria-hidden />с {formatDate(point.startDate)}
                     </span>
                   )}
                   {point.endDate && <span>до {formatDate(point.endDate)}</span>}
@@ -543,5 +510,20 @@ function YourBetCard({
         </dl>
       </CardContent>
     </Card>
+  )
+}
+
+function AuctionDetailSkeleton() {
+  return (
+    <>
+      <Skeleton className="h-6 w-48" />
+      <Skeleton className="h-24" />
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <Skeleton className="h-40" />
+        <Skeleton className="h-40" />
+        <Skeleton className="h-40" />
+        <Skeleton className="h-40" />
+      </div>
+    </>
   )
 }

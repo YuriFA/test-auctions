@@ -6,29 +6,20 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-  BackLink,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-  ErrorStateCard,
-  PageContainer,
+  ErrorAlert,
   Skeleton,
 } from '@shared/ui'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
 
-export function AuctionBetForm() {
-  const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid/bet' })
+export function AuctionBetForm({ auctionUuid }: { auctionUuid: string }) {
   const detail = useAuctionDetail(auctionUuid)
   const navigate = useNavigate()
-
-  const backLink = (
-    <BackLink to="/auctions/$auctionUuid" params={{ auctionUuid }}>
-      К аукциону
-    </BackLink>
-  )
 
   if (detail.isPending) {
     return <AuctionBetFormSkeleton />
@@ -36,11 +27,10 @@ export function AuctionBetForm() {
 
   if (detail.isError) {
     return (
-      <ErrorStateCard
+      <ErrorAlert
         title="Аукцион недоступен"
-        message={detail.error?.message ?? 'Не удалось загрузить аукцион.'}
+        description={detail.error?.message ?? 'Не удалось загрузить аукцион.'}
         onRetry={() => detail.refetch()}
-        backLink={backLink}
       />
     )
   }
@@ -48,11 +38,12 @@ export function AuctionBetForm() {
   const vm = detail.data
   if (!vm) {
     return (
-      <ErrorStateCard
-        title="Аукцион не найден"
-        message="Возможно, ссылка устарела или аукцион был удалён."
-        backLink={backLink}
-      />
+      <Alert>
+        <AlertTitle>Аукцион не найден</AlertTitle>
+        <AlertDescription>
+          Возможно, ссылка устарела или аукцион был удалён.
+        </AlertDescription>
+      </Alert>
     )
   }
 
@@ -64,14 +55,13 @@ export function AuctionBetForm() {
   })
 
   if (!restrictions.canPlaceBet) {
-    return <AuctionBetFormRestricted vm={vm} backLink={backLink} />
+    return <AuctionBetFormRestricted vm={vm} />
   }
 
   return (
     <AuctionBetFormContent
       vm={vm}
       auctionUuid={auctionUuid}
-      backLink={backLink}
       onSuccess={() =>
         navigate({
           to: '/auctions/$auctionUuid/bets',
@@ -82,14 +72,15 @@ export function AuctionBetForm() {
   )
 }
 
-interface ContentProps {
+function AuctionBetFormContent({
+  vm,
+  auctionUuid,
+  onSuccess,
+}: {
   vm: AuctionDetailVM
   auctionUuid: string
-  backLink: React.ReactNode
   onSuccess: () => void
-}
-
-function AuctionBetFormContent({ vm, auctionUuid, backLink, onSuccess }: ContentProps) {
+}) {
   const constraints = useMemo(
     () => ({
       min: vm.priceMin,
@@ -101,14 +92,10 @@ function AuctionBetFormContent({ vm, auctionUuid, backLink, onSuccess }: Content
   )
 
   return (
-    <PageContainer className="flex max-w-2xl flex-col gap-4">
-      {backLink}
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Ставка по аукциону</h1>
-        <p className="text-sm text-muted-foreground">
-          Аукцион {vm.cargoNum ? `№ ${vm.cargoNum}` : `заявка ${vm.orderUid}`}
-        </p>
-      </header>
+    <>
+      <p className="text-sm text-muted-foreground">
+        Аукцион {vm.cargoNum ? `№ ${vm.cargoNum}` : `заявка ${vm.orderUid}`}
+      </p>
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Цена</CardTitle>
@@ -123,7 +110,7 @@ function AuctionBetFormContent({ vm, auctionUuid, backLink, onSuccess }: Content
           />
         </CardContent>
       </Card>
-    </PageContainer>
+    </>
   )
 }
 
@@ -141,17 +128,9 @@ function describeConstraints(vm: AuctionDetailVM): string {
   return parts.length > 0 ? parts.join(' · ') : 'Без явных ограничений'
 }
 
-function AuctionBetFormRestricted({
-  vm,
-  backLink,
-}: {
-  vm: AuctionDetailVM
-  backLink: React.ReactNode
-}) {
+function AuctionBetFormRestricted({ vm }: { vm: AuctionDetailVM }) {
   return (
-    <PageContainer className="flex max-w-2xl flex-col gap-4">
-      {backLink}
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Ставка недоступна</h1>
+    <>
       <Alert>
         <AlertTitle>Нельзя поставить ставку</AlertTitle>
         <AlertDescription>
@@ -161,16 +140,15 @@ function AuctionBetFormRestricted({
       <p className="text-sm text-muted-foreground">
         Аукцион {vm.cargoNum ? `№ ${vm.cargoNum}` : `заявка ${vm.orderUid}`}
       </p>
-    </PageContainer>
+    </>
   )
 }
 
 function AuctionBetFormSkeleton() {
   return (
-    <PageContainer className="flex max-w-2xl flex-col gap-4">
+    <>
       <Skeleton className="h-4 w-32" />
-      <Skeleton className="h-8 w-64" />
       <Skeleton className="h-40" />
-    </PageContainer>
+    </>
   )
 }

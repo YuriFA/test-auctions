@@ -1,4 +1,4 @@
-import type { AuctionBetsVM, AuctionBetVM } from '@entities/auction'
+import type { AuctionBetVM, AuctionBetsVM } from '@entities/auction'
 import { useAuctionBets, useAuctionDetail } from '@entities/auction'
 import { cn } from '@shared/lib/cn'
 import { formatDate, formatPrice } from '@shared/lib/format'
@@ -6,40 +6,28 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-  BackLink,
   Badge,
-  ErrorStateCard,
-  PageContainer,
+  ErrorAlert,
   Skeleton,
 } from '@shared/ui'
-import { useParams } from '@tanstack/react-router'
 import { Crown } from 'lucide-react'
 
-export function AuctionBets() {
-  const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid/bets' })
+export function AuctionBets({ auctionUuid }: { auctionUuid: string }) {
   const detail = useAuctionDetail(auctionUuid)
   const betsQuery = useAuctionBets(auctionUuid, {
     enabled: !detail.data?.hideBetsHistory,
   })
 
-  const backLink = (
-    <BackLink to="/auctions/$auctionUuid" params={{ auctionUuid }}>
-      К аукциону
-    </BackLink>
-  )
-
   if (detail.isPending) {
-    return <AuctionBetsSkeleton />
+    return <BetsListSkeleton rows={4} />
   }
 
   if (detail.isError) {
     return (
-      <ErrorStateCard
+      <ErrorAlert
         title="Аукцион недоступен"
-        message={detail.error?.message ?? 'Не удалось загрузить аукцион.'}
+        description={detail.error?.message ?? 'Не удалось загрузить аукцион.'}
         onRetry={() => detail.refetch()}
-        backLink={backLink}
-        className="max-w-5xl"
       />
     )
   }
@@ -47,64 +35,68 @@ export function AuctionBets() {
   const vm = detail.data
   if (!vm) {
     return (
-      <ErrorStateCard
-        title="Аукцион не найден"
-        message="Возможно, ссылка устарела или аукцион был удалён."
-        backLink={backLink}
-        className="max-w-5xl"
-      />
+      <Alert>
+        <AlertTitle>Аукцион не найден</AlertTitle>
+        <AlertDescription>
+          Возможно, ссылка устарела или аукцион был удалён.
+        </AlertDescription>
+      </Alert>
     )
   }
 
   if (vm.hideBetsHistory) {
-    return <AuctionBetsRestricted backLink={backLink} />
+    return (
+      <Alert>
+        <AlertTitle>История скрыта</AlertTitle>
+        <AlertDescription>
+          Организатор скрыл историю ставок по этому аукциону.
+        </AlertDescription>
+      </Alert>
+    )
   }
 
   if (betsQuery.isPending) {
-    return <AuctionBetsSkeleton />
+    return <BetsListSkeleton rows={4} />
   }
 
   if (betsQuery.isError) {
     return (
-      <ErrorStateCard
+      <ErrorAlert
         title="История недоступна"
-        message={betsQuery.error?.message ?? 'Не удалось загрузить ставки.'}
+        description={betsQuery.error?.message ?? 'Не удалось загрузить ставки.'}
         onRetry={() => betsQuery.refetch()}
-        backLink={backLink}
-        className="max-w-5xl"
       />
     )
   }
 
   const betsVM = betsQuery.data
   if (!betsVM || betsVM.bets.length === 0) {
-    return <AuctionBetsEmpty backLink={backLink} />
+    return (
+      <Alert>
+        <AlertTitle>Ставок пока нет</AlertTitle>
+        <AlertDescription>
+          По этому аукциону ещё никто не делал ставок.
+        </AlertDescription>
+      </Alert>
+    )
   }
 
-  return <AuctionBetsContent vm={betsVM} backLink={backLink} />
+  return <BetsContent vm={betsVM} />
 }
 
-interface BranchProps {
-  backLink: React.ReactNode
-}
-
-function AuctionBetsContent({ vm, backLink }: BranchProps & { vm: AuctionBetsVM }) {
+function BetsContent({ vm }: { vm: AuctionBetsVM }) {
   return (
-    <PageContainer className="flex max-w-5xl flex-col gap-4">
-      {backLink}
-      <header className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">История ставок</h1>
-        <p className="text-sm text-muted-foreground">
-          Участников: <span className="font-medium text-foreground">{vm.participantCount}</span> ·
-          ставок: <span className="font-medium text-foreground">{vm.bets.length}</span>
-        </p>
-      </header>
+    <>
+      <p className="text-sm text-muted-foreground">
+        Участников: <span className="font-medium text-foreground">{vm.participantCount}</span> ·
+        ставок: <span className="font-medium text-foreground">{vm.bets.length}</span>
+      </p>
       <ol className="flex flex-col gap-2">
         {vm.bets.map((bet) => (
           <BetRow key={bet.id} bet={bet} />
         ))}
       </ol>
-    </PageContainer>
+    </>
   )
 }
 
@@ -154,42 +146,12 @@ function BetRow({ bet }: { bet: AuctionBetVM }) {
   )
 }
 
-function AuctionBetsRestricted({ backLink }: BranchProps) {
+function BetsListSkeleton({ rows = 4 }: { rows?: number }) {
   return (
-    <PageContainer className="flex max-w-5xl flex-col gap-4">
-      {backLink}
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">История ставок</h1>
-      <Alert>
-        <AlertTitle>История скрыта</AlertTitle>
-        <AlertDescription>Организатор скрыл историю ставок по этому аукциону.</AlertDescription>
-      </Alert>
-    </PageContainer>
-  )
-}
-
-function AuctionBetsEmpty({ backLink }: BranchProps) {
-  return (
-    <PageContainer className="flex max-w-5xl flex-col gap-4">
-      {backLink}
-      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">История ставок</h1>
-      <Alert>
-        <AlertTitle>Ставок пока нет</AlertTitle>
-        <AlertDescription>По этому аукциону ещё никто не делал ставок.</AlertDescription>
-      </Alert>
-    </PageContainer>
-  )
-}
-
-function AuctionBetsSkeleton() {
-  return (
-    <PageContainer className="flex max-w-5xl flex-col gap-4">
-      <Skeleton className="h-4 w-32" />
-      <Skeleton className="h-8 w-48" />
-      <div className="flex flex-col gap-2">
-        {Array.from({ length: 4 }).map((_, idx) => (
-          <Skeleton key={idx} className="h-16" />
-        ))}
-      </div>
-    </PageContainer>
+    <div className="flex flex-col gap-2" aria-busy="true" aria-live="polite">
+      {Array.from({ length: rows }).map((_, idx) => (
+        <Skeleton key={idx} className="h-16" />
+      ))}
+    </div>
   )
 }
