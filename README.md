@@ -85,4 +85,3 @@ Fast loop, runs locally on every save and mirrors the CI matrix in `.github/work
 | Types          | `pnpm typecheck` | `tsc -b` across app + tests; catches contract drift between OpenAPI codegen, DTOs, and consumers |
 | Lint           | `pnpm lint`      | oxlint — React hooks, accessibility, import order                                                |
 | FSD boundaries | `pnpm lint:fsd`  | steiger — `shared/api/generated` isolation, public/private slices, import direction              |
-
