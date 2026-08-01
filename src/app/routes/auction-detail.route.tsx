@@ -1,3 +1,5 @@
+import { auctionKeys } from '@entities/auction/api/query-keys'
+import { fetchAuctionDetailByRef } from '@shared/api'
 import { createRoute } from '@tanstack/react-router'
 
 import { AuctionLayout } from '../layouts/auction-layout.component'
@@ -7,4 +9,9 @@ export const auctionDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: 'auctions/$auctionRef',
   component: AuctionLayout,
+  loader: ({ context: { queryClient }, params: { auctionRef } }) =>
+    queryClient.ensureQueryData({
+      queryKey: auctionKeys.detail(auctionRef),
+      queryFn: () => fetchAuctionDetailByRef(auctionRef),
+    }),
 })
