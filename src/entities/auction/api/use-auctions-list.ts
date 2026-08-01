@@ -1,10 +1,9 @@
 import type { AuctionListRequest, AuctionListResponse } from '@shared/api'
-import { fetchAuctionList } from '@shared/api'
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 
 import type { AuctionListItemVM } from '../lib/list-item'
 import { toAuctionListItemVM } from '../lib/list-item'
-import { auctionKeys } from './query-keys'
+import { auctionListQueryOptions } from './query-options'
 
 type AuctionsListViewData = {
   items: AuctionListItemVM[]
@@ -15,8 +14,7 @@ type AuctionsListViewData = {
 
 export function useAuctionsList(filters: AuctionListRequest) {
   return useQuery({
-    queryKey: auctionKeys.list(filters),
-    queryFn: () => fetchAuctionList(filters),
+    ...auctionListQueryOptions(filters),
     placeholderData: keepPreviousData,
     select: toAuctionsListViewData,
   })

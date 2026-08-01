@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
-import { deriveAuctionRestrictions } from './restrictions'
+import type { AuctionDetailVM } from './detail'
+import { deriveAuctionRestrictions, restrictionsFromVM } from './restrictions'
 
 const ALL_OPEN = {
   canSetBet: true,
@@ -70,5 +71,63 @@ describe('deriveAuctionRestrictions', () => {
       canViewContacts: false,
       canViewCargoPrice: true,
     })
+  })
+})
+
+describe('restrictionsFromVM', () => {
+  function vmWith(
+    overrides: Partial<
+      Pick<
+        AuctionDetailVM,
+        'canSetBet' | 'hideBetsHistory' | 'hidePointsAddressAndContacts' | 'noViewCargoPrice'
+      >
+    >,
+  ) {
+    return {
+      canSetBet: true,
+      hideBetsHistory: false,
+      hidePointsAddressAndContacts: false,
+      noViewCargoPrice: false,
+      ...overrides,
+    } as AuctionDetailVM
+  }
+
+  it('returns all-open restrictions for an unrestricted VM', () => {
+    expect(restrictionsFromVM(vmWith({}))).toEqual({
+      canPlaceBet: true,
+      canViewBetsHistory: true,
+      canViewContacts: true,
+      canViewCargoPrice: true,
+    })
+  })
+
+  it('flips each hide/no-view flag into the matching can-view restriction', () => {
+    expect(
+      restrictionsFromVM(
+        vmWith({
+          canSetBet: false,
+          hideBetsHistory: true,
+          hidePointsAddressAndContacts: true,
+          noViewCargoPrice: true,
+        }),
+      ),
+    ).toEqual({
+      canPlaceBet: false,
+      canViewBetsHistory: false,
+      canViewContacts: false,
+      canViewCargoPrice: false,
+    })
+  })
+
+  it('matches deriveAuctionRestrictions for the same field values', () => {
+    const vm = vmWith({ canSetBet: false, hideBetsHistory: true })
+    expect(restrictionsFromVM(vm)).toEqual(
+      deriveAuctionRestrictions({
+        canSetBet: vm.canSetBet,
+        hideBetsHistory: vm.hideBetsHistory,
+        hidePointsAddressAndContacts: vm.hidePointsAddressAndContacts,
+        noViewCargoPrice: vm.noViewCargoPrice,
+      }),
+    )
   })
 })

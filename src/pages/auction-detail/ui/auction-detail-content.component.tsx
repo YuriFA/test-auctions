@@ -4,7 +4,7 @@ import {
   AuctionTypeBadge,
   TradingStatusBadge,
   deriveAuctionCardPrimaryAction,
-  deriveAuctionRestrictions,
+  restrictionsFromVM,
 } from '@entities/auction'
 import { formatDate } from '@shared/lib'
 
@@ -23,12 +23,7 @@ export interface AuctionDetailContentProps {
 }
 
 export function AuctionDetailContent({ vm, auctionRef }: AuctionDetailContentProps) {
-  const restrictions = deriveAuctionRestrictions({
-    canSetBet: vm.canSetBet,
-    hideBetsHistory: vm.hideBetsHistory,
-    hidePointsAddressAndContacts: vm.hidePointsAddressAndContacts,
-    noViewCargoPrice: vm.noViewCargoPrice,
-  })
+  const restrictions = restrictionsFromVM(vm)
   const action = deriveAuctionCardPrimaryAction({
     auctionStatus: vm.auctionStatus,
     canSetBet: restrictions.canPlaceBet,

@@ -1,5 +1,5 @@
 import type { AuctionDetailVM } from '@entities/auction'
-import { deriveAuctionRestrictions, useAuctionDetail } from '@entities/auction'
+import { restrictionsFromVM, useAuctionDetail } from '@entities/auction'
 import { BetForm, describeConstraints } from '@features/bet-form'
 import {
   Alert,
@@ -48,12 +48,7 @@ export function AuctionBetForm({
     )
   }
 
-  const restrictions = deriveAuctionRestrictions({
-    canSetBet: vm.canSetBet,
-    hideBetsHistory: vm.hideBetsHistory,
-    hidePointsAddressAndContacts: vm.hidePointsAddressAndContacts,
-    noViewCargoPrice: vm.noViewCargoPrice,
-  })
+  const restrictions = restrictionsFromVM(vm)
 
   if (!restrictions.canPlaceBet) {
     return <AuctionBetFormRestricted vm={vm} />

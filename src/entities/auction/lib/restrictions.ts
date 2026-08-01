@@ -1,3 +1,5 @@
+import type { AuctionDetailVM } from './detail'
+
 export interface AuctionRestrictionSource {
   canSetBet: boolean
   hideBetsHistory: boolean
@@ -19,4 +21,13 @@ export function deriveAuctionRestrictions(source: AuctionRestrictionSource): Auc
     canViewContacts: !source.hidePointsAddressAndContacts,
     canViewCargoPrice: !source.noViewCargoPrice,
   }
+}
+
+export function restrictionsFromVM(vm: AuctionDetailVM): AuctionRestrictions {
+  return deriveAuctionRestrictions({
+    canSetBet: vm.canSetBet,
+    hideBetsHistory: vm.hideBetsHistory,
+    hidePointsAddressAndContacts: vm.hidePointsAddressAndContacts,
+    noViewCargoPrice: vm.noViewCargoPrice,
+  })
 }

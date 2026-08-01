@@ -1,6 +1,5 @@
-import { auctionKeys } from '@entities/auction'
+import { auctionBetsQueryOptions } from '@entities/auction'
 import { AuctionBetsPage } from '@pages/auction-bets'
-import { fetchBetsByRef } from '@shared/api'
 import { createRoute } from '@tanstack/react-router'
 
 import { auctionDetailRoute } from './auction-detail.route'
@@ -10,8 +9,5 @@ export const auctionBetsRoute = createRoute({
   path: 'bets',
   component: AuctionBetsPage,
   loader: ({ context: { queryClient }, params: { auctionRef } }) =>
-    queryClient.ensureQueryData({
-      queryKey: auctionKeys.bets(auctionRef),
-      queryFn: () => fetchBetsByRef(auctionRef),
-    }),
+    queryClient.ensureQueryData(auctionBetsQueryOptions(auctionRef)),
 })

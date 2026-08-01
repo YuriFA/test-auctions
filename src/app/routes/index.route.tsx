@@ -1,11 +1,10 @@
-import { auctionKeys } from '@entities/auction'
+import { auctionListQueryOptions } from '@entities/auction'
 import {
   DEFAULT_AUCTIONS_LIST_FILTERS,
   buildAuctionListRequest,
   parseAuctionsListSearch,
 } from '@features/auction-filters'
 import { AuctionsPage } from '@pages/auctions-list'
-import { fetchAuctionList } from '@shared/api'
 import { createRoute } from '@tanstack/react-router'
 
 import { rootRoute } from './root.route'
@@ -18,9 +17,6 @@ export const indexRoute = createRoute({
   loaderDeps: ({ search }) => ({ ...DEFAULT_AUCTIONS_LIST_FILTERS, ...search }),
   loader: ({ context: { queryClient }, deps }) => {
     const request = buildAuctionListRequest(deps)
-    return queryClient.ensureQueryData({
-      queryKey: auctionKeys.list(request),
-      queryFn: () => fetchAuctionList(request),
-    })
+    return queryClient.ensureQueryData(auctionListQueryOptions(request))
   },
 })

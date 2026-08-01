@@ -1,4 +1,9 @@
 export * from './api/query-keys'
+export {
+  auctionBetsQueryOptions,
+  auctionDetailQueryOptions,
+  auctionListQueryOptions,
+} from './api/query-options'
 export { useAuctionsList } from './api/use-auctions-list'
 export { useAuctionDetail } from './api/use-auction-detail'
 export { usePrefetchAuctionDetail } from './api/use-prefetch-auction-detail'
@@ -10,7 +15,7 @@ export type { AuctionBetsVM, AuctionBetVM } from './lib/bets'
 export type { AuctionCardPrimaryAction } from './lib/primary-action'
 export { deriveAuctionCardPrimaryAction } from './lib/primary-action'
 export type { AuctionRestrictions } from './lib/restrictions'
-export { deriveAuctionRestrictions } from './lib/restrictions'
+export { restrictionsFromVM } from './lib/restrictions'
 export {
   describeAuctionStatusCode,
   describeAuctionType,
