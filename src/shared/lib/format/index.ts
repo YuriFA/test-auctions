@@ -1,1 +1,9 @@
-export { formatDate, formatPrice, formatPricePerKm, formatVolume, formatWeight } from './format'
+export {
+  formatDate,
+  formatDistance,
+  formatLength,
+  formatPrice,
+  formatPricePerKm,
+  formatVolume,
+  formatWeight,
+} from './format'

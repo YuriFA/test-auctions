@@ -36,6 +36,20 @@ export function formatVolume(value: number | null | undefined): string {
   return `${PLAIN_NUMBER.format(value)} м³`
 }
 
+export function formatDistance(value: number | null | undefined): string {
+  if (value == null) {
+    return FALLBACK
+  }
+  return `${PLAIN_NUMBER.format(value)} км`
+}
+
+export function formatLength(value: number | null | undefined): string {
+  if (value == null) {
+    return FALLBACK
+  }
+  return `${PLAIN_NUMBER.format(value)} м`
+}
+
 export function formatDate(iso: string | undefined | null): string {
   if (!iso) {
     return FALLBACK
