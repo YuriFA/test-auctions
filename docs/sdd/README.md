@@ -71,6 +71,15 @@
 28. `SDD-028` Runtime Consistency Verification
 29. `SDD-030` Active Filter Chips
 30. `SDD-031` Final Documentation
+31. `SDD-032` Contract-Correct Routing Identity
+32. `SDD-033` Fix List View Data Correctness
+33. `SDD-034` Align Filter Contract With OpenAPI
+34. `SDD-035` Harden MSW Business Rules
+35. `SDD-036` Upgrade Router-Query Integration
+36. `SDD-037` Restore Page Boundaries And Entity API
+37. `SDD-038` Fix Navigation Semantics And Accessibility
+38. `SDD-039` Close Assignment Compliance Gaps
+39. `SDD-040` Rebuild Verification And CI Confidence
 
 ## Порядок исполнения
 
@@ -80,6 +89,18 @@
 4. Роутинг, search params и флоу списка
 5. Флоу detail, bets и формы ставки
 6. Тесты, верификация и финальная документация
+
+## Пост-ревью hardening track
+
+Ниже добавлен отдельный remediation-трек `SDD-032..040` по итогам жёсткого production-level review. Его цель — поднять проект от "работает как тестовое" до уровня, который можно защищать перед Senior Engineer, Staff Engineer и Tech Lead без очевидных contract, correctness, accessibility и verification дыр.
+
+Рекомендуемый порядок этого трека:
+
+1. Закрыть correctness и contract blockers: `SDD-032`, `SDD-033`, `SDD-034`.
+2. Выравнять backend realism и data orchestration: `SDD-035`, `SDD-036`.
+3. Почистить архитектурные и semantic UI boundaries: `SDD-037`, `SDD-038`.
+4. Закрыть formal assignment gaps: `SDD-039`.
+5. Пересобрать доверяемую verification story и CI: `SDD-040`.
 
 ## Запланированные маршруты
 
