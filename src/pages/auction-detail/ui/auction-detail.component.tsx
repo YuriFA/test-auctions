@@ -6,8 +6,8 @@ import { AuctionDetailContent } from './auction-detail-content.component'
 import { AuctionDetailSkeleton } from './auction-detail-skeleton.component'
 
 export function AuctionDetail() {
-  const { auctionRef } = useParams({ from: '/auctions/$auctionRef' })
-  const query = useAuctionDetail(auctionRef)
+  const { auctionUuid } = useParams({ from: '/auctions/$auctionUuid' })
+  const query = useAuctionDetail(auctionUuid)
 
   if (query.isPending) {
     return <AuctionDetailSkeleton />
@@ -33,5 +33,5 @@ export function AuctionDetail() {
     )
   }
 
-  return <AuctionDetailContent vm={vm} auctionRef={auctionRef} />
+  return <AuctionDetailContent vm={vm} auctionUuid={auctionUuid} />
 }

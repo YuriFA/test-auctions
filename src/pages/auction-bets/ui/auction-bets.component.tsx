@@ -6,9 +6,9 @@ import { formatDate } from '@shared/lib/date'
 import { Alert, AlertDescription, AlertTitle, Badge, ErrorAlert, Skeleton } from '@shared/ui'
 import { Crown } from 'lucide-react'
 
-export function AuctionBets({ auctionRef }: { auctionRef: string }) {
-  const detail = useAuctionDetail(auctionRef)
-  const betsQuery = useAuctionBets(auctionRef, {
+export function AuctionBets({ auctionUuid }: { auctionUuid: string }) {
+  const detail = useAuctionDetail(auctionUuid)
+  const betsQuery = useAuctionBets(auctionUuid, {
     enabled: !detail.data?.hideBetsHistory,
   })
 

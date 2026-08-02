@@ -1,15 +1,15 @@
-import type { AuctionDetail, AuctionRef } from '@shared/api'
+import type { AuctionDetail, AuctionUuid } from '@shared/api'
 import { useQuery } from '@tanstack/react-query'
 
 import type { AuctionDetailVM } from '../lib/detail'
 import { toAuctionDetailVM } from '../lib/detail'
 import { auctionDetailQueryOptions } from './query-options'
 
-export function useAuctionDetail(auctionRef: AuctionRef) {
+export function useAuctionDetail(auctionUuid: AuctionUuid) {
   return useQuery({
-    ...auctionDetailQueryOptions(auctionRef),
+    ...auctionDetailQueryOptions(auctionUuid),
     select: toAuctionDetailViewData,
-    enabled: auctionRef.length > 0,
+    enabled: auctionUuid.length > 0,
   })
 }
 

@@ -12,7 +12,7 @@ export type {
   PaymentDelayType,
   TradingStatus,
 } from './generated'
-export { extractAuctionRef, fetchAuctionDetailByRef, fetchAuctionList } from './auctions'
-export type { AuctionDetail, AuctionListResponse, AuctionRef } from './auctions'
-export { fetchBetsByRef, placeBetByRef } from './bets'
+export { extractAuctionUuid, fetchAuctionDetailByUuid, fetchAuctionList } from './auctions'
+export type { AuctionDetail, AuctionListResponse, AuctionUuid } from './auctions'
+export { fetchBetsByUuid, placeBetByUuid } from './bets'
 export type { BetsListResponse } from './bets'

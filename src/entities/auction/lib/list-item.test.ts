@@ -59,7 +59,7 @@ describe('toAuctionListItemVM', () => {
   it('maps every required card field', () => {
     const vm = toAuctionListItemVM(makeItem())
     expect(vm).toMatchObject({
-      auctionRef: '3a05d045-0e67-4f85-b20a-de81d18bba7a',
+      auctionUuid: '3a05d045-0e67-4f85-b20a-de81d18bba7a',
       cargoNum: 'MSK-001',
       orderUid: '3a05d045-0e67-4f85-b20a-de81d18bba7a',
       aucType: 'Down',

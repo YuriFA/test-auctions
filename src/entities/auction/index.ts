@@ -1,8 +1,4 @@
-export {
-  auctionBetsQueryOptions,
-  auctionDetailQueryOptions,
-  auctionListQueryOptions,
-} from './api/query-options'
+export { auctionDetailQueryOptions, auctionListQueryOptions } from './api/query-options'
 export { useAuctionsList } from './api/use-auctions-list'
 export { useAuctionDetail } from './api/use-auction-detail'
 export { usePrefetchAuctionDetail } from './api/use-prefetch-auction-detail'

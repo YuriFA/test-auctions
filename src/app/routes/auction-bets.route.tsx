@@ -8,9 +8,9 @@ export const auctionBetsRoute = createRoute({
   getParentRoute: () => auctionDetailRoute,
   path: 'bets',
   component: AuctionBetsPage,
-  loader: ({ context: { queryClient }, params: { auctionRef } }) =>
+  loader: ({ context: { queryClient }, params: { auctionUuid } }) =>
     queryClient.ensureQueryData({
-      ...auctionDetailQueryOptions(auctionRef),
+      ...auctionDetailQueryOptions(auctionUuid),
       revalidateIfStale: true,
     }),
 })

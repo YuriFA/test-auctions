@@ -28,15 +28,15 @@ async function fetchBets(
   return result.data
 }
 
-export async function fetchBetsByRef(
-  auctionRef: string,
+export async function fetchBetsByUuid(
+  auctionUuid: string,
   options: FetchBetsOptions = {},
 ): Promise<BetsListResponse> {
-  const auctionUuid = resolveAuctionUuid(auctionRef)
-  if (!auctionUuid) {
-    throw new Error(`Не удалось определить аукцион по ссылке «${auctionRef}»`)
+  const resolved = resolveAuctionUuid(auctionUuid)
+  if (!resolved) {
+    throw new Error(`Не удалось определить аукцион по ссылке «${auctionUuid}»`)
   }
-  return fetchBets(auctionUuid, options)
+  return fetchBets(resolved, options)
 }
 
 async function placeBet(options: PlaceBetOptions): Promise<void> {
@@ -49,13 +49,13 @@ async function placeBet(options: PlaceBetOptions): Promise<void> {
   }
 }
 
-export async function placeBetByRef(options: {
-  auctionRef: string
+export async function placeBetByUuid(options: {
+  auctionUuid: string
   body: PlaceBetInput
 }): Promise<void> {
-  const auctionUuid = resolveAuctionUuid(options.auctionRef)
-  if (!auctionUuid) {
-    throw new Error(`Не удалось определить аукцион по ссылке «${options.auctionRef}»`)
+  const resolved = resolveAuctionUuid(options.auctionUuid)
+  if (!resolved) {
+    throw new Error(`Не удалось определить аукцион по ссылке «${options.auctionUuid}»`)
   }
-  return placeBet({ auctionUuid, body: options.body })
+  return placeBet({ auctionUuid: resolved, body: options.body })
 }

@@ -19,10 +19,10 @@ import { DetailActionBar } from './detail-action-bar.component'
 
 export interface AuctionDetailContentProps {
   vm: AuctionDetailVM
-  auctionRef: string
+  auctionUuid: string
 }
 
-export function AuctionDetailContent({ vm, auctionRef }: AuctionDetailContentProps) {
+export function AuctionDetailContent({ vm, auctionUuid }: AuctionDetailContentProps) {
   const restrictions = restrictionsFromVM(vm)
   const action = deriveAuctionCardPrimaryAction({
     auctionStatus: vm.auctionStatus,
@@ -50,7 +50,7 @@ export function AuctionDetailContent({ vm, auctionRef }: AuctionDetailContentPro
         </div>
       </header>
 
-      <DetailActionBar action={action} auctionRef={auctionRef} restrictions={restrictions} />
+      <DetailActionBar action={action} auctionUuid={auctionUuid} restrictions={restrictions} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <OrganizerCard vm={vm} />

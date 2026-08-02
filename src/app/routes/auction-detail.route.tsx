@@ -5,11 +5,11 @@ import { rootRoute } from './root.route'
 
 export const auctionDetailRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: 'auctions/$auctionRef',
+  path: 'auctions/$auctionUuid',
   component: Outlet,
-  loader: ({ context: { queryClient }, params: { auctionRef } }) =>
+  loader: ({ context: { queryClient }, params: { auctionUuid } }) =>
     queryClient.ensureQueryData({
-      ...auctionDetailQueryOptions(auctionRef),
+      ...auctionDetailQueryOptions(auctionUuid),
       revalidateIfStale: true,
     }),
 })

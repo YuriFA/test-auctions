@@ -10,17 +10,13 @@ import { getAuction, listAuctions } from './generated'
 export type AuctionListFilters = AuctionListRequest
 export type AuctionListResponse = AuctionListResponseBase
 export type AuctionDetail = AuctionShowResponse
-export type AuctionRef = string
+export type AuctionUuid = string
 
-type AuctionRefResolver = (auctionRef: AuctionRef) => string | undefined
+type AuctionUuidResolver = (auctionUuid: AuctionUuid) => string | undefined
 
-// NOTE: identity resolver — production treats the route ref as the server
-// uuid. Mock/dev environments override it via `configureAuctionRefResolver`
-// because the seed store keys some auctions by an internal uuid that differs
-// from the list DTO's `main.order_uid`.
-let resolveAuctionUuidImpl: AuctionRefResolver = (ref) => ref
+let resolveAuctionUuidImpl: AuctionUuidResolver = (uuid) => uuid
 
-export function configureAuctionRefResolver(resolver: AuctionRefResolver): void {
+export function configureAuctionUuidResolver(resolver: AuctionUuidResolver): void {
   resolveAuctionUuidImpl = resolver
 }
 
@@ -40,18 +36,22 @@ async function fetchAuctionDetail(auctionUuid: string): Promise<AuctionDetail> {
   return result.data
 }
 
-export function extractAuctionRef(item: AuctionListItem): AuctionRef | undefined {
+// NOTE: OpenAPI list DTO не содержит отдельного поля auction_uuid.
+// main.order_uid — единственный стабильный идентификатор в list response,
+// поэтому используется как route identity и резолвится в API uuid
+// на границе адаптера.
+export function extractAuctionUuid(item: AuctionListItem): AuctionUuid | undefined {
   return item.main?.order_uid
 }
 
-export function resolveAuctionUuid(auctionRef: AuctionRef): string | undefined {
-  return resolveAuctionUuidImpl(auctionRef)
+export function resolveAuctionUuid(auctionUuid: AuctionUuid): string | undefined {
+  return resolveAuctionUuidImpl(auctionUuid)
 }
 
-export async function fetchAuctionDetailByRef(auctionRef: AuctionRef): Promise<AuctionDetail> {
-  const auctionUuid = resolveAuctionUuid(auctionRef)
-  if (!auctionUuid) {
-    throw new Error(`Не удалось определить аукцион по ссылке «${auctionRef}»`)
+export async function fetchAuctionDetailByUuid(auctionUuid: AuctionUuid): Promise<AuctionDetail> {
+  const resolved = resolveAuctionUuid(auctionUuid)
+  if (!resolved) {
+    throw new Error(`Не удалось определить аукцион по ссылке «${auctionUuid}»`)
   }
-  return fetchAuctionDetail(auctionUuid)
+  return fetchAuctionDetail(resolved)
 }

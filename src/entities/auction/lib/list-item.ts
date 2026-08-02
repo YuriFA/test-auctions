@@ -1,16 +1,16 @@
 import type {
   AuctionListItem,
-  AuctionRef,
   AuctionStatus,
   AuctionType,
+  AuctionUuid,
   TradingStatus,
 } from '@shared/api'
-import { extractAuctionRef } from '@shared/api'
+import { extractAuctionUuid } from '@shared/api'
 
 import { describeAuctionStatus, describeAuctionType, describeTradingStatus } from './describe'
 
 export type AuctionListItemVM = {
-  auctionRef: AuctionRef
+  auctionUuid: AuctionUuid
 
   cargoNum: string
   orderUid: string
@@ -42,8 +42,8 @@ export type AuctionListItemVM = {
 }
 
 export function toAuctionListItemVM(item: AuctionListItem): AuctionListItemVM | null {
-  const auctionRef = extractAuctionRef(item)
-  if (!auctionRef) {
+  const auctionUuid = extractAuctionUuid(item)
+  if (!auctionUuid) {
     return null
   }
 
@@ -92,6 +92,6 @@ export function toAuctionListItemVM(item: AuctionListItem): AuctionListItemVM | 
     currentPrice: price?.current ?? null,
     currentPriceNoVat: price?.current_no_vat ?? null,
     startPrice: price?.start ?? null,
-    auctionRef,
+    auctionUuid,
   }
 }

@@ -15,13 +15,13 @@ import {
 } from '@shared/ui'
 
 export function AuctionBetForm({
-  auctionRef,
+  auctionUuid,
   onSuccess,
 }: {
-  auctionRef: string
+  auctionUuid: string
   onSuccess: () => void
 }) {
-  const detail = useAuctionDetail(auctionRef)
+  const detail = useAuctionDetail(auctionUuid)
 
   if (detail.isPending) {
     return <AuctionBetFormSkeleton />
@@ -53,16 +53,16 @@ export function AuctionBetForm({
     return <AuctionBetFormRestricted vm={vm} />
   }
 
-  return <AuctionBetFormContent vm={vm} auctionRef={auctionRef} onSuccess={onSuccess} />
+  return <AuctionBetFormContent vm={vm} auctionUuid={auctionUuid} onSuccess={onSuccess} />
 }
 
 function AuctionBetFormContent({
   vm,
-  auctionRef,
+  auctionUuid,
   onSuccess,
 }: {
   vm: AuctionDetailVM
-  auctionRef: string
+  auctionUuid: string
   onSuccess: () => void
 }) {
   const constraints = {
@@ -84,7 +84,7 @@ function AuctionBetFormContent({
         </CardHeader>
         <CardContent>
           <BetForm
-            auctionRef={auctionRef}
+            auctionUuid={auctionUuid}
             constraints={constraints}
             available={vm.priceAvailable}
             onSuccess={onSuccess}

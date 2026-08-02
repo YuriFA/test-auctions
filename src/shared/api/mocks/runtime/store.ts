@@ -72,9 +72,9 @@ export function readAuctionDetail(uuid: string): AuctionShowResponse | undefined
   return auction?.detail
 }
 
-export function resolveAuctionUuidFromRef(ref: string): string | undefined {
+export function resolveMockAuctionUuid(auctionUuid: string): string | undefined {
   return state.auctions.find(
-    (auction) => auction.uuid === ref || auction.list.main?.order_uid === ref,
+    (auction) => auction.uuid === auctionUuid || auction.list.main?.order_uid === auctionUuid,
   )?.uuid
 }
 

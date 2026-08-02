@@ -4,10 +4,10 @@ import { Link } from '@tanstack/react-router'
 
 interface Props {
   action: AuctionCardPrimaryAction
-  auctionRef: string
+  auctionUuid: string
 }
 
-export function AuctionAction({ action, auctionRef }: Props) {
+export function AuctionAction({ action, auctionUuid }: Props) {
   if (action.kind === 'disabled') {
     return (
       <Button variant="outline" className="relative" disabled>
@@ -21,7 +21,7 @@ export function AuctionAction({ action, auctionRef }: Props) {
       <Button
         className="relative"
         nativeButton={false}
-        render={<Link to="/auctions/$auctionRef/bet" params={{ auctionRef }} />}
+        render={<Link to="/auctions/$auctionUuid/bet" params={{ auctionUuid }} />}
       >
         {action.label}
       </Button>
@@ -33,7 +33,7 @@ export function AuctionAction({ action, auctionRef }: Props) {
       variant="outline"
       className="relative"
       nativeButton={false}
-      render={<Link to="/auctions/$auctionRef/bets" params={{ auctionRef }} />}
+      render={<Link to="/auctions/$auctionUuid/bets" params={{ auctionUuid }} />}
     >
       {action.label}
     </Button>
