@@ -26,7 +26,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { DEFAULT_AUCTIONS_LIST_FILTERS, type AuctionsListFilters } from '../lib/search-params'
 import { useAuctionsListFiltersCommit } from '../lib/use-auctions-list-filters-commit'
 import { CheckboxList } from './checkbox-list.component'
-import { ResetButton } from './reset-button.component'
 
 const AUC_TYPE_OPTIONS: ReadonlyArray<{ value: AuctionType; label: string }> = [
   { value: 'Request', label: describeAuctionType('Request') },
@@ -62,7 +61,6 @@ export function AuctionFiltersForm({ onApplied }: Props) {
   const { initialFilters, commitFilters } = useAuctionsListFiltersCommit()
   const form = useForm<AuctionsListFilters>({
     defaultValues: initialFilters,
-    values: initialFilters,
   })
 
   const handleSubmit = form.handleSubmit((values: AuctionsListFilters) => {
@@ -70,8 +68,11 @@ export function AuctionFiltersForm({ onApplied }: Props) {
     onApplied()
   })
 
-  const reset = () => {
-    form.reset({ ...DEFAULT_AUCTIONS_LIST_FILTERS })
+  const handleReset = () => {
+    const resetValues = { ...DEFAULT_AUCTIONS_LIST_FILTERS }
+    form.reset(resetValues)
+    commitFilters(resetValues)
+    onApplied()
   }
 
   return (
@@ -187,11 +188,35 @@ export function AuctionFiltersForm({ onApplied }: Props) {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Field orientation="vertical">
                 <FieldLabel htmlFor="load_date_from">С</FieldLabel>
-                <Input id="load_date_from" type="date" {...form.register('load_date_from')} />
+                <Controller
+                  control={form.control}
+                  name="load_date_from"
+                  render={({ field }) => (
+                    <Input
+                      id="load_date_from"
+                      type="date"
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
               </Field>
               <Field orientation="vertical">
                 <FieldLabel htmlFor="load_date_to">По</FieldLabel>
-                <Input id="load_date_to" type="date" {...form.register('load_date_to')} />
+                <Controller
+                  control={form.control}
+                  name="load_date_to"
+                  render={({ field }) => (
+                    <Input
+                      id="load_date_to"
+                      type="date"
+                      value={field.value ?? ''}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                    />
+                  )}
+                />
               </Field>
             </div>
           </FieldSet>
@@ -277,13 +302,9 @@ export function AuctionFiltersForm({ onApplied }: Props) {
       </div>
 
       <div className="sticky bottom-0 flex items-center justify-between gap-2 border-t border-border bg-popover p-4">
-        <ResetButton
-          size="lg"
-          variant="ghost"
-          control={form.control}
-          defaultValues={initialFilters}
-          onReset={reset}
-        />
+        <Button type="button" variant="ghost" onClick={handleReset} size="lg">
+          Сбросить
+        </Button>
         <Button type="submit" size="lg">
           Применить
         </Button>
